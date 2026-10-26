@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable
 {
@@ -42,9 +43,9 @@ class User extends Authenticatable
             'is_intern' => 'boolean',
             'isAllocation_visible' => 'boolean',
             'remember_me' => 'boolean',
-            'birth_date' => 'date',
-            'hiring_date' => 'date',
-            'resignation_date' => 'date',
+            'birth_date' => 'date:Y-m-d',
+            'hiring_date' => 'date:Y-m-d',
+            'resignation_date' => 'date:Y-m-d',
             'password' => 'hashed',
         ];
     }
@@ -112,5 +113,11 @@ class User extends Authenticatable
     public function performedAuditLogs(): HasMany
     {
         return $this->hasMany(LeaveAuditLog::class, 'admin_id');
+    }
+
+    public function latestContract(): HasOne
+    {
+        return $this->hasOne(Contract::class)
+            ->latestOfMany('contract_start_date');
     }
 }
