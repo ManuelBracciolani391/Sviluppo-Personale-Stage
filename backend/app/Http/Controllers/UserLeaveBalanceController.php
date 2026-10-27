@@ -19,22 +19,9 @@ class UserLeaveBalanceController extends Controller
     public function index(Request $request, User $user): JsonResponse
     {
         $validated = $request->validate([
-            'leave_type' => [
-                'sometimes',
-                'in:ferie,permesso,rol',
-            ],
-            'year' => [
-                'sometimes',
-                'integer',
-                'min:2000',
-                'max:2100',
-            ],
-            'per_page' => [
-                'sometimes',
-                'integer',
-                'min:1',
-                'max:100',
-            ],
+            'leave_type' => ['sometimes', 'in:ferie,permesso,rol'],
+            'year' => ['sometimes', 'integer', 'min:2000', 'max:2100'],
+            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
         ]);
 
         $query = $user->leaveBalances();
@@ -44,18 +31,14 @@ class UserLeaveBalanceController extends Controller
         }
 
         if (!empty($validated['year'])) {
-            $query->whereYear(
-                'reference_month',
-                $validated['year']
-            );
+            $query->whereYear('reference_month', $validated['year']);
         }
 
-        $balances = $query
-            ->orderByDesc('reference_month')
-            ->orderBy('leave_type')
-            ->paginate($validated['per_page'] ?? 15);
-
-        return response()->json($balances);
+        return response()->json(
+            $query->orderByDesc('reference_month')
+                ->orderBy('leave_type')
+                ->paginate($validated['per_page'] ?? 15)
+        );
     }
 
     public function show(
@@ -72,6 +55,7 @@ class UserLeaveBalanceController extends Controller
         User $user
     ): JsonResponse {
         $validated = $request->validated();
+        $adminId = (int) $request->user()->id;
 
         $referenceMonth = Carbon::parse(
             $validated['reference_month']
@@ -92,21 +76,20 @@ class UserLeaveBalanceController extends Controller
             );
         }
 
-        $balance = DB::transaction(function () use ($user, $validated, $referenceMonth, $contractInfo) {
+        $balance = DB::transaction(function () use ($user, $adminId, $validated, $referenceMonth, $contractInfo) {
             $balance = UserLeaveBalance::create([
                 'user_id' => $user->id,
                 'leave_type' => $validated['leave_type'],
                 'reference_month' => $referenceMonth->toDateString(),
-
                 'contract_type' => $contractInfo['contract_type'] ?? null,
                 'balance_unit' => $contractInfo['balance_unit'] ?? 'ore',
-
                 'remaining_hours' => $validated['remaining_hours'],
                 'accrued_hours' => $validated['accrued_hours'] ?? 0,
                 'monthly_accrual' => $validated['monthly_accrual'] ?? 0,
             ]);
 
             $this->writeAuditLogs(
+                adminId: $adminId,
                 userId: $user->id,
                 leaveType: $balance->leave_type,
                 referenceMonth: $referenceMonth,
@@ -132,6 +115,7 @@ class UserLeaveBalanceController extends Controller
         $this->ensureBalanceBelongsToUser($user, $leaveBalance);
 
         $validated = $request->validated();
+        $adminId = (int) $request->user()->id;
 
         $referenceMonth = Carbon::parse(
             $validated['reference_month']
@@ -144,12 +128,7 @@ class UserLeaveBalanceController extends Controller
             $leaveBalance->id
         );
 
-        /*
-         * Se il record resta relativo allo stesso mese ferie,
-         * manteniamo il tipo di contratto e l'unità salvati.
-         * In questo modo una modifica successiva al contratto
-         * non riscrive retroattivamente lo storico.
-         */
+        // Conserva lo snapshot contrattuale se il mese ferie non cambia.
         $sameHistoricalFerie =
             $leaveBalance->leave_type === 'ferie'
             && $validated['leave_type'] === 'ferie'
@@ -171,7 +150,7 @@ class UserLeaveBalanceController extends Controller
             );
         }
 
-        $balance = DB::transaction(function () use ($user, $validated, $referenceMonth, $leaveBalance, $contractInfo) {
+        $balance = DB::transaction(function () use ($user, $adminId, $validated, $referenceMonth, $leaveBalance, $contractInfo) {
             $oldValues = [
                 'remaining_hours' => $leaveBalance->remaining_hours,
                 'accrued_hours' => $leaveBalance->accrued_hours,
@@ -204,12 +183,8 @@ class UserLeaveBalanceController extends Controller
 
             $leaveBalance->save();
 
-            /*
-             * Il log viene associato al tipo e al mese del record
-             * dopo la modifica. I valori precedenti sono quelli
-             * salvati prima dell'aggiornamento.
-             */
             $this->writeAuditLogs(
+                adminId: $adminId,
                 userId: $user->id,
                 leaveType: $leaveBalance->leave_type,
                 referenceMonth: $referenceMonth,
@@ -221,10 +196,6 @@ class UserLeaveBalanceController extends Controller
                 ]
             );
 
-            /*
-             * Se tipologia o mese cambiano, registriamo anche
-             * una traccia per la vecchia combinazione.
-             */
             if (
                 $oldLeaveType !== $leaveBalance->leave_type
                 || (
@@ -235,7 +206,7 @@ class UserLeaveBalanceController extends Controller
             ) {
                 LeaveAuditLog::create([
                     'user_id' => $user->id,
-                    'admin_id' => null,
+                    'admin_id' => $adminId,
                     'leave_type' => $oldLeaveType,
                     'reference_month' => $oldReferenceMonth?->toDateString()
                         ?? $referenceMonth->toDateString(),
@@ -252,13 +223,17 @@ class UserLeaveBalanceController extends Controller
     }
 
     public function destroy(
+        Request $request,
         User $user,
         UserLeaveBalance $leaveBalance
     ): JsonResponse {
         $this->ensureBalanceBelongsToUser($user, $leaveBalance);
 
-        DB::transaction(function () use ($user, $leaveBalance) {
+        $adminId = (int) $request->user()->id;
+
+        DB::transaction(function () use ($user, $adminId, $leaveBalance) {
             $this->writeAuditLogs(
+                adminId: $adminId,
                 userId: $user->id,
                 leaveType: $leaveBalance->leave_type,
                 referenceMonth: $leaveBalance->reference_month,
@@ -331,11 +306,7 @@ class UserLeaveBalanceController extends Controller
             ->whereDate('contract_start_date', '<=', $monthEnd)
             ->where(function ($query) use ($monthStart) {
                 $query->whereNull('contract_end_date')
-                    ->orWhereDate(
-                        'contract_end_date',
-                        '>=',
-                        $monthStart
-                    );
+                    ->orWhereDate('contract_end_date', '>=', $monthStart);
             })
             ->orderByDesc('contract_start_date')
             ->first();
@@ -388,19 +359,18 @@ class UserLeaveBalanceController extends Controller
     }
 
     private function writeAuditLogs(
+        int $adminId,
         int $userId,
         string $leaveType,
         Carbon $referenceMonth,
         ?array $oldValues,
         array $newValues
     ): void {
-        $fields = [
+        foreach ([
             'remaining_hours',
             'accrued_hours',
             'monthly_accrual',
-        ];
-
-        foreach ($fields as $field) {
+        ] as $field) {
             $oldValue = $oldValues[$field] ?? null;
             $newValue = $newValues[$field] ?? null;
 
@@ -415,7 +385,7 @@ class UserLeaveBalanceController extends Controller
 
             LeaveAuditLog::create([
                 'user_id' => $userId,
-                'admin_id' => null,
+                'admin_id' => $adminId,
                 'leave_type' => $leaveType,
                 'reference_month' => $referenceMonth->toDateString(),
                 'field_name' => $field,

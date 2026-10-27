@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Providers;
+
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
-
-
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Auth\Notifications\ResetPassword;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,5 +27,14 @@ class AppServiceProvider extends ServiceProvider
                 ->whereIn('alias', ['Admin', 'HR'])
                 ->exists();
         });
+
+        ResetPassword::createUrlUsing(
+            function ($notifiable, string $token): string {
+                return 'http://localhost:3000/reset-password?token='
+                    . $token
+                    . '&email='
+                    . urlencode($notifiable->getEmailForPasswordReset());
+            }
+        );
     }
 }
