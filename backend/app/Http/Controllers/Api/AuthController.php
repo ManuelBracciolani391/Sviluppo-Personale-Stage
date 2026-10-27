@@ -21,24 +21,32 @@ class AuthController extends Controller
             'remember' => 'nullable|boolean',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        // Includere anche gli utenti soft-deleted con withTrashed()
+        $user = User::withTrashed()->where('email', $request->email)->first();
+
+        
+        if (!$user || !\Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['Le credenziali non sono corrette.'],
             ]);
         }
 
-        $user = User::where('email', $request->email)->first();
+        // Controllo utenti disabilitati
+        if ($user->deleted_at !== null && $user->resignation_date !== null) {
+            throw ValidationException::withMessages([
+                'email' => ['Il tuo account è disabilitato. Impossibile effettuare il login.'],
+            ]);
+        }
 
-        // Gestione remember me e scadenza token (14 giorni se true, 1 giorno se false)
+        // Gestione Remember Me e generazione token (14 giorni o 1 giorno)
         $remember = $request->boolean('remember');
         $expiresAt = $remember ? now()->addDays(14) : now()->addDay();
 
         $tokenResult = $user->createToken('auth_token', ['*'], $expiresAt);
-        $token = $tokenResult->plainTextToken;
-
+        
         return response()->json([
             'message' => 'Login effettuato con successo',
-            'access_token' => $token,
+            'access_token' => $tokenResult->plainTextToken,
             'token_type' => 'Bearer',
             'remember' => $remember,
             'expires_at' => $tokenResult->accessToken->expires_at,

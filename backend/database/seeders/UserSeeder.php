@@ -12,7 +12,7 @@ class UserSeeder extends Seeder
     {
         $now = now();
 
-        // 1. Recupera i file di riferimento creati da FileStorageSeeder
+        
         $fileStorageId = DB::table('filestorage')
             ->where('name', 'default-avatar')
             ->value('id');
@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             );
         }
 
-        // 2. Crea gli utenti
+        
         $users = [
             [
                 'first_name' => 'Mario',
@@ -108,6 +108,22 @@ class UserSeeder extends Seeder
                 'assignment_roles' => [
                     ['alias' => 'Sviluppatore Full-stack', 'expertise' => 'junior'],
                 ],
+            ],
+            [
+                'first_name' => 'Test', // utente disabilitato
+                'last_name' => 'Disabilitato',
+                'gender' => 'male',
+                'email' => 'disabilitato@example.com',
+                'azure_email' => 'disabilitato@azure.azure.example.com',
+                'company_email' => 'disabilitato@company.example.com',
+                'is_intern' => false,
+                'isAllocation_visible' => false,
+                'birth_date' => '1990-01-01',
+                'hiring_date' => '2020-01-01',
+                'resignation_date' => '2024-01-01', // per testare utente disabilitato
+                'deleted_at' => $now,               // per testare utente disabilitato
+                'role' => 'User',
+                'assignment_roles' => [],
             ],
         ];
 
