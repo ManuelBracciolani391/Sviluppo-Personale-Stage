@@ -10,8 +10,8 @@ class StoreUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return app()->environment('local');
-        //return $this->user()?->can('manage-users') ?? false;
+        //return app()->environment('local');
+        return $this->user()?->can('manage-users') ?? false;
     }
 
     public function rules(): array
