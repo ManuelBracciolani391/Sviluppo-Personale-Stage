@@ -10,7 +10,7 @@ return new class extends Migration {
             $table->id();
 
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('admin_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('admin_id')->nullable()->constrained('users')->cascadeOnDelete();
 
             $table->string('leave_type');
             $table->date('reference_month');

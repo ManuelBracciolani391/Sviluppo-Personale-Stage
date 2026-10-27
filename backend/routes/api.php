@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserLeaveBalanceController;
 
 Route::
     prefix('users')
@@ -22,5 +23,18 @@ Route::
         Route::put('/{user}', 'update')->name('update');
         Route::patch('/{user}', 'update')->name('patch');
         Route::delete('/{user}', 'destroy')->name('destroy');
+    });
+
+
+
+Route::prefix('users/{user}/leave-balances')
+    ->controller(UserLeaveBalanceController::class)
+    ->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+
+        Route::get('/{leaveBalance}', 'show');
+        Route::put('/{leaveBalance}', 'update');
+        Route::delete('/{leaveBalance}', 'destroy');
     });
 
