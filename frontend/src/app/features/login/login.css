@@ -1,0 +1,128 @@
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #f4f6f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-box {
+  display: flex;
+  flex-direction: row;
+  background-color: white;
+  width: 900px;
+  max-width: 95%;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+/*Colonna sinistra*/
+.login-logo {
+  flex: 0 0 50%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  padding-left: 40px;
+}
+
+.login-logo img {
+  max-width: 100%;
+  height: auto;
+}
+
+/*Colonna destra*/
+.login-container {
+  flex: 0 0 50%;
+  box-sizing: border-box;
+  padding: 130px 60px;
+  padding-right: 90px;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+.login-container h2 {
+  font-size: 40px;
+  color: #505050;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+
+/*Campi input*/
+.form-group {
+  margin-bottom: 0;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  background-color: #f7f7f7;
+  border: none;
+  border-bottom: 2px solid #ff4d4f;
+  border-radius: 0;
+  font-size: 14px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.form-group input::placeholder {
+  color: #bfbfbf;
+}
+
+/*Checkbox*/
+#checkbox {
+  display: flex;
+  align-items: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #262626;
+}
+
+#checkbox input {
+  width: 15px;
+  height: 15px;
+  margin-right: 8px;
+  cursor: pointer;
+  accent-color: #ffb26c;
+  transform: translateY(1px);
+}
+
+#checkbox label {
+  cursor: pointer;
+}
+
+/*Pulsante accedi*/
+button[type='submit'] {
+  width: 100%;
+  padding: 18px;
+  background-color: #ffb26c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button[type='submit']:hover {
+  background-color: #f49f5a;
+}
+
+/*Link password dimenticata*/
+.login-container a {
+  display: block;
+  text-align: center;
+  margin-top: 13px;
+  color: #ffb26c;
+  font-size: 14px;
+  font-weight: bold;
+}
