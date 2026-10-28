@@ -8,6 +8,7 @@ use App\Models\Contract;
 use App\Models\LeaveAuditLog;
 use App\Models\User;
 use App\Models\UserLeaveBalance;
+use App\Services\LeaveBalanceHistory;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,10 @@ use Illuminate\Validation\ValidationException;
 
 class UserLeaveBalanceController extends Controller
 {
+    public function __construct(private LeaveBalanceHistory $history)
+    {
+    }
+
     public function index(Request $request, User $user): JsonResponse
     {
         $validated = $request->validate([
@@ -88,6 +93,17 @@ class UserLeaveBalanceController extends Controller
                 'monthly_accrual' => $validated['monthly_accrual'] ?? 0,
             ]);
 
+            $balance = $balance->fresh();
+
+            $operationId = $this->history->record(
+                adminId: $adminId,
+                userId: $user->id,
+                balanceId: $balance->id,
+                action: 'create',
+                before: null,
+                after: $this->history->snapshot($balance)
+            );
+
             $this->writeAuditLogs(
                 adminId: $adminId,
                 userId: $user->id,
@@ -98,7 +114,10 @@ class UserLeaveBalanceController extends Controller
                     'remaining_hours' => $balance->remaining_hours,
                     'accrued_hours' => $balance->accrued_hours,
                     'monthly_accrual' => $balance->monthly_accrual,
-                ]
+                ],
+                operationId: $operationId,
+                balanceId: $balance->id,
+                action: 'create'
             );
 
             return $balance;
@@ -151,14 +170,14 @@ class UserLeaveBalanceController extends Controller
         }
 
         $balance = DB::transaction(function () use ($user, $adminId, $validated, $referenceMonth, $leaveBalance, $contractInfo) {
+            // Snapshot PRIMA di modificare il modello
+            $before = $this->history->snapshot($leaveBalance);
+
             $oldValues = [
                 'remaining_hours' => $leaveBalance->remaining_hours,
                 'accrued_hours' => $leaveBalance->accrued_hours,
                 'monthly_accrual' => $leaveBalance->monthly_accrual,
             ];
-
-            $oldLeaveType = $leaveBalance->leave_type;
-            $oldReferenceMonth = $leaveBalance->reference_month;
 
             $leaveBalance->leave_type = $validated['leave_type'];
             $leaveBalance->reference_month = $referenceMonth->toDateString();
@@ -183,40 +202,38 @@ class UserLeaveBalanceController extends Controller
 
             $leaveBalance->save();
 
-            $this->writeAuditLogs(
-                adminId: $adminId,
-                userId: $user->id,
-                leaveType: $leaveBalance->leave_type,
-                referenceMonth: $referenceMonth,
-                oldValues: $oldValues,
-                newValues: [
-                    'remaining_hours' => $leaveBalance->remaining_hours,
-                    'accrued_hours' => $leaveBalance->accrued_hours,
-                    'monthly_accrual' => $leaveBalance->monthly_accrual,
-                ]
-            );
+            $fresh = $leaveBalance->fresh();
+            $after = $this->history->snapshot($fresh);
 
-            if (
-                $oldLeaveType !== $leaveBalance->leave_type
-                || (
-                    $oldReferenceMonth !== null
-                    && $oldReferenceMonth->format('Y-m')
-                    !== $referenceMonth->format('Y-m')
-                )
-            ) {
-                LeaveAuditLog::create([
-                    'user_id' => $user->id,
-                    'admin_id' => $adminId,
-                    'leave_type' => $oldLeaveType,
-                    'reference_month' => $oldReferenceMonth?->toDateString()
-                        ?? $referenceMonth->toDateString(),
-                    'field_name' => 'record_reference',
-                    'old_value' => null,
-                    'new_value' => null,
-                ]);
+            // Nessuna modifica reale: niente revisione nello stack
+            if (!$this->history->sameState($before, $after)) {
+                $operationId = $this->history->record(
+                    adminId: $adminId,
+                    userId: $user->id,
+                    balanceId: $fresh->id,
+                    action: 'update',
+                    before: $before,
+                    after: $after
+                );
+
+                $this->writeAuditLogs(
+                    adminId: $adminId,
+                    userId: $user->id,
+                    leaveType: $fresh->leave_type,
+                    referenceMonth: $referenceMonth,
+                    oldValues: $oldValues,
+                    newValues: [
+                        'remaining_hours' => $fresh->remaining_hours,
+                        'accrued_hours' => $fresh->accrued_hours,
+                        'monthly_accrual' => $fresh->monthly_accrual,
+                    ],
+                    operationId: $operationId,
+                    balanceId: $fresh->id,
+                    action: 'update'
+                );
             }
 
-            return $leaveBalance->fresh();
+            return $fresh;
         });
 
         return response()->json($balance);
@@ -232,6 +249,17 @@ class UserLeaveBalanceController extends Controller
         $adminId = (int) $request->user()->id;
 
         DB::transaction(function () use ($user, $adminId, $leaveBalance) {
+            $before = $this->history->snapshot($leaveBalance);
+
+            $operationId = $this->history->record(
+                adminId: $adminId,
+                userId: $user->id,
+                balanceId: $leaveBalance->id,
+                action: 'delete',
+                before: $before,
+                after: null
+            );
+
             $this->writeAuditLogs(
                 adminId: $adminId,
                 userId: $user->id,
@@ -246,7 +274,10 @@ class UserLeaveBalanceController extends Controller
                     'remaining_hours' => null,
                     'accrued_hours' => null,
                     'monthly_accrual' => null,
-                ]
+                ],
+                operationId: $operationId,
+                balanceId: $leaveBalance->id,
+                action: 'delete'
             );
 
             $leaveBalance->delete();
@@ -255,6 +286,52 @@ class UserLeaveBalanceController extends Controller
         return response()->json([
             'message' => 'Contatore eliminato correttamente.',
         ]);
+    }
+
+    /**
+     * Stato dell'undo/redo per un singolo record (per accendere/spegnere le icone).
+     * $balanceId è un intero e non un model binding: il record potrebbe
+     * essere stato eliminato da un undo.
+     */
+    public function history(User $user, int $balanceId): JsonResponse
+    {
+        return response()->json(
+            $this->history->state($user->id, $balanceId)
+        );
+    }
+
+    public function undo(
+        Request $request,
+        User $user,
+        int $balanceId
+    ): JsonResponse {
+        $balance = $this->history->undo(
+            $user,
+            $balanceId,
+            (int) $request->user()->id
+        );
+
+        return response()->json(array_merge(
+            ['balance' => $balance],
+            $this->history->state($user->id, $balanceId)
+        ));
+    }
+
+    public function redo(
+        Request $request,
+        User $user,
+        int $balanceId
+    ): JsonResponse {
+        $balance = $this->history->redo(
+            $user,
+            $balanceId,
+            (int) $request->user()->id
+        );
+
+        return response()->json(array_merge(
+            ['balance' => $balance],
+            $this->history->state($user->id, $balanceId)
+        ));
     }
 
     private function ensureBalanceBelongsToUser(
@@ -364,7 +441,10 @@ class UserLeaveBalanceController extends Controller
         string $leaveType,
         Carbon $referenceMonth,
         ?array $oldValues,
-        array $newValues
+        array $newValues,
+        ?string $operationId = null,
+        ?int $balanceId = null,
+        ?string $action = null
     ): void {
         foreach ([
             'remaining_hours',
@@ -386,11 +466,14 @@ class UserLeaveBalanceController extends Controller
             LeaveAuditLog::create([
                 'user_id' => $userId,
                 'admin_id' => $adminId,
+                'balance_id' => $balanceId,
                 'leave_type' => $leaveType,
                 'reference_month' => $referenceMonth->toDateString(),
                 'field_name' => $field,
                 'old_value' => $oldValue,
                 'new_value' => $newValue,
+                'operation_id' => $operationId,
+                'action' => $action,
             ]);
         }
     }

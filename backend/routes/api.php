@@ -111,5 +111,22 @@ Route::middleware('auth:sanctum')->group(function () {
 
             Route::delete('/{leaveBalance}', 'destroy')
                 ->name('destroy');
+
+            /*
+            | Undo / redo per singolo record.
+            | {balanceId} è un intero semplice (non un model binding): il record
+            | potrebbe essere stato eliminato da un undo e dev'essere ripristinabile.
+            */
+            Route::get('/{balanceId}/history', 'history')
+                ->whereNumber('balanceId')
+                ->name('history');
+
+            Route::post('/{balanceId}/undo', 'undo')
+                ->whereNumber('balanceId')
+                ->name('undo');
+
+            Route::post('/{balanceId}/redo', 'redo')
+                ->whereNumber('balanceId')
+                ->name('redo');
         });
 });
