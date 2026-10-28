@@ -56,12 +56,12 @@ class User extends Authenticatable
     }
     public function roles(): BelongsToMany
     {
-    return $this->belongsToMany(Role::class);
+        return $this->belongsToMany(Role::class);
     }
 
     public function projectUsers(): HasMany
     {
-    return $this->hasMany(ProjectUser::class);
+        return $this->hasMany(ProjectUser::class);
     }
 
 
@@ -73,8 +73,8 @@ class User extends Authenticatable
             'user_id',
             'assignmentrole_id'
         )
-        ->withPivot('expertise')
-        ->withTimestamps();
+            ->withPivot('expertise')
+            ->withTimestamps();
     }
 
     public function calendarEntries(): HasMany
@@ -100,5 +100,18 @@ class User extends Authenticatable
     public function contracts(): HasMany
     {
         return $this->hasMany(Contract::class, 'user_id');
+    }
+
+    public function leaveAuditLogs(): HasMany
+    {
+        return $this->hasMany(LeaveAuditLog::class, 'user_id');
+    }
+
+    /**
+     * Log delle modifiche effettuate dall'utente in qualità di HR/Admin.
+     */
+    public function performedAuditLogs(): HasMany
+    {
+        return $this->hasMany(LeaveAuditLog::class, 'admin_id');
     }
 }
