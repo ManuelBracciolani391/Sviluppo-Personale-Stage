@@ -1,8 +1,8 @@
 [
     "Laravel\\Pao\\Drivers\\Pest\\Plugin",
     "Pest\\Arch\\Plugin",
-    "Pest\\Laravel\\Plugin",
     "Pest\\Profanity\\Plugin",
+    "Pest\\Laravel\\Plugin",
     "Pest\\Mutate\\Plugins\\Mutate",
     "Pest\\Plugins\\Configuration",
     "Pest\\Plugins\\Bail",
