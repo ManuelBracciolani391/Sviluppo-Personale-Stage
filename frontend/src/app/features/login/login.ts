@@ -24,6 +24,7 @@ export class LoginComponent {
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
+    remember: [false],
   });
 
   onSubmit() {
@@ -35,7 +36,9 @@ export class LoginComponent {
     const credentials = this.loginForm.value;
 
     this.authService.login(credentials).subscribe({
-      next: () => {
+      next: (response) => {
+        // Salva il token restituito da Laravel
+        localStorage.setItem('access_token', response.access_token);
         // Login riuscito: reindirizza alla home protetta
         this.router.navigate(['/home']);
       },

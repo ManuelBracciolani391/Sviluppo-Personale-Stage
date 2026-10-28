@@ -35,13 +35,13 @@
 
       <!--Casella ricordami-->
       <div id="checkbox">
-        <input type="checkbox" />
-        <label for="checkbox">Ricordami</label>
+        <input type="checkbox" id="remember" formControlName="remember" />
+        <label for="remember">Ricordami</label>
       </div>
 
       <!-- Bottone di Invio -->
       <button type="submit" [disabled]="loginForm.invalid || isLoading">
-        {{ isLoading ? 'Accesso in corso...' : 'LOGIN' }}
+        {{ isLoading ? 'ACCESSO...' : 'LOGIN' }}
       </button>
 
       <!--Password dimenticata-->
