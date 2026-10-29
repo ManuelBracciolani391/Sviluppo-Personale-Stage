@@ -1,0 +1,53 @@
+<div class="login-box">
+  <div class="login-logo">
+    <img src="/img/logo-sviluppo-personale.png" alt="" />
+  </div>
+  <div class="login-container">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <h2>Benvenuto</h2>
+
+      <!-- Campo Email -->
+      <div class="form-group">
+        <input id="email" type="email" formControlName="email" placeholder="Email" />
+        <!--<div
+          *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
+          class="error"
+        >
+          Inserisci un'email valida.
+        </div>-->
+      </div>
+
+      <!-- Campo Password -->
+      <div class="form-group">
+        <input id="password" type="password" formControlName="password" placeholder="Password" />
+        <!--<div
+          *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
+          class="error"
+        >
+          La password deve essere di almeno 6 caratteri.
+        </div>-->
+      </div>
+
+      <!-- Messaggio di errore generale -->
+      <div *ngIf="errorMessage" class="alert-error">
+        {{ errorMessage }}
+      </div>
+
+      <!--Casella ricordami-->
+      <div id="checkbox">
+        <input type="checkbox" id="remember" formControlName="remember" />
+        <label for="remember">Ricordami</label>
+      </div>
+
+      <!-- Bottone di Invio -->
+      <button type="submit" [disabled]="loginForm.invalid || isLoading">
+        {{ isLoading ? 'ACCESSO...' : 'LOGIN' }}
+      </button>
+
+      <!--Password dimenticata-->
+      <div>
+        <a href="">Password dimenticata?</a>
+      </div>
+    </form>
+  </div>
+</div>
