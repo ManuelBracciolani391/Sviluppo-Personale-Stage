@@ -130,3 +130,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('timesheet-projects/{timesheetProjectId}/members/{userId}', [TimesheetProjectMemberController::class, 'destroy']);
 
 });
+
+
+require __DIR__ . '/scrum.php';
