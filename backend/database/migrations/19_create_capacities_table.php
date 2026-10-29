@@ -4,52 +4,41 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
-    /**
-     * Run the migrations.
-     */
-   public function up(): void
-{
-        Schema::create('capacities', function (Blueprint $table) {
-                $table->id();
-                
-                $table->foreignId('user_id')
-                        ->constrained('users')
-                        ->restrictOnDelete();
+return new class extends Migration {
+        /**
+         * Run the migrations.
+         */
+        public function up(): void
+        {
+                Schema::create('capacities', function (Blueprint $table) {
+                        $table->id();
 
-                $table->date('date');
+                        $table->foreignId('user_id')
+                                ->constrained('users')
+                                ->restrictOnDelete();
 
-                $table->decimal('value',8,2)->unsigned();
+                        $table->date('date');
 
-                $table->decimal('billing_value', 8, 2)
-                        ->unsigned()
-                        ->nullable();
+                        $table->decimal('value', 8, 2)->unsigned();
 
-                $table->foreignId('sprint_id')
-                        ->constrained('sprints')
-                        ->restrictOnDelete();
+                        $table->decimal('billing_value', 8, 2)
+                                ->unsigned()
+                                ->nullable();
 
-                $table->tinyText('alias')->nullable();
+                        $table->foreignId('sprint_id')
+                                ->constrained('sprints')
+                                ->restrictOnDelete();
 
-                $table->boolean('is_capacity_per_day')
-                        ->default(false);
+                        $table->unique(['sprint_id', 'user_id', 'date']);
 
-                $table->boolean('is_statistical')
-                        ->default(false);
-                $table->boolean('is_dailydone')->default(false);
-                $table->string('note')->nullable();
+                        $table->timestamps();
+                        $table->softDeletes();
+                });
+        }
 
-                $table->string('request_status')->nullable();
-
-                $table->timestamps();
-                $table->softDeletes();
-        });
-}
-
-public function down(): void
-{
-        Schema::dropIfExists('capacities');
-}
+        public function down(): void
+        {
+                Schema::dropIfExists('capacities');
+        }
 
 };

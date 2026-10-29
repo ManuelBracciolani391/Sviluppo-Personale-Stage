@@ -16,3 +16,5 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 });
+
+require __DIR__ . '/scrum.php';
