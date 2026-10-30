@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-  use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Contract extends Model
 {
@@ -38,7 +38,18 @@ class Contract extends Model
 
     public function workingDays(): HasMany
     {
-        return $this->hasMany(ContractWorkingDay::class, 'contract_id');
+        return $this->hasMany(ContractWorkingDay::class)
+            ->orderByRaw("
+            CASE day_of_week
+                WHEN 'Monday' THEN 1
+                WHEN 'Tuesday' THEN 2
+                WHEN 'Wednesday' THEN 3
+                WHEN 'Thursday' THEN 4
+                WHEN 'Friday' THEN 5
+                WHEN 'Saturday' THEN 6
+                WHEN 'Sunday' THEN 7
+            END
+        ");
     }
 
 }

@@ -19,12 +19,25 @@ class LeaveAuditLog extends Model
         'field_name',
         'old_value',
         'new_value',
+        'operation_id',
+        'revision',
+        'action',
+        'before_data',
+        'after_data',
+        'undone_at',
+        'undone_by',
+        'balance_id',
+        'discarded_at',
     ];
 
     protected $casts = [
         'reference_month' => 'date',
         'old_value' => 'decimal:2',
         'new_value' => 'decimal:2',
+        'before_data' => 'array',
+        'after_data' => 'array',
+        'undone_at' => 'datetime',
+        'discarded_at' => 'datetime',
     ];
 
     /**
