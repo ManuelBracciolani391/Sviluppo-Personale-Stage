@@ -28,6 +28,13 @@ class AppServiceProvider extends ServiceProvider
                 ->exists();
         });
 
+        // -> AGGIUNGI QUESTO GATE PER I PROGETTI <-
+        Gate::define('manage-projects', function (User $user): bool {
+            return $user->roles()
+                ->whereIn('alias', ['Admin', 'Project Manager', 'PM'])
+                ->exists();
+        });
+
         ResetPassword::createUrlUsing(
             function ($notifiable, string $token): string {
                 return 'http://localhost:3000/reset-password?token='

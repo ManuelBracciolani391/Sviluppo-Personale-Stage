@@ -25,7 +25,7 @@ return new class extends Migration
             
             $table->date('startwork_date');
             $table->date('endwork_date')->nullable();
-            $table->integer('work_allocation');
+            $table->integer('work_allocation')->nullable();
 
             
 

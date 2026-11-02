@@ -9,14 +9,44 @@ use Illuminate\Http\Request;
 
 class TimesheetProjectController extends Controller
 {
-    
-    public function index()
+    /**
+     * Helper per mappare l'URL pubblico del file storage (coerente con i progetti standard)
+     */
+    private function appendFileStorageUrl($project)
     {
-        $projects = TimesheetProject::with(['filestorage', 'users'])->get();
+        if ($project && $project->filestorage) {
+            $project->filestorage->url = asset('storage/' . $project->filestorage->path . '/' . $project->filestorage->name . '.' . $project->filestorage->extension);
+        }
+        return $project;
+    }
+
+    public function index(Request $request)
+    {
+        $query = TimesheetProject::with(['filestorage', 'users']);
+
+        // Filtro di ricerca per nome o progetti Azure
+        if ($request->has('search') && !empty($request->input('search'))) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('azure_project_name', 'like', "%{$search}%")
+                  ->orWhere('azure_team_name', 'like', "%{$search}%");
+            });
+        }
+
+        $projects = $query->paginate(10);
+        
+        // Mappiamo l'URL del file storage per ogni progetto della lista paginata
+        $projects->getCollection()->transform(function ($project) {
+            return $this->appendFileStorageUrl($project);
+        });
+
+        $timesheetsCount = TimesheetProject::count();
 
         return response()->json([
             'success' => true,
-            'data' => $projects
+            'data' => $projects,
+            'timesheets_count' => $timesheetsCount,
         ], 200);
     }
 
@@ -30,16 +60,18 @@ class TimesheetProjectController extends Controller
             'pbi_with_feature_url' => 'nullable|url|max:255',
             'pbi_without_feature_url' => 'nullable|url|max:255',
             'description' => 'nullable|string|max:250',
-            'note' => 'nullable|string|max:1000', // Aggiunto per completare i dettagli
+            'note' => 'nullable|string|max:1000',
             'filestorage_id' => 'nullable|exists:filestorage,id',
         ]);
 
         $project = TimesheetProject::create($validatedData);
+        $project->load(['filestorage', 'users']);
+        $this->appendFileStorageUrl($project);
 
         return response()->json([
             'success' => true,
             'message' => 'Progetto timesheet creato con successo!',
-            'data' => $project->load(['filestorage', 'users'])
+            'data' => $project
         ], 201);
     }
 
@@ -53,6 +85,8 @@ class TimesheetProjectController extends Controller
                 'message' => 'Progetto timesheet non trovato.'
             ], 404);
         }
+
+        $this->appendFileStorageUrl($project);
 
         return response()->json([
             'success' => true,
@@ -79,16 +113,18 @@ class TimesheetProjectController extends Controller
             'pbi_with_feature_url' => 'nullable|url|max:255',
             'pbi_without_feature_url' => 'nullable|url|max:255',
             'description' => 'nullable|string|max:250',
-            'note' => 'nullable|string|max:1000', // Aggiunto per completare i dettagli
+            'note' => 'nullable|string|max:1000',
             'filestorage_id' => 'nullable|exists:filestorage,id',
         ]);
 
         $project->update($validatedData);
+        $project->load(['filestorage', 'users']);
+        $this->appendFileStorageUrl($project);
 
         return response()->json([
             'success' => true,
             'message' => 'Progetto timesheet aggiornato con successo!',
-            'data' => $project->load(['filestorage', 'users'])
+            'data' => $project
         ], 200);
     }
 
@@ -123,7 +159,7 @@ class TimesheetProjectController extends Controller
         }
 
         $request->validate([
-            'file' => 'required|file|image|max:10240', // Max 10MB, solo immagini per il logo
+            'file' => 'required|file|image|max:10240',
         ]);
 
         if ($request->hasFile('file')) {
@@ -140,11 +176,15 @@ class TimesheetProjectController extends Controller
             $project->filestorage_id = $fileStorage->id;
             $project->save();
 
+            $project->load(['filestorage', 'users']);
+            $this->appendFileStorageUrl($project);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Logo caricato e associato con successo!',
                 'data' => [
-                    'project' => $project->load('filestorage')
+                    'project' => $project,
+                    'filestorage_url' => $project->filestorage->url ?? null
                 ]
             ], 200);
         }
@@ -172,6 +212,8 @@ class TimesheetProjectController extends Controller
 
         $project->note = $validatedData['note'] ?? null;
         $project->save();
+        $project->load(['filestorage', 'users']);
+        $this->appendFileStorageUrl($project);
 
         return response()->json([
             'success' => true,

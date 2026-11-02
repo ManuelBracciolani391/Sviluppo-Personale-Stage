@@ -10,6 +10,7 @@ use App\Services\Scrum\SprintTotalsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class SprintController extends Controller
@@ -80,5 +81,45 @@ class SprintController extends Controller
         Gate::authorize('manage', $sprint);
 
         return response()->json($this->sprints->close($sprint));
+    }
+
+    // --- NUOVO METODO PER IL CARICAMENTO DEL CSV ---
+    public function uploadCsv(Request $request, Sprint $sprint): JsonResponse
+    {
+        Gate::authorize('manage', $sprint);
+
+        $data = $request->validate([
+            'file' => ['required', 'file', 'mimes:csv,txt', 'max:10240'], // Max 10MB
+            'is_pilot' => ['sometimes', 'boolean'],
+            'is_billing' => ['sometimes', 'boolean'],
+        ]);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            
+            // Salvataggio del file nella cartella pubblica storage/app/public/sprint_csvs
+            $path = $file->store('sprint_csvs', 'public');
+
+            // Aggiorniamo le flag e impostiamo has_csv a true
+            $sprint->update([
+                'has_csv' => true,
+                'is_pilot' => $data['is_pilot'] ?? $sprint->is_pilot,
+                'is_billing' => $data['is_billing'] ?? $sprint->is_billing,
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'File CSV caricato e sprint aggiornato con successo!',
+                'data' => [
+                    'sprint' => $sprint,
+                    'file_url' => Storage::url($path)
+                ]
+            ], 200);
+        }
+
+        return response()->json([
+            'success' => false,
+            'message' => 'Nessun file inviato.'
+        ], 400);
     }
 }

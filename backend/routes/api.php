@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\ProjectMemberController;
 use App\Http\Controllers\Api\TimesheetProjectController;
 use App\Http\Controllers\Api\TimesheetProjectMemberController;
+use App\Http\Controllers\SprintController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -93,22 +94,32 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Modulo Progetti (Projects)
-    | Lettura libera per utenti autenticati, Scrittura protetta da permessi
+    | Modulo Progetti & Timesheet (Protetto da can:manage-projects)
     |--------------------------------------------------------------------------
     */
-    // Lettura aperta a tutti gli utenti autenticati
-    Route::get('projects', [ProjectController::class, 'index']);
-    Route::get('projects/{id}', [ProjectController::class, 'show']);
-
-    // Azioni di scrittura/modifica protette (es. blocco per utenti standard come Giulia -> 403 Forbidden)
     Route::middleware('can:manage-projects')->group(function () {
+        // Progetti Standard
+        Route::get('projects/{id}/csv-management', [ProjectController::class, 'getProjectCsvs']);
         Route::post('projects', [ProjectController::class, 'store']);
         Route::put('projects/{id}', [ProjectController::class, 'update']);
         Route::delete('projects/{id}', [ProjectController::class, 'destroy']);
         Route::post('projects/{id}/restore', [ProjectController::class, 'restore']);
         Route::post('projects/{id}/upload-file', [ProjectController::class, 'uploadFile']);
+
+        // Progetti Timesheet
+        Route::apiResource('timesheet-projects', TimesheetProjectController::class);
+        Route::post('timesheet-projects/{id}/upload-logo', [TimesheetProjectController::class, 'uploadLogo']);
+        Route::put('timesheet-projects/{id}/note', [TimesheetProjectController::class, 'updateNote']);
+
+        // Membri Timesheet Projects
+        Route::get('timesheet-projects/{timesheetProjectId}/members', [TimesheetProjectMemberController::class, 'index']);
+        Route::post('timesheet-projects/{timesheetProjectId}/members', [TimesheetProjectMemberController::class, 'store']);
+        Route::delete('timesheet-projects/{timesheetProjectId}/members/{userId}', [TimesheetProjectMemberController::class, 'destroy']);
     });
+
+    // Lettura base progetti aperta a tutti gli utenti autenticati
+    Route::get('projects', [ProjectController::class, 'index']);
+    Route::get('projects/{id}', [ProjectController::class, 'show']);
 
     // Membri del Progetto Standard
     Route::get('projects/{projectId}/members', [ProjectMemberController::class, 'index']);
@@ -118,18 +129,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Modulo Timesheet Projects
+    | Modulo Sprints (Caricamento CSV Sprint)
     |--------------------------------------------------------------------------
     */
-    Route::apiResource('timesheet-projects', TimesheetProjectController::class);
-    Route::post('timesheet-projects/{id}/upload-logo', [TimesheetProjectController::class, 'uploadLogo']);
-    Route::put('timesheet-projects/{id}/note', [TimesheetProjectController::class, 'updateNote']);
-
-    Route::get('timesheet-projects/{timesheetProjectId}/members', [TimesheetProjectMemberController::class, 'index']);
-    Route::post('timesheet-projects/{timesheetProjectId}/members', [TimesheetProjectMemberController::class, 'store']);
-    Route::delete('timesheet-projects/{timesheetProjectId}/members/{userId}', [TimesheetProjectMemberController::class, 'destroy']);
+    Route::post('sprints/{sprint}/upload-csv', [SprintController::class, 'uploadCsv']);
 
 });
-
 
 require __DIR__ . '/scrum.php';

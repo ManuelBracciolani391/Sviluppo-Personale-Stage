@@ -21,16 +21,16 @@ return new class extends Migration
             $table->foreignId('project_manager_id')
                 ->constrained('users')
                 ->restrictOnDelete();
-            $table->foreignId('team_leader_id')
+            $table->foreignId('team_leader_id')->nullable()
                 ->constrained('users')
                 ->restrictOnDelete();
-            $table->foreignId('scrum_master_id')
+            $table->foreignId('scrum_master_id')->nullable()
                 ->constrained('users')
                 ->restrictOnDelete();
             $table->string('delivery_plan')->nullable();
-            $table->string('azure_team_name');
-            $table->string('bug_count_url');
-            $table->string('note');
+            $table->string('azure_team_name')->nullable();
+            $table->string('bug_count_url')->nullable();
+            $table->string('note')->nullable();
             $table->enum('priority', ['bassa','media','alta']);
             $table->string('pbi_without_feature_url')->nullable();
             $table->string('pbi_past_feature_url')->nullable();

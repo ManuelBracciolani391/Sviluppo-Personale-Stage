@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class ProjectMemberController extends Controller
 {
- 
     public function index($projectId)
     {
         $project = Project::with('users')->find($projectId);
@@ -37,12 +36,26 @@ class ProjectMemberController extends Controller
             ], 404);
         }
 
-        $request->validate([
+        // Validazione dei campi della pivot, con work_allocation opzionale e senza limiti bloccanti
+        $validatedData = $request->validate([
             'user_id' => 'required|exists:users,id',
+            'assignmentrole_id' => 'required|exists:assignmentroles,id',
+            'startwork_date' => 'required|date',
+            'endwork_date' => 'nullable|date|after_or_equal:startwork_date',
+            'work_allocation' => 'nullable|integer', // Nessun limite min/max o blocco 100%
         ]);
 
-        // Evitiamo duplicati usando syncWithoutDetaching o attach
-        $project->users()->syncWithoutDetaching([$request->user_id]);
+        $userId = $validatedData['user_id'];
+
+        // Salvataggio diretto nella tabella pivot senza alcun controllo di superamento allocazione
+        $project->users()->syncWithoutDetaching([
+            $userId => [
+                'assignmentrole_id' => $validatedData['assignmentrole_id'],
+                'startwork_date' => $validatedData['startwork_date'],
+                'endwork_date' => $validatedData['endwork_date'] ?? null,
+                'work_allocation' => $validatedData['work_allocation'] ?? null,
+            ]
+        ]);
 
         return response()->json([
             'success' => true,

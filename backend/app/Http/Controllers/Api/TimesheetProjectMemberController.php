@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 
 class TimesheetProjectMemberController extends Controller
 {
-    
     public function index($timesheetProjectId)
     {
         $project = TimesheetProject::with('users')->find($timesheetProjectId);
@@ -27,7 +26,6 @@ class TimesheetProjectMemberController extends Controller
         ], 200);
     }
 
-    
     public function store(Request $request, $timesheetProjectId)
     {
         $project = TimesheetProject::find($timesheetProjectId);
@@ -43,7 +41,6 @@ class TimesheetProjectMemberController extends Controller
             'user_id' => 'required|exists:users,id',
         ]);
 
-        
         if (!$project->users()->where('user_id', $validated['user_id'])->exists()) {
             $project->users()->attach($validated['user_id']);
         }
@@ -55,7 +52,6 @@ class TimesheetProjectMemberController extends Controller
         ], 200);
     }
 
-    
     public function destroy($timesheetProjectId, $userId)
     {
         $project = TimesheetProject::find($timesheetProjectId);

@@ -105,4 +105,22 @@ class Sprint extends Model
             ->filter(fn($date) => $date->isWeekday())
             ->toArray();
     }
+
+    /**
+ * Verifica se lo sprint richiede il file CSV in base alle flag.
+ */
+    public function requiresCsv(): bool
+    {
+        // Se è di fatturazione, il CSV NON serve
+        if ($this->is_billing) {
+            return false;
+        }
+
+        // Se è uno sprint pilota, il CSV SERVE
+        if ($this->is_pilot) {
+            return true;
+        }
+
+        return false;
+    }
 }
