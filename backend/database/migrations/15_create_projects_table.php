@@ -6,9 +6,7 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+    
     public function up(): void
     {
         Schema::create('projects', function (Blueprint $table) {
@@ -41,7 +39,7 @@ return new class extends Migration
             $table->date('start_date');
             $table->date('end_date')->nullable();
 
-            $table->foreignId('filestorage_id')
+            $table->foreignId('filestorage_id')->nullable()
             ->constrained('filestorage')
             ->restrictOnDelete();
 
@@ -50,9 +48,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('projects');
