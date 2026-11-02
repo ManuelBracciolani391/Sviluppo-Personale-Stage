@@ -28,4 +28,17 @@ class FileStorage extends Model
     {
         return $this->hasMany(Project::class, 'filestorage_id');
     }
+
+
+    protected $appends = ['url'];
+
+    public function getUrlAttribute(): string
+    {
+        return asset(
+            'storage/' .
+            $this->path . '/' .
+            $this->name . '.' .
+            $this->extension
+        );
+    }
 }

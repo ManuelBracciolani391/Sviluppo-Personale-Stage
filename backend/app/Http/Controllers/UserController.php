@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Contract;
 use App\Models\ContractWorkingDay;
 use Illuminate\Http\Request;
