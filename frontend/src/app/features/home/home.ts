@@ -8,6 +8,14 @@ interface UserRole {
   alias: string;
 }
 
+interface FileStorage {
+  id: number;
+  path: string;
+  name: string;
+  extension: string;
+  type: string;
+}
+
 interface UserProfile {
   id: number;
   first_name: string;
@@ -16,6 +24,7 @@ interface UserProfile {
   company_email?: string | null;
   hiring_date?: string | null;
   roles?: UserRole[];
+  filestorage?: FileStorage | null;
 }
 
 @Component({
@@ -27,13 +36,14 @@ interface UserProfile {
 })
 export class Home implements OnInit {
   private http = inject(HttpClient);
-  private cdr = inject(ChangeDetectorRef); // Forza il rendering dei dati nell'HTML
+  private cdr = inject(ChangeDetectorRef);
 
   nomeUtente = '';
   ruoloUtente = 'Utente';
   emailUtente = '';
   hiringDate = '';
   iniziali = '';
+  avatarUrl: string | null = null; // Memorizza l'URL dell'immagine del profilo
 
   modalePasswordAperta = false;
 
@@ -68,30 +78,31 @@ export class Home implements OnInit {
 
     this.http.get<UserProfile>('http://127.0.0.1:8000/api/user', { headers }).subscribe({
       next: (utente) => {
-        console.log('Dati ricevuti con successo:', utente);
+        console.log('Dati utente ricevuti:', utente);
 
-        // Popola il Nome
         this.nomeUtente = `${utente.first_name || ''} ${utente.last_name || ''}`.trim();
-
-        // Popola la Mail
         this.emailUtente = utente.company_email || utente.email || 'N/D';
-
-        // Popola la Data di Assunzione
         this.hiringDate = utente.hiring_date ? this.formatDate(utente.hiring_date) : 'N/D';
 
-        // Popola i Ruoli
         if (utente.roles && utente.roles.length > 0) {
           this.ruoloUtente = utente.roles.map(r => r.alias).join(', ');
         } else {
           this.ruoloUtente = 'Utente';
         }
 
-        // Popola le Iniziali (es. Giulia Neri -> GN)
+        // Gestione dell'avatar tramite filestorage
+        if (utente.filestorage && utente.filestorage.path && utente.filestorage.name) {
+          // Costruisce l'URL pubblico del file (modifica se usi una rotta di storage differente)
+          this.avatarUrl = `http://127.0.0.1:8000/storage/${utente.filestorage.path}/${utente.filestorage.name}.${utente.filestorage.extension}`;
+        } else {
+          this.avatarUrl = null;
+        }
+
+        // Fallback per le iniziali nel caso non ci sia l'immagine o non si carichi
         const fInitial = utente.first_name?.[0] || '';
         const lInitial = utente.last_name?.[0] || '';
         this.iniziali = (fInitial + lInitial).toUpperCase();
 
-        // FORZA ANGULAR AD AGGIORNARE L'HTML IMMEDIATAMENTE
         this.cdr.detectChanges();
       },
       error: (err) => {

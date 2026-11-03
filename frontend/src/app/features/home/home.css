@@ -38,6 +38,14 @@
   font-weight: 600;
 }
 
+/* Stile per l'immagine dell'avatar all'interno del cerchio */
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
 .profile-text {
   color: #ffffff;
 }

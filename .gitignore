@@ -25,7 +25,6 @@ Thumbs.db
 /backend/public/build/
 /backend/public/fonts-manifest.dev.json
 /backend/public/hot
-/backend/public/storage
 /backend/storage/*.key
 /backend/storage/pail
 /backend/Homestead.json

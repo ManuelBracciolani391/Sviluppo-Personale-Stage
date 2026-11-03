@@ -2,9 +2,12 @@
 
 <div class="profile-banner">
   <div class="profile-info">
-    <!-- Avatar con le iniziali dinamiche (es. GN) -->
+    <!-- Avatar: mostra l'immagine se avatarUrl esiste, altrimenti mostra le iniziali -->
     <div class="profile-avatar">
-      {{ iniziali }}
+      <img *ngIf="avatarUrl; else initialsTpl" [src]="avatarUrl" alt="Avatar" class="avatar-img" />
+      <ng-template #initialsTpl>
+        {{ iniziali }}
+      </ng-template>
     </div>
 
     <!-- Nome completo e Ruolo dinamici -->
