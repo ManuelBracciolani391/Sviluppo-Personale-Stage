@@ -1,0 +1,211 @@
+<div class="projects-page">
+  <!-- Schede -->
+  <div class="tabs">
+    <button class="tab" [class.active]="activeTab === 'projects'" (click)="activeTab = 'projects'">
+      Progetti <span>8</span>
+    </button>
+
+    <button
+      class="tab"
+      [class.active]="activeTab === 'timesheet'"
+      (click)="activeTab = 'timesheet'"
+    >
+      Timesheet <span>3</span>
+    </button>
+  </div>
+
+  <!-- Nuovo progetto -->
+  <div class="nuovo-progetto">
+    <button>
+      <span class="plus">⊕</span>
+      Nuovo progetto
+    </button>
+  </div>
+
+  <!-- Contenuto Progetti -->
+  <div class="table-container" *ngIf="activeTab === 'projects'">
+    <nz-table
+      #projectsTable
+      [nzData]="projects"
+      [nzPageSize]="8"
+      [nzShowSizeChanger]="false"
+      [nzScroll]="{ x: '1100px' }"
+    >
+      <thead>
+        <tr>
+          <th class="col-project">
+            <div class="th-content">
+              <span>Progetti</span>
+              <span class="th-icons">↑⌕</span>
+            </div>
+          </th>
+
+          <th class="col-manager">
+            <div class="th-content">
+              <span>Project manager</span>
+              <span class="th-icons">↑⌕</span>
+            </div>
+          </th>
+
+          <th class="col-team">
+            <div class="th-content">
+              <span>Team leader</span>
+              <span class="th-icons">↑⌕</span>
+            </div>
+          </th>
+
+          <th class="col-scrum">
+            <div class="th-content">
+              <span>Scrum master</span>
+              <span class="th-icons">↑⌕</span>
+            </div>
+          </th>
+
+          <th class="col-status">
+            <div class="th-content">
+              <span>Stato</span>
+              <span class="th-icons">↓ ▼</span>
+            </div>
+          </th>
+
+          <th class="col-priority">
+            <div class="th-content">
+              <span>Priorità</span>
+              <span class="th-icons">↓ ▼</span>
+            </div>
+          </th>
+
+          <th class="col-delivery">
+            <div class="header-small">
+              <span>DELIVERY PLAN</span>
+              <strong>▣</strong>
+            </div>
+          </th>
+
+          <th class="col-daily">
+            <div class="header-small">
+              <span>DAILY</span>
+              <strong>♟</strong>
+            </div>
+          </th>
+
+          <th class="col-review">
+            <div class="header-small">
+              <span>SPRINT REVIEW</span>
+              <strong>▣</strong>
+            </div>
+          </th>
+
+          <th class="col-bug">
+            <div>
+              <img src="/img/projects/bug.png" alt="" />
+            </div>
+          </th>
+
+          <th class="col-pbi">
+            <div>
+              <img src="/img/projects/pbi.png" alt="" />
+            </div>
+          </th>
+
+          <th class="col-actions"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let project of projectsTable.data">
+          <!-- Progetto -->
+          <td class="project-cell">
+            <div class="project-info">
+              <div class="project-logo">
+                <img src="/img/projects/lampadina-progetto.png" alt="" />
+              </div>
+
+              <span class="project-name">
+                {{ project.name }}
+              </span>
+            </div>
+          </td>
+
+          <!-- Project manager -->
+          <td class="people-cell">
+            {{ project.projectManager }}
+          </td>
+
+          <!-- Team leader -->
+          <td class="people-cell">
+            {{ project.teamLeader }}
+          </td>
+
+          <!-- Scrum master -->
+          <td class="people-cell">
+            {{ project.scrumMaster }}
+          </td>
+
+          <!-- Stato -->
+          <td>
+            <nz-tag class="status-tag" [nzColor]="getStatusColor(project.status)">
+              <span class="status-dot"></span>
+              {{ project.status }}
+            </nz-tag>
+          </td>
+
+          <!-- Priorità -->
+          <td>
+            <div
+              class="priority"
+              [class.priority-high]="project.priority === 'Alta'"
+              [class.priority-medium]="project.priority === 'Media'"
+              [class.priority-low]="project.priority === 'Bassa'"
+            >
+              <span class="priority-bars">▮▮▮</span>
+              {{ project.priority }}
+            </div>
+          </td>
+
+          <!-- Delivery plan -->
+          <td class="center-cell">
+            <ng-container *ngIf="project.deliveryPlan !== '-'; else noPlan">
+              <a class="view-plan">▧ &nbsp;View plan</a>
+            </ng-container>
+
+            <ng-template #noPlan>
+              <span>-</span>
+            </ng-template>
+          </td>
+
+          <!-- Daily -->
+          <td class="center-cell">
+            <span *ngIf="project.daily !== '-'; else dailyNo" class="check-icon"> ✓ </span>
+
+            <ng-template #dailyNo>
+              <span class="cross-icon">×</span>
+            </ng-template>
+          </td>
+
+          <!-- Sprint review -->
+          <td class="center-cell">
+            {{ project.sprintReview }}
+          </td>
+
+          <!-- Bug -->
+          <td class="center-cell">2</td>
+
+          <!-- PBI -->
+          <td class="center-cell">3</td>
+
+          <!-- Azioni -->
+          <td class="actions-cell">
+            <span class="menu-dots">⋮</span>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+
+  <!-- Contenuto Timesheet -->
+  <div class="timesheet-placeholder" *ngIf="activeTab === 'timesheet'">
+    <h2>Timesheet</h2>
+    <p>Qui inseriremo successivamente la gestione dei timesheet.</p>
+  </div>
+</div>

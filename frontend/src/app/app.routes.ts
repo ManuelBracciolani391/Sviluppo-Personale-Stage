@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
 import { LoginComponent } from './features/login/login';
 import { Home } from './features/home/home';
+import { Projects } from './features/projects/projects';
 
 export const routes: Routes = [
   // Rotta pubblica di login
@@ -11,6 +12,12 @@ export const routes: Routes = [
   {
     path: 'home',
     component: Home,
+    canActivate: [authGuard],
+  },
+
+  {
+    path: 'projects',
+    component: Projects,
     canActivate: [authGuard],
   },
 

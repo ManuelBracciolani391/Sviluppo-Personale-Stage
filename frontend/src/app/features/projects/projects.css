@@ -1,0 +1,414 @@
+.projects-page {
+  width: 100%;
+  padding: 2px 22px 25px;
+  box-sizing: border-box;
+  color: #252525;
+  background-color: #f4f6fa;
+  min-height: 100vh;
+}
+
+/* =========================================================
+   SCHEDE
+   ========================================================= */
+
+.tabs {
+  display: flex;
+  gap: 25px;
+  margin-bottom: 22px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 12px 0 10px;
+  color: #7c8495;
+  font-size: 16px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  font-weight: 500;
+}
+
+.tab span {
+  margin-left: 5px;
+  font-size: 14px;
+}
+
+.tab.active {
+  color: #252525;
+  border-bottom-color: #214d85;
+  font-weight: 700;
+}
+
+.tab.active span {
+  color: #214d85;
+}
+
+/* =========================================================
+   NUOVO PROGETTO
+   ========================================================= */
+
+.nuovo-progetto {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 23px;
+}
+
+.nuovo-progetto button {
+  width: 273px;
+  height: 41px;
+  border: none;
+  border-radius: 8px;
+  background-color: #214d85;
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.nuovo-progetto button:hover {
+  background-color: #214d85;
+}
+
+.plus {
+  font-size: 22px;
+  line-height: 0;
+  margin-right: 6px;
+  vertical-align: -2px;
+}
+
+/* =========================================================
+   CONTENITORE TABELLA
+   ========================================================= */
+
+.table-container {
+  width: 100%;
+  overflow: hidden;
+}
+
+/* =========================================================
+   TABELLA NG-ZORRO
+   ========================================================= */
+
+::ng-deep .ant-table {
+  background: white;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+}
+
+::ng-deep .ant-table-container {
+  border-radius: 8px 8px 0 0;
+}
+
+/* Header */
+
+::ng-deep .ant-table-thead > tr > th {
+  background: #214d85 !important;
+  color: white !important;
+  border-bottom: none !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.25);
+  height: 64px;
+  padding: 8px 15px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+::ng-deep .ant-table-thead > tr > th:last-child {
+  border-right: none;
+}
+
+/* Righe */
+
+::ng-deep .ant-table-tbody > tr > td {
+  height: 64px;
+  padding: 8px 15px;
+  border-bottom: 1px solid #dce1e8;
+  color: #272c35;
+  font-size: 13px;
+  background: white;
+}
+
+::ng-deep .ant-table-tbody > tr:hover > td {
+  background: #fafbfd !important;
+}
+
+/* =========================================================
+   DIMENSIONI COLONNE
+   ========================================================= */
+
+::ng-deep .col-project {
+  min-width: 140px;
+}
+
+::ng-deep .col-manager {
+  min-width: 180px;
+}
+
+::ng-deep .col-team {
+  min-width: 155px;
+}
+
+::ng-deep .col-scrum {
+  min-width: 165px;
+}
+
+::ng-deep .col-status {
+  min-width: 140px;
+}
+
+::ng-deep .col-priority {
+  min-width: 125px;
+}
+
+::ng-deep .col-delivery {
+  min-width: 90px;
+  width: 90px;
+}
+
+::ng-deep .col-daily {
+  min-width: 65px;
+  width: 65px;
+}
+
+::ng-deep .col-review {
+  min-width: 105px;
+  width: 105px;
+}
+
+::ng-deep .col-bug {
+  min-width: 50px;
+  width: 50px;
+}
+
+::ng-deep .col-pbi {
+  min-width: 50px;
+  width: 50px;
+}
+
+::ng-deep .col-actions {
+  min-width: 45px;
+  width: 45px;
+}
+
+/* =========================================================
+   HEADER TABELLA
+   ========================================================= */
+
+.th-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.th-icons {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+  letter-spacing: 3px;
+}
+
+.header-small {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.header-small span {
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.header-small strong {
+  font-size: 17px;
+  font-weight: 400;
+}
+
+/* =========================================================
+   PROGETTO
+   ========================================================= */
+
+.project-cell {
+  padding-left: 15px !important;
+}
+
+.project-info {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.project-logo {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: #f0f3f7;
+  border: 1px solid #d8dee7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.project-logo img {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+.project-name {
+  font-weight: 700;
+  color: #30343b;
+}
+
+/* =========================================================
+   PERSONE
+   ========================================================= */
+
+.people-cell {
+  line-height: 21px;
+}
+
+/* =========================================================
+   STATO
+   ========================================================= */
+
+::ng-deep .status-tag {
+  border: none !important;
+  border-radius: 15px !important;
+  padding: 3px 10px !important;
+  font-size: 12px !important;
+  margin: 0 !important;
+}
+
+::ng-deep .status-tag.ant-tag-processing {
+  background: #d8f4e8;
+  color: #18784e;
+}
+
+::ng-deep .status-tag.ant-tag-warning {
+  background: #ffe4ce;
+  color: #a8580b;
+}
+
+::ng-deep .status-tag.ant-tag-success {
+  background: #dceafb;
+  color: #20558e;
+}
+
+/* =========================================================
+   PRIORITÀ
+   ========================================================= */
+
+.priority {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.priority-bars {
+  font-size: 12px;
+  letter-spacing: -2px;
+}
+
+.priority-high {
+  color: #ee587b;
+}
+
+.priority-medium {
+  color: #f3a04c;
+}
+
+.priority-low {
+  color: #58bd91;
+}
+
+/* =========================================================
+   DELIVERY / DAILY / REVIEW
+   ========================================================= */
+
+.center-cell {
+  text-align: center;
+}
+
+.view-plan {
+  color: #173f76;
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.check-icon {
+  color: #18a56b;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.cross-icon {
+  color: #e31845;
+  font-size: 23px;
+  font-weight: 300;
+}
+
+/* =========================================================
+   MENU
+   ========================================================= */
+
+.actions-cell {
+  text-align: center;
+}
+
+.menu-dots {
+  font-size: 25px;
+  line-height: 1;
+  color: #111;
+  cursor: pointer;
+}
+
+/* =========================================================
+   PAGINAZIONE
+   ========================================================= */
+
+::ng-deep .ant-table-pagination {
+  margin: 20px 15px 0 !important;
+}
+
+::ng-deep .ant-pagination {
+  display: flex;
+  justify-content: flex-end;
+}
+
+::ng-deep .ant-pagination-item {
+  border-radius: 4px;
+}
+
+::ng-deep .ant-pagination-item-active {
+  border-color: #1769e0;
+}
+
+::ng-deep .ant-pagination-item-active a {
+  color: #1769e0;
+}
+
+/* =========================================================
+   TIMESHEET
+   ========================================================= */
+
+.timesheet-placeholder {
+  padding: 40px;
+  text-align: center;
+  background: #fafafa;
+  border-radius: 8px;
+  color: #777;
+}
+
+.timesheet-placeholder h2 {
+  color: #252525;
+}
