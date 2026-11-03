@@ -1,12 +1,13 @@
-
 <app-side-bar [titoloPagina]="'Profilo'"></app-side-bar>
-<div class="profile-banner">
 
+<div class="profile-banner">
   <div class="profile-info">
+    <!-- Avatar con le iniziali dinamiche (es. GN) -->
     <div class="profile-avatar">
-      MR
+      {{ iniziali }}
     </div>
 
+    <!-- Nome completo e Ruolo dinamici -->
     <div class="profile-text">
       <h2>{{ nomeUtente }}</h2>
       <p>{{ ruoloUtente }}</p>
@@ -22,7 +23,6 @@
   <!-- Intestazione -->
   <div class="personal-data-header">
     <h3>Dati personali</h3>
-
     <p class="change-password">
       ✎ Modifica password
     </p>
@@ -32,18 +32,24 @@
   <div class="personal-data-content">
 
     <div class="data-card">
-      <span class="data-label"><img src="/img/icone/icona_utente.png">Ruolo</span>
-      <span class="data-value">Utente</span>
+      <span class="data-label">
+        <img src="/img/icone/icona_utente.png">Ruolo
+      </span>
+      <span class="data-value">{{ ruoloUtente }}</span>
     </div>
 
     <div class="data-card">
-      <span class="data-label"><img src="/img/icone/icona_calendario.png">Data di assunzione</span>
-      <span class="data-value">01/10/2025</span>
+      <span class="data-label">
+        <img src="/img/icone/icona_calendario.png">Data di assunzione
+      </span>
+      <span class="data-value">{{ hiringDate }}</span>
     </div>
 
     <div class="data-card">
-      <span class="data-label"><img src="/img/icone/icona_email.png">Email</span>
-      <span class="data-value">email@example.com</span>
+      <span class="data-label">
+        <img src="/img/icone/icona_email.png">Email
+      </span>
+      <span class="data-value">{{ emailUtente }}</span>
     </div>
 
   </div>

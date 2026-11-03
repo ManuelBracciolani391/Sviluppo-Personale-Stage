@@ -43,8 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
         'logout',
     ])->name('logout');
 
+    // Modificata: adesso carica esplicitamente i ruoli associati all'utente autenticato
     Route::get('/user', function (Request $request) {
-        return $request->user();
+        return response()->json($request->user()->load('roles'));
     })->name('user.profile');
 
 
@@ -101,7 +102,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('projects', [ProjectController::class, 'index']);
     Route::get('projects/{id}', [ProjectController::class, 'show']);
 
-    // Azioni di scrittura/modifica protette (es. blocco per utenti standard come Giulia -> 403 Forbidden)
+    // Azioni di scrittura/modifica protette
     Route::middleware('can:manage-projects')->group(function () {
         Route::post('projects', [ProjectController::class, 'store']);
         Route::put('projects/{id}', [ProjectController::class, 'update']);
