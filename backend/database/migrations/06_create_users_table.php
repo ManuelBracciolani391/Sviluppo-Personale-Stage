@@ -30,7 +30,7 @@ return new class extends Migration {
             $table->boolean('remember_me')->default(false);
 
             $table->foreignId('filestorage_id')
-                ->nullable()
+                ->default(1) // <-- Assegna l'ID 1 (default-avatar) se non specificato
                 ->constrained('filestorage')
                 ->restrictOnDelete();
 

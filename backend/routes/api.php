@@ -43,9 +43,8 @@ Route::middleware('auth:sanctum')->group(function () {
         'logout',
     ])->name('logout');
 
-    // Modificata: adesso carica esplicitamente i ruoli associati all'utente autenticato
     Route::get('/user', function (Request $request) {
-        return response()->json($request->user()->load('roles'));
+    return response()->json($request->user()->load(['roles', 'filestorage']));
     })->name('user.profile');
 
 
