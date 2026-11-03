@@ -35,6 +35,20 @@ export class Home implements OnInit {
   hiringDate = '';
   iniziali = '';
 
+  modalePasswordAperta = false;
+
+  mostraPasswordAttuale = false;
+  mostraNuovaPassword = false;
+  mostraConfermaPassword = false;
+
+  apriModalePassword(): void {
+    this.modalePasswordAperta = true;
+  }
+
+  chiudiModalePassword(): void {
+    this.modalePasswordAperta = false;
+  }
+
   ngOnInit(): void {
     this.caricaProfilo();
   }

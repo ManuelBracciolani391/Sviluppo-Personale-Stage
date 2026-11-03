@@ -23,7 +23,7 @@
   <!-- Intestazione -->
   <div class="personal-data-header">
     <h3>Dati personali</h3>
-    <p class="change-password">
+    <p class="change-password" (click)="apriModalePassword()">
       ✎ Modifica password
     </p>
   </div>
@@ -53,5 +53,124 @@
     </div>
 
   </div>
+
+  @if (modalePasswordAperta) {
+  <div class="modal-overlay">
+    <section
+      class="password-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="password-modal-title"
+    >
+      <div class="password-modal-header">
+        <h2 id="password-modal-title">Modifica password</h2>
+
+        <button
+          type="button"
+          class="modal-close"
+          aria-label="Chiudi"
+          (click)="chiudiModalePassword()"
+        >
+          ×
+        </button>
+      </div>
+
+      <div class="password-modal-body">
+
+  <!-- Password attuale -->
+  <label for="password-attuale">Password attuale</label>
+
+  <div class="password-input-wrapper">
+    <input
+      id="password-attuale"
+      [type]="mostraPasswordAttuale ? 'text' : 'password'"
+      placeholder="Inserisci la password attuale"
+    />
+
+    <button
+      type="button"
+      class="password-eye"
+      (click)="mostraPasswordAttuale = !mostraPasswordAttuale"
+      aria-label="Mostra o nascondi password attuale"
+    >
+      <img
+        [src]="mostraPasswordAttuale
+          ? '/img/icone/el_eye-open.png'
+          : '/img/icone/el_eye-close.png'"
+        alt=""
+      />
+    </button>
+  </div>
+
+
+  <!-- Nuova password -->
+  <label for="nuova-password">Nuova password</label>
+
+  <div class="password-input-wrapper">
+    <input
+      id="nuova-password"
+      [type]="mostraNuovaPassword ? 'text' : 'password'"
+      placeholder="Inserisci la nuova password"
+    />
+
+    <button
+      type="button"
+      class="password-eye"
+      (click)="mostraNuovaPassword = !mostraNuovaPassword"
+      aria-label="Mostra o nascondi nuova password"
+    >
+      <img
+        [src]="mostraNuovaPassword
+          ? '/img/icone/el_eye-open.png'
+          : '/img/icone/el_eye-close.png'"
+        alt=""
+      />
+    </button>
+  </div>
+
+
+  <!-- Conferma nuova password -->
+  <label for="conferma-password">Conferma nuova password</label>
+
+  <div class="password-input-wrapper">
+    <input
+      id="conferma-password"
+      [type]="mostraConfermaPassword ? 'text' : 'password'"
+      placeholder="Conferma la nuova password"
+    />
+
+    <button
+      type="button"
+      class="password-eye"
+      (click)="mostraConfermaPassword = !mostraConfermaPassword"
+      aria-label="Mostra o nascondi conferma password"
+    >
+      <img
+        [src]="mostraConfermaPassword
+          ? '/img/icone/el_eye-open.png'
+          : '/img/icone/el_eye-close.png'"
+        alt=""
+      />
+    </button>
+  </div>
+
+</div>
+
+      <div class="password-modal-actions">
+        <button
+          type="button"
+          class="btn-annulla"
+          (click)="chiudiModalePassword()"
+        >
+          Annulla
+        </button>
+
+        <button type="button" class="btn-salva">
+          Salva
+        </button>
+      </div>
+    </section>
+  </div>
+}
 
 </div>
