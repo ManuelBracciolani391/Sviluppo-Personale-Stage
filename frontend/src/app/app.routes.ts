@@ -3,6 +3,7 @@ import { authGuard } from './core/guards/auth-guard';
 import { LoginComponent } from './features/login/login';
 import { Home } from './features/home/home';
 import { Impostazioni } from './features/impostazioni/impostazioni';
+import { Projects } from './features/projects/projects';
 
 export const routes: Routes = [
   // Rotta pubblica di login
@@ -19,6 +20,10 @@ export const routes: Routes = [
     path: 'impostazioni',
     component: Impostazioni,
     canActivate: [authGuard],
+  },
+  {
+     path: 'projects',
+    component: Projects,
   },
 
   // Qualsiasi altra rotta non definita reindirizza al login
