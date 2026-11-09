@@ -3,6 +3,7 @@ import { authGuard } from './core/guards/auth-guard';
 import { LoginComponent } from './features/login/login';
 import { Home } from './features/home/home';
 import { Projects } from './features/projects/projects';
+import { Impostazioni } from './features/impostazioni/impostazioni';
 
 export const routes: Routes = [
   // Rotta pubblica di login
@@ -18,6 +19,12 @@ export const routes: Routes = [
   {
     path: 'projects',
     component: Projects,
+    canActivate: [authGuard],
+  },
+
+  {
+    path: 'impostazioni',
+    component: Impostazioni,
     canActivate: [authGuard],
   },
 

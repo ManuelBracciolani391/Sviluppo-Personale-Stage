@@ -1,4 +1,6 @@
+# Ignora tutto quello che c'è in public (es. le foto caricate dagli utenti)
 *
-!private/
-!public/
-!.gitignore
+
+# Traccia però la cartella seed e tutto ciò che contiene
+!seed/
+!seed/**

@@ -1,0 +1,183 @@
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f5f7;
+}
+
+.sidebar {
+  position: relative;
+  display: flex;
+  flex: 0 0 60px;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: #fff;
+  border-right: 1px solid #e7ebf0;
+  padding-top: 15px;
+  border: 0;
+}
+
+.brand {
+  color: #1763a8;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.side-nav {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.side-nav svg {
+  width: 15px;
+  height: 15px;
+}
+
+.side-nav button {
+  display: grid;
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #263746;
+  cursor: pointer;
+  transition:
+  background-color 0.35s ease-in-out,
+  box-shadow 0.35s ease-in-out;
+}
+
+.side-nav button img {
+  display: block;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin: auto;
+}
+
+.side-nav button:hover {
+  background: #eef2f7;
+  box-shadow: 0 2px 6px rgb(30 50 70 / 10%);
+}
+
+.info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: #8291a4;
+  font-size: 11px;
+}
+
+.info-icon svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.side-nav button,
+.top-actions button {
+  border: 0;
+  background: transparent;
+  color: #225b91;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease,
+              transform 0.2s ease;
+  border-radius: 20%;
+}
+
+.top-actions button img {
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+
+.top-actions button:hover {
+  background-color: #eaf2f9;
+  transform: scale(1.10);
+}
+
+.page-title {
+  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-size: 20px;
+  padding: 10px;
+}
+
+.page-title,
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.top-actions {
+  gap: 12px;
+}
+
+.top-actions button {
+  color: #475569;
+  font-size: 20px;
+}
+
+.side-promo {
+  position: absolute;
+  bottom: 12%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 7px;
+  border-radius: 9px;
+  color: white;
+  background: linear-gradient(180deg, #8538db, #35128c);
+}
+
+.main-area {
+  flex: 1;
+  min-width: 0;
+}
+
+.topbar {
+  display: flex;
+  height: 70px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 9px;
+  background: #fff;
+  border-bottom: 1px solid #e5e9ef;
+  width: 100%;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #eef2f7;
+  color: #526477;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+
+.avatar svg {
+  display: block;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+}
+
+.settings-content {
+  padding: 10px 11px 16px;
+}

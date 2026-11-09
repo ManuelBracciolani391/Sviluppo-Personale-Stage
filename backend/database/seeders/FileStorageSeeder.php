@@ -11,7 +11,7 @@ class FileStorageSeeder extends Seeder
     {
         $now = now();
 
-        DB::table('filestorage')->insert([
+        $defaults = [
             [
                 'path' => 'seed/avatars',
                 'name' => 'default-avatar',
@@ -36,6 +36,13 @@ class FileStorageSeeder extends Seeder
                 'created_at' => $now,
                 'updated_at' => $now,
             ],
-        ]);
+        ];
+
+        foreach ($defaults as $default) {
+            DB::table('filestorage')->updateOrInsert(
+                ['name' => $default['name']], // Cerca per nome univoco
+                $default                      // Inserisce o aggiorna questi dati
+            );
+        }
     }
 }
