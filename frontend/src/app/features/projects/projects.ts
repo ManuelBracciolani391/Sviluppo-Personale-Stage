@@ -160,4 +160,20 @@ export class Projects {
         return 'default';
     }
   }
+
+  getPriorityImage(priority: string): string {
+    switch (priority) {
+      case 'Alta':
+        return '/img/projects/alta.png';
+
+      case 'Media':
+        return '/img/projects/media.png';
+
+      case 'Bassa':
+        return '/img/projects/bassa.png';
+
+      default:
+        return '/img/projects/media.png';
+    }
+  }
 }

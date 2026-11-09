@@ -17,7 +17,7 @@
   <!-- Nuovo progetto -->
   <div class="nuovo-progetto">
     <button>
-      <span class="plus">⊕</span>
+      <span class="plus"><img src="/img/projects/add_circle.png" alt="" /></span>
       Nuovo progetto
     </button>
   </div>
@@ -36,63 +36,81 @@
           <th class="col-project">
             <div class="th-content">
               <span>Progetti</span>
-              <span class="th-icons">↑⌕</span>
+              <span class="th-icons">
+                <img src="/img/projects/freccia-su.png" alt="" />
+                <img src="/img/projects/lente.png" alt="" />
+              </span>
             </div>
           </th>
 
           <th class="col-manager">
             <div class="th-content">
               <span>Project manager</span>
-              <span class="th-icons">↑⌕</span>
+              <span class="th-icons">
+                <img src="/img/projects/freccia-su.png" alt="" />
+                <img src="/img/projects/lente.png" alt="" />
+              </span>
             </div>
           </th>
 
           <th class="col-team">
             <div class="th-content">
               <span>Team leader</span>
-              <span class="th-icons">↑⌕</span>
+              <span class="th-icons">
+                <img src="/img/projects/freccia-su.png" alt="" />
+                <img src="/img/projects/lente.png" alt="" />
+              </span>
             </div>
           </th>
 
           <th class="col-scrum">
             <div class="th-content">
               <span>Scrum master</span>
-              <span class="th-icons">↑⌕</span>
+              <span class="th-icons">
+                <img src="/img/projects/freccia-su.png" alt="" />
+                <img src="/img/projects/lente.png" alt="" />
+              </span>
             </div>
           </th>
 
           <th class="col-status">
             <div class="th-content">
               <span>Stato</span>
-              <span class="th-icons">↓ ▼</span>
+              <span class="th-icons">
+                <img src="/img/projects/freccia-giu.png" alt="" />
+                <img src="/img/projects/gerarchia.png" alt="" />
+              </span>
             </div>
           </th>
 
           <th class="col-priority">
             <div class="th-content">
               <span>Priorità</span>
-              <span class="th-icons">↓ ▼</span>
+              <span class="th-icons">
+                <img src="/img/projects/freccia-giu.png" alt="" />
+                <img src="/img/projects/gerarchia.png" alt="" />
+              </span>
             </div>
           </th>
 
           <th class="col-delivery">
             <div class="header-small">
               <span>DELIVERY PLAN</span>
-              <strong>▣</strong>
+              <img src="/img/projects/calendar.png" alt="" />
             </div>
           </th>
 
           <th class="col-daily">
             <div class="header-small">
               <span>DAILY</span>
-              <strong>♟</strong>
+              <img src="/img/projects/daily.png" alt="" />
             </div>
           </th>
 
           <th class="col-review">
             <div class="header-small">
               <span>SPRINT REVIEW</span>
-              <strong>▣</strong>
+              <img src="/img/projects/review.png" alt="" />
             </div>
           </th>
 
@@ -145,7 +163,7 @@
           <!-- Stato -->
           <td>
             <nz-tag class="status-tag" [nzColor]="getStatusColor(project.status)">
-              <span class="status-dot"></span>
+              <span class="status-dot">.</span>
               {{ project.status }}
             </nz-tag>
           </td>
@@ -158,7 +176,9 @@
               [class.priority-medium]="project.priority === 'Media'"
               [class.priority-low]="project.priority === 'Bassa'"
             >
-              <span class="priority-bars">▮▮▮</span>
+              <span class="priority-bars"
+                ><img [src]="getPriorityImage(project.priority)" alt=""
+              /></span>
               {{ project.priority }}
             </div>
           </td>
@@ -166,7 +186,7 @@
           <!-- Delivery plan -->
           <td class="center-cell">
             <ng-container *ngIf="project.deliveryPlan !== '-'; else noPlan">
-              <a class="view-plan">▧ &nbsp;View plan</a>
+              <a class="view-plan"><img src="/img/projects/view-plan.png" alt="" />View plan</a>
             </ng-container>
 
             <ng-template #noPlan>
@@ -176,10 +196,12 @@
 
           <!-- Daily -->
           <td class="center-cell">
-            <span *ngIf="project.daily !== '-'; else dailyNo" class="check-icon"> ✓ </span>
+            <span *ngIf="project.daily !== '-'; else dailyNo" class="check-icon"
+              ><img src="/img/projects/check.png" alt=""
+            /></span>
 
             <ng-template #dailyNo>
-              <span class="cross-icon">×</span>
+              <span class="cross-icon"><img src="/img/projects/cross.png" alt="" /></span>
             </ng-template>
           </td>
 
