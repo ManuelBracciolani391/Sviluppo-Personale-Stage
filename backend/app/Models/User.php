@@ -55,6 +55,7 @@ class User extends Authenticatable
     {
         return $this->belongsTo(FileStorage::class, 'filestorage_id');
     }
+
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
@@ -65,6 +66,25 @@ class User extends Authenticatable
         return $this->hasMany(ProjectUser::class);
     }
 
+    /**
+     * Relazione Many-to-Many con i Progetti (Gestione Allocazioni)
+     * Include i campi della tabella pivot utilizzati dai controller.
+     */
+    public function projects(): BelongsToMany
+    {
+        return $this->belongsToMany(Project::class, 'project_user', 'user_id', 'project_id')
+            ->withPivot('assignmentrole_id', 'startwork_date', 'endwork_date', 'work_allocation')
+            ->withTimestamps();
+    }
+
+    /**
+     * Relazione Many-to-Many con i Progetti Timesheet (Tab Timesheet)
+     */
+    public function timesheetProjects(): BelongsToMany
+    {
+        return $this->belongsToMany(TimesheetProject::class, 'timesheet_project_user')
+            ->withTimestamps();
+    }
 
     public function assignmentRoles(): BelongsToMany
     {

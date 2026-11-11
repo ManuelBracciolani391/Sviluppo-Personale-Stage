@@ -1,0 +1,627 @@
+<app-side-bar [titoloPagina]="'Gestione team'">
+  <div class="allocazioni-container">
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast-notification" [ngClass]="toastType" *ngIf="toastMessage">
+      <span>{{ toastMessage }}</span>
+    </div>
+
+    <!-- BARRA HEADER KPI -->
+    <div class="kpi-header" *ngIf="kpi">
+      <div class="kpi-card">
+        <span class="label">Risorse allocate</span>
+        <div class="kpi-value-row">
+          <span class="val font-dark">{{ kpi.allocated_resources }}</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <span class="label">Risorse non allocate</span>
+        <div class="kpi-value-row">
+          <span class="val font-dark">{{ kpi.unallocated_resources }}</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <span class="label">Difficoltà allocazione</span>
+        <div class="kpi-value-row">
+          <span class="val text-kpi-yellow">{{ kpi.difficulty_allocations }}</span>
+          <span class="sub-muted">segnalate</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <span class="label">Sovraccarico</span>
+        <div class="kpi-value-row">
+          <span class="val text-kpi-orange">{{ kpi.overloaded_resources }}</span>
+          <span class="sub-muted">risorse</span>
+        </div>
+        <span class="kpi-desc-sub">&gt;= 3 progetti</span>
+      </div>
+      <div
+        class="kpi-card"
+        (click)="projects.length > 0 && onOpenNeedsModal(projects[0])"
+        style="cursor: pointer"
+        title="Clicca per gestire necessità"
+      >
+        <span class="label">Necessità aperte</span>
+        <div class="kpi-value-row">
+          <span class="val text-kpi-red">{{ kpi.open_needs }}</span>
+          <span class="sub-muted">ruoli da coprire</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANNELLO LEGENDA VERTICALE -->
+    <div class="legend-panel">
+      <div class="legend-header" (click)="toggleLegend()">
+        <span class="legend-title">Legenda</span>
+        <span class="legend-arrow" [class.collapsed]="!isLegendExpanded">▲</span>
+      </div>
+      <div class="legend-body-vertical" *ngIf="isLegendExpanded">
+        <div class="legend-section">
+          <div class="legend-item">
+            <span class="box-diff-sample"></span> <span>Difficoltà</span>
+          </div>
+        </div>
+
+        <div class="legend-section">
+          <span class="legend-section-title">Progetti</span>
+          <div class="legend-items-row">
+            <span class="legend-item"><span class="dot-sample dot-green"></span> In corso</span>
+            <span class="legend-item"
+              ><span class="dot-sample dot-orange"></span> Manutenzione</span
+            >
+            <span class="legend-item"><span class="dot-sample dot-pink"></span> Sospeso</span>
+            <span class="legend-item"><span class="dot-sample dot-blue"></span> Concluso</span>
+          </div>
+        </div>
+
+        <div class="legend-section">
+          <span class="legend-section-title">Ruoli</span>
+          <div class="legend-items-row">
+            <span class="legend-item"><span class="badge-pill bg-frontend">F</span> Frontend</span>
+            <span class="legend-item"><span class="badge-pill bg-backend">B</span> Backend</span>
+            <span class="legend-item"
+              ><span class="badge-pill bg-fullstack">FB</span> Fullstack</span
+            >
+            <span class="legend-item"><span class="badge-pill bg-designer">D</span> Designer</span>
+            <span class="legend-item"
+              ><span class="badge-pill bg-teamleader">TL</span> Team Leader</span
+            >
+            <span class="legend-item"
+              ><span class="badge-pill bg-pm">PM</span> Project Manager</span
+            >
+            <span class="legend-item"><span class="badge-pill bg-sm">SM</span> Scrum Master</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB BAR -->
+    <div class="tabs-header-wrapper">
+      <div class="tabs-bar">
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'progetti'"
+          (click)="switchTab('progetti')"
+        >
+          Progetti
+        </button>
+        <button
+          class="tab-btn"
+          [class.active]="activeTab === 'timesheet'"
+          (click)="switchTab('timesheet')"
+        >
+          Timesheet
+        </button>
+        <button class="tab-btn" [class.active]="activeTab === 'corsi'" (click)="switchTab('corsi')">
+          Corsi
+        </button>
+      </div>
+    </div>
+
+    <!-- FILTRI -->
+    <div class="filter-bar-vertical">
+      <div class="filter-field-group search-group-wide">
+        <label>Cerca</label>
+        <div class="search-input-wrapper">
+          <span class="search-icon-lens">🔍</span>
+          <input
+            type="text"
+            [ngModel]="searchQuery"
+            (ngModelChange)="onSearchInputChange($event)"
+            placeholder="Cerca risorsa..."
+          />
+        </div>
+      </div>
+
+      <div class="filter-field-group filter-dropdown-group" *ngIf="activeTab === 'progetti'">
+        <label>Ruolo</label>
+        <select [(ngModel)]="selectedRole" (change)="onFilterChange()">
+          <option value="">Seleziona</option>
+          <option value="Frontend">Frontend</option>
+          <option value="Backend">Backend</option>
+          <option value="Fullstack">Fullstack</option>
+          <option value="Designer">Designer</option>
+          <option value="Team Leader">Team Leader</option>
+          <option value="Project Manager">Project Manager</option>
+          <option value="Scrum Master">Scrum Master</option>
+        </select>
+      </div>
+
+      <div class="filter-field-group filter-dropdown-group" *ngIf="activeTab === 'progetti'">
+        <label>Stato</label>
+        <select [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+          <option value="">Seleziona</option>
+          <option value="in_corso">In corso</option>
+          <option value="manutenzione">Manutenzione</option>
+          <option value="sospeso">Sospeso</option>
+          <option value="concluso">Concluso</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- TABELLA PROGETTI -->
+    <div class="table-responsive" *ngIf="activeTab === 'progetti'">
+      <table class="allocation-table">
+        <thead>
+          <tr>
+            <th class="sticky-col blue-header-cell">PROGETTI ({{ projects.length }})</th>
+            <th
+              *ngFor="let proj of projects"
+              class="project-header blue-header-cell"
+              [class.highlighted-column]="prioritizedProjectId === proj.id"
+              (click)="onProjectHeaderClick(proj.id)"
+            >
+              <div class="proj-logo-container">
+                <div
+                  class="proj-logo"
+                  [ngClass]="'status-' + (proj.status || 'in_corso')"
+                  [class.selected]="prioritizedProjectId === proj.id"
+                >
+                  <img
+                    [src]="getProjectLogo(proj)"
+                    (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
+                    [title]="proj.name"
+                  />
+                </div>
+                <span class="proj-count-badge" *ngIf="proj.users_count !== undefined">{{
+                  proj.users_count
+                }}</span>
+              </div>
+            </th>
+            <th class="tot-col blue-header-cell">TOT.</th>
+          </tr>
+
+          <tr class="needs-header-row">
+            <td class="sticky-col needs-title-cell">
+              <span class="text-bold-sm">RISORSE ({{ users.length }})</span>
+              <span class="badge-needs-label">NECESSITÀ</span>
+            </td>
+            <td
+              *ngFor="let proj of projects"
+              class="needs-count-cell"
+              [class.highlighted-column]="prioritizedProjectId === proj.id"
+              (click)="onOpenNeedsModal(proj)"
+            >
+              <div class="need-bubble" *ngIf="getProjectOpenNeedsCount(proj) as count">
+                <span>{{ count }}</span>
+              </div>
+            </td>
+            <td class="tot-col"></td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td class="sticky-col user-cell" (click)="onUserClick(user)">
+              <img [src]="user.filestorage?.url || 'img/icone/default-avatar.png'" class="avatar" />
+              <span class="user-name">{{ user.first_name }} {{ user.last_name }}</span>
+              <span
+                class="badge-unallocated-pill"
+                *ngIf="!user.projects || user.projects.length === 0"
+                >Non allocato</span
+              >
+              <span
+                class="icon-warning-orange"
+                *ngIf="user.projects && user.projects.length >= 3"
+                title="Sovraccarico (>=3 progetti)"
+                >⚠️</span
+              >
+            </td>
+
+            <td
+              *ngFor="let proj of projects"
+              class="matrix-cell"
+              [class.highlighted-column]="prioritizedProjectId === proj.id"
+              (click)="onCellClick(user, proj)"
+            >
+              <ng-container
+                *ngIf="getUserAllocationForProject(user, proj.id) as alloc; else emptyCell"
+              >
+                <div
+                  class="role-badge"
+                  [ngClass]="getRoleBadgeClass(alloc.pivot?.assignmentrole_id)"
+                  [class.difficult]="alloc.pivot?.is_difficult"
+                >
+                  <span>{{ getRoleBadgeLabel(alloc.pivot?.assignmentrole_id) }}</span>
+                  <span
+                    class="diff-toggle-star"
+                    (click)="onToggleDifficulty(proj.id, user.id, $event)"
+                    title="Segnala/Rimuovi difficoltà"
+                    >★</span
+                  >
+                </div>
+              </ng-container>
+              <ng-template #emptyCell>
+                <span class="cell-empty-plus">+</span>
+              </ng-template>
+            </td>
+
+            <td class="tot-col text-center font-bold">{{ user.projects?.length || 0 }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TAB TIMESHEET (Tabella interattiva che sfrutta correttamente timesheetUsers e getUserAllocationForProject) -->
+    <div class="table-responsive" *ngIf="activeTab === 'timesheet'">
+      <table class="allocation-table">
+        <thead>
+          <tr>
+            <th class="sticky-col blue-header-cell">PROGETTI ({{ projects.length }})</th>
+            <th *ngFor="let proj of projects" class="project-header blue-header-cell">
+              <div class="proj-logo-container">
+                <div class="proj-logo" [ngClass]="'status-' + (proj.status || 'in_corso')">
+                  <img
+                    [src]="getProjectLogo(proj)"
+                    (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
+                    [title]="proj.name"
+                  />
+                </div>
+                <span class="proj-count-badge">{{ proj.users_count || 0 }}</span>
+              </div>
+            </th>
+            <th class="tot-col blue-header-cell">TOT.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tu of timesheetUsers">
+            <td class="sticky-col user-cell" (click)="onUserClick(tu)">
+              <img [src]="tu.filestorage?.url || 'img/icone/default-avatar.png'" class="avatar" />
+              <span class="user-name">{{ tu.first_name }} {{ tu.last_name }}</span>
+            </td>
+
+            <td *ngFor="let proj of projects" class="matrix-cell" (click)="onCellClick(tu, proj)">
+              <ng-container
+                *ngIf="getUserAllocationForProject(tu, proj.id) as alloc; else timesheetEmpty"
+              >
+                <div
+                  class="role-badge"
+                  [ngClass]="getRoleBadgeClass(alloc.pivot?.assignmentrole_id)"
+                >
+                  <span>{{ getRoleBadgeLabel(alloc.pivot?.assignmentrole_id) }}</span>
+                </div>
+              </ng-container>
+              <ng-template #timesheetEmpty>
+                <span class="cell-empty-plus">+</span>
+              </ng-template>
+            </td>
+
+            <td class="tot-col text-center font-bold">{{ tu.projects?.length || 0 }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- TAB CORSI -->
+    <div class="empty-tab-view" *ngIf="activeTab === 'corsi'">
+      <div class="empty-card">
+        <h3>Modulo Corsi di Formazione</h3>
+        <p>Pannello in fase di sincronizzazione con i dati dei corsi aziendali.</p>
+      </div>
+    </div>
+
+    <!-- ================= MODALI ================= -->
+
+    <!-- 1. MODALE AGGIUNTA RISORSA -->
+    <div class="modal-backdrop" *ngIf="showAssignModal">
+      <div class="modal-content">
+        <div class="modal-user-header" *ngIf="selectedUserForModal && selectedProjectForModal">
+          <img
+            [src]="selectedUserForModal.filestorage?.url || 'img/icone/default-avatar.png'"
+            class="avatar-sm"
+          />
+          <span class="modal-title-user"
+            >{{ selectedUserForModal.first_name }} {{ selectedUserForModal.last_name }}</span
+          >
+          <span class="modal-arrow">&rarr;</span>
+          <div class="modal-proj-mini-badge">
+            <img
+              [src]="getProjectLogo(selectedProjectForModal)"
+              (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
+              class="avatar-xs"
+            />
+            <span>{{ selectedProjectForModal.name }}</span>
+          </div>
+        </div>
+
+        <div class="form-group mt-3">
+          <label>Data di inizio *</label>
+          <input type="date" [(ngModel)]="formStartDate" class="form-control" />
+        </div>
+
+        <div class="form-group">
+          <label>Ruolo *</label>
+          <select [(ngModel)]="formRoleId" class="form-control">
+            <option [ngValue]="1">Frontend (F)</option>
+            <option [ngValue]="2">Backend (B)</option>
+            <option [ngValue]="3">Designer (D)</option>
+            <option [ngValue]="4">Fullstack (FB)</option>
+            <option [ngValue]="5">Team Leader (TL)</option>
+            <option [ngValue]="6">Project Manager (PM)</option>
+            <option [ngValue]="7">Scrum Master (SM)</option>
+          </select>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-outline modal-btn-wide" (click)="showAssignModal = false">
+            Annulla
+          </button>
+          <button class="btn-primary modal-btn-wide" (click)="confirmAssignment()">Conferma</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. MODALE MODIFICA / ELIMINAZIONE ALLOCAZIONE -->
+    <div class="modal-backdrop" *ngIf="showEditModal">
+      <div class="modal-content">
+        <ng-container *ngIf="editModeView === 'details'">
+          <div class="modal-header-actions">
+            <div class="modal-user-header" *ngIf="selectedUserForModal && selectedProjectForModal">
+              <img
+                [src]="selectedUserForModal.filestorage?.url || 'img/icone/default-avatar.png'"
+                class="avatar-sm"
+              />
+              <div>
+                <span class="modal-title-user"
+                  >{{ selectedUserForModal.first_name }} {{ selectedUserForModal.last_name }}</span
+                >
+                <div class="collab-sub-text">
+                  Collocata su:
+                  <img
+                    [src]="getProjectLogo(selectedProjectForModal)"
+                    (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
+                    class="avatar-xxs"
+                  />
+                  <b>{{ selectedProjectForModal.name }}</b>
+                </div>
+              </div>
+            </div>
+            <button
+              class="btn-icon-trash"
+              (click)="editModeView = 'confirm_delete'"
+              title="Elimina o concludi"
+            >
+              🗑️
+            </button>
+          </div>
+
+          <div class="form-group mt-3">
+            <label>Data di inizio *</label>
+            <input type="date" [(ngModel)]="formStartDate" class="form-control" />
+          </div>
+
+          <div class="form-group">
+            <label>Ruolo *</label>
+            <select [(ngModel)]="formRoleId" class="form-control">
+              <option [ngValue]="1">Frontend (F)</option>
+              <option [ngValue]="2">Backend (B)</option>
+              <option [ngValue]="3">Designer (D)</option>
+              <option [ngValue]="4">Fullstack (FB)</option>
+              <option [ngValue]="5">Team Leader (TL)</option>
+              <option [ngValue]="6">Project Manager (PM)</option>
+              <option [ngValue]="7">Scrum Master (SM)</option>
+            </select>
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn-outline modal-btn-wide" (click)="showEditModal = false">
+              Annulla
+            </button>
+            <button class="btn-primary modal-btn-wide" (click)="confirmUpdateAllocation()">
+              Conferma
+            </button>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="editModeView === 'confirm_delete'">
+          <div class="modal-top-nav">
+            <div class="modal-user-header">
+              <img
+                [src]="selectedUserForModal?.filestorage?.url || 'img/icone/default-avatar.png'"
+                class="avatar-sm"
+              />
+              <div>
+                <span class="modal-title-user"
+                  >{{ selectedUserForModal?.first_name }}
+                  {{ selectedUserForModal?.last_name }}</span
+                >
+                <div class="collab-sub-text">
+                  Collocata su: <b>{{ selectedProjectForModal?.name }}</b>
+                </div>
+              </div>
+            </div>
+            <button class="btn-link-back" (click)="editModeView = 'details'">
+              &larr; Indietro
+            </button>
+          </div>
+
+          <div class="radio-group-box">
+            <label class="radio-option">
+              <input type="radio" name="actionType" value="delete" [(ngModel)]="modalActionType" />
+              <span>Elimina collaboratore</span>
+            </label>
+            <label class="radio-option">
+              <input
+                type="radio"
+                name="actionType"
+                value="conclude"
+                [(ngModel)]="modalActionType"
+              />
+              <span>Concludi collaborazione</span>
+            </label>
+          </div>
+
+          <div class="warning-alert-box" *ngIf="modalActionType === 'conclude'">
+            <span class="warn-icon">⚠️</span>
+            <span
+              >L'utente concluderà la sua collaborazione, i dati relativi alla sua partecipazione
+              nel team verranno salvati.</span
+            >
+          </div>
+
+          <div class="form-group mt-3" *ngIf="modalActionType === 'conclude'">
+            <label>Data fine collaborazione *</label>
+            <input type="date" [(ngModel)]="formEndWorkDate" class="form-control" />
+          </div>
+
+          <div class="modal-actions">
+            <button class="btn-outline modal-btn-wide" (click)="showEditModal = false">
+              Annulla
+            </button>
+            <button class="btn-primary modal-btn-wide" (click)="confirmTerminateAllocation()">
+              Conferma
+            </button>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- 3. MODALE DETTAGLIO RISORSA -->
+    <div class="modal-backdrop" *ngIf="showUserDetailModal">
+      <div class="modal-content modal-content-wide">
+        <div class="modal-user-detail-header" *ngIf="selectedUserDetail">
+          <img
+            [src]="selectedUserDetail.filestorage?.url || 'img/icone/default-avatar.png'"
+            class="avatar-lg"
+          />
+          <div>
+            <h3>{{ selectedUserDetail.first_name }} {{ selectedUserDetail.last_name }}</h3>
+            <p class="modal-user-subtitle">
+              {{ selectedUserDetail.projects?.length || 0 }} progetti &bull; 2 con difficoltà
+            </p>
+          </div>
+        </div>
+
+        <div class="project-list-detail" *ngIf="selectedUserDetail">
+          <div *ngFor="let p of selectedUserDetail.projects" class="project-item-row">
+            <div class="proj-info-left">
+              <span
+                class="dot-status"
+                [class.orange]="p.pivot?.is_difficult"
+                [class.green]="!p.pivot?.is_difficult"
+              ></span>
+              <span>{{ p.name }}</span>
+            </div>
+            <span class="badge-role" [ngClass]="getRoleBadgeClass(p.pivot?.assignmentrole_id)">
+              {{ getRoleBadgeLabel(p.pivot?.assignmentrole_id) }}
+            </span>
+          </div>
+        </div>
+
+        <div
+          class="overload-warning-footer"
+          *ngIf="(selectedUserDetail?.projects?.length || 0) >= 3"
+        >
+          Sovraccarico: &gt;=3 progetti assegnati
+        </div>
+
+        <div class="modal-actions modal-actions-center mt-4">
+          <button class="btn-outline btn-full-width" (click)="showUserDetailModal = false">
+            Chiudi
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. MODALE GESTIONE NECESSITÀ -->
+    <div class="modal-backdrop" *ngIf="showNeedsModal">
+      <div class="modal-content">
+        <div class="modal-header-needs" *ngIf="selectedProjectForNeeds">
+          <div class="proj-title-row">
+            <img
+              [src]="getProjectLogo(selectedProjectForNeeds)"
+              (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
+              class="avatar-sm"
+            />
+            <div>
+              <h3>{{ selectedProjectForNeeds.name }}</h3>
+              <span class="badge-status-green-pill">● In corso</span>
+            </div>
+          </div>
+        </div>
+
+        <h4 class="needs-section-title">Necessità aperte</h4>
+
+        <div class="needs-items-list">
+          <div *ngFor="let need of selectedProjectForNeeds?.needs" class="need-item-row">
+            <div class="need-role-display">
+              <span class="badge-pill bg-frontend">F</span>
+              <span>{{ need.role }}</span>
+            </div>
+
+            <div class="need-delete-actions" *ngIf="needToDeleteId === need.id; else trashIconBtn">
+              <button class="btn-danger-sm" (click)="removeProjectNeed(need.id)">Elimina</button>
+              <button class="btn-outline-sm" (click)="needToDeleteId = null">Annulla</button>
+            </div>
+            <ng-template #trashIconBtn>
+              <button
+                class="btn-delete-icon"
+                (click)="needToDeleteId = need.id"
+                title="Rimuovi necessità"
+              >
+                🗑️
+              </button>
+            </ng-template>
+          </div>
+
+          <div
+            *ngIf="!selectedProjectForNeeds?.needs || selectedProjectForNeeds?.needs?.length === 0"
+            class="empty-needs"
+          >
+            Nessuna necessità aperta.
+          </div>
+        </div>
+
+        <div class="mt-3" *ngIf="!showAddNeedForm">
+          <button class="btn-add-need-dashed" (click)="showAddNeedForm = true">
+            + Aggiungi necessità
+          </button>
+        </div>
+
+        <div class="form-group mt-3" *ngIf="showAddNeedForm">
+          <label>Ruolo mancante</label>
+          <select [(ngModel)]="newNeedRole" class="form-control">
+            <option value="Frontend">Frontend (F)</option>
+            <option value="Backend">Backend (B)</option>
+            <option value="Designer">Designer (D)</option>
+            <option value="Fullstack">Fullstack (FB)</option>
+            <option value="Team Leader">Team Leader (TL)</option>
+            <option value="Project Manager">Project Manager (PM)</option>
+            <option value="Scrum Master">Scrum Master (SM)</option>
+          </select>
+        </div>
+
+        <div class="modal-actions mt-4">
+          <button class="btn-outline modal-btn-wide" (click)="showNeedsModal = false">
+            Annulla
+          </button>
+          <button
+            class="btn-primary modal-btn-wide"
+            (click)="addProjectNeed()"
+            *ngIf="showAddNeedForm"
+          >
+            Salva
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-side-bar>

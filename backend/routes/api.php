@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\ProjectMemberController;
 use App\Http\Controllers\Api\TimesheetProjectController;
 use App\Http\Controllers\Api\TimesheetProjectMemberController;
+use App\Http\Controllers\Api\AllocationManagementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -44,13 +45,13 @@ Route::middleware('auth:sanctum')->group(function () {
     ])->name('logout');
 
     Route::get('/user', function (Request $request) {
-    return response()->json($request->user()->load(['roles', 'filestorage']));
+        return response()->json($request->user()->load(['roles', 'filestorage']));
     })->name('user.profile');
 
 
     /*
     |--------------------------------------------------------------------------
-    | Gestione Utenti (Admin / manage-users)
+    | Gestione Utenti (Admin / HR)
     |--------------------------------------------------------------------------
     */
     Route::middleware('can:manage-users')
@@ -93,15 +94,41 @@ Route::middleware('auth:sanctum')->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | Modulo Progetti (Projects)
-    | Lettura libera per utenti autenticati, Scrittura protetta da permessi
+    | Modulo Gestione Allocazioni e Team (Admin / Project Manager)
     |--------------------------------------------------------------------------
     */
-    // Lettura aperta a tutti gli utenti autenticati
+    Route::middleware('can:manage-allocations')
+        ->prefix('allocations')
+        ->name('allocations.')
+        ->controller(AllocationManagementController::class)
+        ->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/timesheet', 'timesheetIndex')->name('timesheet.index');
+            Route::post('/timesheet/toggle', 'toggleTimesheetAssignment')->name('timesheet.toggle');
+            Route::get('/user/{user}', 'userDetail')->name('user.detail');
+            Route::get('/project/{project}', 'projectDetail')->name('project.detail');
+            Route::post('/assign', 'storeAllocation')->name('assign');
+            
+            // Rotta per aggiornare un'allocazione esistente (Modale modifica risorsa)
+            Route::put('/project/{projectId}/user/{userId}', 'updateAllocation')->name('update');
+
+            // Rotta per terminare o concludere la collaborazione
+            Route::delete('/project/{projectId}/user/{userId}/terminate', 'terminateAllocation')->name('terminate');
+
+            Route::patch('/project/{projectId}/user/{userId}/toggle-difficulty', 'toggleDifficulty')->name('toggle-difficulty');
+            Route::post('/project/{project}/needs', 'storeNeed')->name('needs.store');
+            Route::delete('/needs/{need}', 'destroyNeed')->name('needs.destroy');
+        });
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Modulo Progetti (Projects)
+    |--------------------------------------------------------------------------
+    */
     Route::get('projects', [ProjectController::class, 'index']);
     Route::get('projects/{id}', [ProjectController::class, 'show']);
 
-    // Azioni di scrittura/modifica protette
     Route::middleware('can:manage-projects')->group(function () {
         Route::post('projects', [ProjectController::class, 'store']);
         Route::put('projects/{id}', [ProjectController::class, 'update']);
@@ -110,7 +137,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('projects/{id}/upload-file', [ProjectController::class, 'uploadFile']);
     });
 
-    // Membri del Progetto Standard
     Route::get('projects/{projectId}/members', [ProjectMemberController::class, 'index']);
     Route::post('projects/{projectId}/members', [ProjectMemberController::class, 'store']);
     Route::delete('projects/{projectId}/members/{userId}', [ProjectMemberController::class, 'destroy']);
