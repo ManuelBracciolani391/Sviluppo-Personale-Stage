@@ -140,6 +140,10 @@
   background: white;
 }
 
+.td-stato {
+  text-align: center;
+}
+
 ::ng-deep .ant-table-tbody > tr:hover > td {
   background: #fafbfd !important;
 }
@@ -200,7 +204,7 @@
 
 ::ng-deep .col-actions {
   min-width: 45px;
-  width: 45px;
+  width: 55px;
 }
 
 /* =========================================================
@@ -301,11 +305,13 @@
   padding: 3px 10px !important;
   font-size: 12px !important;
   margin: 0 !important;
+  font-weight: 500;
+  text-align: center;
 }
 
 .status-dot {
   display: inline-block;
-  transform: scale(7) translate(-0.5px, -3.9px);
+  transform: scale(5) translate(-0.5px, -3.7px);
   margin-left: 5px;
 }
 
@@ -330,7 +336,7 @@
 
 .priority {
   display: flex;
-  align-items: center;
+  justify-content: center;
   gap: 6px;
   font-size: 13px;
   font-weight: 500;
@@ -341,7 +347,7 @@
   vertical-align: -3px;
 }
 
-.priority-high {
+/*.priority-high {
   color: #ee587b;
 }
 
@@ -351,7 +357,7 @@
 
 .priority-low {
   color: #58bd91;
-}
+}*/
 
 /* =========================================================
    DELIVERY / DAILY / REVIEW
@@ -359,6 +365,19 @@
 
 .center-cell {
   text-align: center;
+  font-weight: 500;
+}
+
+.center-cell-bug {
+  text-align: center;
+  color: red;
+  font-weight: 500;
+}
+
+.center-cell-pbi {
+  text-align: center;
+  text-decoration: underline;
+  font-weight: 500;
 }
 
 .view-plan {
@@ -389,13 +408,31 @@
 
 .actions-cell {
   text-align: center;
+  font-weight: bold;
+  position: relative;
+  margin-right: 20px;
 }
 
 .menu-dots {
-  font-size: 25px;
-  line-height: 1;
+  width: 30px;
+  height: 34px;
+
+  border: none;
+
+  background: transparent;
+
   color: #111;
+
+  font-family: Arial, sans-serif;
+  font-size: 25px;
+  line-height: 30px;
+
   cursor: pointer;
+}
+
+.menu-dots:hover {
+  background: #f1f3f6;
+  border-radius: 4px;
 }
 
 /* =========================================================
@@ -437,4 +474,1530 @@
 
 .timesheet-placeholder h2 {
   color: #252525;
+}
+
+/* =========================================================
+   MODALE NUOVO PROGETTO
+   ========================================================= */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 12px;
+
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.new-project-modal {
+  width: 672px;
+  max-width: calc(100vw - 24px);
+  max-height: calc(100vh - 24px);
+
+  padding: 25px 24px 23px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+  border-radius: 8px;
+
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+
+  overflow-y: auto;
+}
+
+/* =========================================================
+   HEADER MODALE
+   ========================================================= */
+
+.modal-header h2 {
+  margin: 0;
+
+  color: #214d85;
+
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.modal-divider {
+  width: 100%;
+  height: 1px;
+
+  margin-top: 20px;
+  margin-bottom: 16px;
+
+  background: #edf0f5;
+}
+
+/* =========================================================
+   IMMAGINE PROGETTO
+   ========================================================= */
+
+.project-image-container {
+  position: relative;
+
+  width: 105px;
+  height: 105px;
+
+  margin: 0 auto 18px;
+}
+
+.project-modal-image {
+  width: 105px;
+  height: 105px;
+
+  border-radius: 50%;
+
+  background: #edf2f8;
+  border: 1px solid #d5dce6;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.project-modal-image img {
+  width: 92px;
+  height: 92px;
+
+  object-fit: contain;
+}
+
+.edit-image-button {
+  position: absolute;
+
+  right: -5px;
+  top: 0;
+
+  width: 36px;
+  height: 36px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 50%;
+
+  background: #214d85;
+  color: white;
+
+  font-size: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.project-form {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  column-gap: 16px;
+  row-gap: 16px;
+}
+
+.form-field {
+  min-width: 0;
+}
+
+.form-field label,
+.description-field label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #30343b;
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.required {
+  color: #214d85;
+}
+
+/* =========================================================
+   INPUT
+   ========================================================= */
+
+.form-field input[type='text'],
+.form-field input[type='date'],
+.select-wrapper select {
+  width: 100%;
+  height: 40px;
+
+  box-sizing: border-box;
+
+  padding: 0 14px;
+
+  border: 1px solid #ccd5e2;
+  border-radius: 7px;
+
+  background: white;
+
+  color: #30343b;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+}
+
+.form-field input::placeholder {
+  color: #8994a8;
+}
+
+.form-field input:focus,
+.select-wrapper select:focus,
+.description-field textarea:focus {
+  border-color: #214d85;
+}
+
+/* =========================================================
+   SELECT
+   ========================================================= */
+
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper select {
+  appearance: none;
+  cursor: pointer;
+
+  color: #8994a8;
+}
+
+.select-wrapper::after {
+  content: '';
+
+  position: absolute;
+
+  right: 16px;
+  top: 50%;
+
+  width: 8px;
+  height: 8px;
+
+  border-right: 2px solid #111;
+  border-bottom: 2px solid #111;
+
+  transform: translateY(-70%) rotate(45deg);
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   DATA
+   ========================================================= */
+
+.date-wrapper {
+  position: relative;
+}
+
+.date-wrapper input {
+  padding-right: 42px !important;
+}
+
+.date-wrapper img {
+  position: absolute;
+
+  right: 13px;
+  top: 50%;
+
+  width: 19px;
+  height: 19px;
+
+  transform: translateY(-50%);
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   CARATTERISTICHE
+   ========================================================= */
+
+.characteristics-field {
+  min-width: 0;
+}
+
+.characteristics {
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkbox-option {
+  display: flex !important;
+  align-items: center;
+
+  gap: 8px;
+
+  margin: 0 !important;
+
+  color: #535c6c !important;
+
+  font-size: 14px !important;
+  font-weight: 400 !important;
+
+  cursor: pointer;
+}
+
+.checkbox-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #8995aa;
+  border-radius: 4px;
+
+  background: white;
+
+  position: relative;
+}
+
+.checkbox-option input:checked + .custom-checkbox {
+  background: #214d85;
+  border-color: #214d85;
+}
+
+.checkbox-option input:checked + .custom-checkbox::after {
+  content: '✓';
+
+  position: absolute;
+
+  left: 2px;
+  top: -2px;
+
+  color: white;
+
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* =========================================================
+   MESSAGGIO INFORMATIVO
+   ========================================================= */
+
+.info-message {
+  grid-column: 1 / -1;
+
+  min-height: 40px;
+
+  box-sizing: border-box;
+
+  padding: 8px 16px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  border-radius: 20px;
+
+  background: #eaf2fc;
+
+  color: #214d85;
+
+  font-size: 14px;
+}
+
+.info-icon {
+  width: 19px;
+  height: 19px;
+
+  flex-shrink: 0;
+
+  border: 2px solid #1769c2;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   LINK
+   ========================================================= */
+
+.input-icon-wrapper {
+  position: relative;
+}
+
+.input-icon-wrapper input {
+  padding-right: 40px !important;
+}
+
+.link-icon {
+  position: absolute;
+
+  right: 13px;
+  top: 50%;
+
+  color: #8491a7;
+
+  font-size: 21px;
+
+  transform: translateY(-50%) rotate(-45deg);
+
+  pointer-events: none;
+}
+
+/* =========================================================
+   DELIVERY PLAN
+   ========================================================= */
+
+.delivery-upload {
+  display: flex;
+  flex-direction: column;
+}
+
+.upload-plan {
+  height: 40px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #214d85;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  text-decoration: underline;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.upload-icon {
+  margin-right: 6px;
+
+  font-size: 19px;
+  font-weight: bold;
+
+  text-decoration: none;
+}
+
+/* =========================================================
+   DESCRIZIONE
+   ========================================================= */
+
+.description-field {
+  grid-column: 1 / -1;
+
+  position: relative;
+}
+
+.description-field textarea {
+  width: 100%;
+  height: 128px;
+
+  box-sizing: border-box;
+
+  padding: 11px;
+
+  resize: none;
+
+  border: 1px solid #ccd5e2;
+  border-radius: 7px;
+
+  color: #30343b;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+}
+
+.description-field textarea::placeholder {
+  color: #8994a8;
+}
+
+.character-count {
+  position: absolute;
+
+  right: 10px;
+  bottom: 8px;
+
+  color: #8994a8;
+
+  font-size: 12px;
+}
+
+/* =========================================================
+   AZIONI
+   ========================================================= */
+
+.modal-actions {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 16px;
+
+  margin-top: 16px;
+}
+
+.cancel-button,
+.save-button {
+  height: 40px;
+
+  border-radius: 7px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.cancel-button {
+  border: 1px solid #214d85;
+
+  background: white;
+
+  color: #214d85;
+}
+
+.save-button {
+  border: 1px solid #214d85;
+
+  background: #214d85;
+
+  color: white;
+}
+
+.cancel-button:hover {
+  background: #f4f7fb;
+}
+
+.save-button:hover {
+  background: #214d85;
+}
+
+/* =========================================================
+   MODALE PROGETTO CREATO
+   ========================================================= */
+
+.confirmation-backdrop {
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.project-created-modal {
+  position: relative;
+
+  width: 640px;
+  max-width: calc(100vw - 30px);
+  height: 430px;
+
+  box-sizing: border-box;
+
+  padding: 100px 40px 40px;
+
+  background: #ffffff;
+  border-radius: 8px;
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.2),
+    0 2px 6px rgba(0, 0, 0, 0.1);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+/* =========================================================
+   CHIUSURA X
+   ========================================================= */
+
+.confirmation-close {
+  position: absolute;
+
+  top: 19px;
+  right: 25px;
+
+  width: 24px;
+  height: 24px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #8c9ab0;
+
+  font-family: Arial, sans-serif;
+  font-size: 27px;
+  font-weight: 300;
+  line-height: 20px;
+
+  cursor: pointer;
+}
+
+.confirmation-close:hover {
+  color: #214d85;
+}
+
+/* =========================================================
+   ICONA CONFERMA
+   ========================================================= */
+
+.confirmation-icon {
+  width: 52px;
+  height: 52px;
+
+  margin-top: 2px;
+  margin-bottom: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirmation-icon svg {
+  width: 48px;
+  height: 48px;
+
+  fill: none;
+
+  stroke: #214d85;
+
+  stroke-width: 2.5;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* =========================================================
+   TITOLO
+   ========================================================= */
+
+.project-created-modal h2 {
+  margin: 0 0 17px;
+
+  color: #214d85;
+
+  font-size: 25px;
+  font-weight: 600;
+
+  line-height: 1.2;
+
+  text-align: center;
+}
+
+/* =========================================================
+   MESSAGGIO
+   ========================================================= */
+
+.project-created-modal p {
+  margin: 0;
+
+  color: #4f5663;
+
+  font-size: 14px;
+  font-weight: 400;
+
+  line-height: 1.4;
+
+  text-align: center;
+}
+
+/* =========================================================
+   PULSANTE OK
+   ========================================================= */
+
+.confirmation-ok {
+  width: 305px;
+  height: 41px;
+
+  margin-top: 24px;
+
+  border: none;
+  border-radius: 7px;
+
+  background: #214d85;
+
+  color: #ffffff;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.confirmation-ok:hover {
+  background: #214d85;
+}
+
+/* =========================================================
+   MODALE NUOVA NOTA
+   ========================================================= */
+
+.note-backdrop {
+  z-index: 10001;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.note-modal {
+  width: 490px;
+  height: 360px;
+
+  box-sizing: border-box;
+
+  padding: 34px 40px 30px;
+
+  background: #ffffff;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.22),
+    0 2px 6px rgba(0, 0, 0, 0.1);
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================================
+   TITOLO
+   ========================================================= */
+
+.note-modal-header h2 {
+  margin: 0;
+
+  color: #214d85;
+
+  font-size: 20px;
+  font-weight: 500;
+
+  line-height: 1.2;
+}
+
+.note-modal-divider {
+  width: 100%;
+  height: 1px;
+
+  margin-top: 20px;
+  margin-bottom: 23px;
+
+  background: #edf0f5;
+}
+
+/* =========================================================
+   PROGETTO
+   ========================================================= */
+
+.note-project {
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+
+  gap: 9px;
+
+  margin-bottom: 16px;
+}
+
+.note-project-image {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #edf2f8;
+  border: 1px solid #d5dce6;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.note-project-image img {
+  width: 35px;
+  height: 35px;
+
+  object-fit: contain;
+}
+
+.note-project-name {
+  color: #30343b;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   TEXTAREA
+   ========================================================= */
+
+.note-textarea {
+  width: 100%;
+  height: 104px;
+
+  box-sizing: border-box;
+
+  padding: 10px 14px;
+
+  resize: none;
+
+  border: 1px solid #ccd5e2;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #30343b;
+
+  font-family: inherit;
+  font-size: 14px;
+
+  outline: none;
+}
+
+.note-textarea::placeholder {
+  color: #8994a8;
+}
+
+.note-textarea:focus {
+  border-color: #214d85;
+}
+
+/* =========================================================
+   PULSANTI
+   ========================================================= */
+
+.note-modal-actions {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 16px;
+
+  margin-top: 24px;
+}
+
+.note-cancel-button,
+.note-save-button {
+  height: 40px;
+
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.note-cancel-button {
+  border: 1px solid #214d85;
+
+  background: #ffffff;
+
+  color: #214d85;
+}
+
+.note-save-button {
+  border: 1px solid #214d85;
+
+  background: #214d85;
+
+  color: #ffffff;
+}
+
+.note-cancel-button:hover {
+  background: #f4f7fb;
+}
+
+.note-save-button:hover {
+  background: #214d85;
+}
+
+/* =========================================================
+   MODALE GESTIONE CSV
+   ========================================================= */
+
+.csv-backdrop {
+  z-index: 10002;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.csv-modal {
+  width: 620px;
+  max-width: calc(100vw - 30px);
+  max-height: calc(100vh - 30px);
+
+  box-sizing: border-box;
+
+  padding: 30px 32px 25px;
+
+  background: #ffffff;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.22),
+    0 2px 6px rgba(0, 0, 0, 0.1);
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.csv-modal-header h2 {
+  margin: 0;
+
+  color: #214d85;
+
+  font-size: 20px;
+  font-weight: 600;
+
+  line-height: 1.2;
+}
+
+.csv-modal-divider {
+  width: 100%;
+  height: 1px;
+
+  margin-top: 18px;
+  margin-bottom: 18px;
+
+  background: #edf0f5;
+}
+
+/* =========================================================
+   PROGETTO
+   ========================================================= */
+
+.csv-project {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 22px;
+}
+
+.csv-project-image {
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: #edf2f8;
+  border: 1px solid #d5dce6;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.csv-project-image img {
+  width: 42px;
+  height: 42px;
+
+  object-fit: contain;
+}
+
+.csv-project-name {
+  color: #30343b;
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   TAB CSV
+   ========================================================= */
+
+.csv-tabs {
+  display: flex;
+
+  gap: 25px;
+
+  margin-bottom: 12px;
+}
+
+.csv-tab {
+  position: relative;
+
+  padding: 10px 0 11px;
+
+  border: none;
+  background: transparent;
+
+  color: #7c8495;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.csv-tab span {
+  margin-left: 4px;
+
+  color: #7c8495;
+
+  font-size: 13px;
+}
+
+.csv-tab.active {
+  color: #30343b;
+
+  font-weight: 600;
+}
+
+.csv-tab.active span {
+  color: #214d85;
+}
+
+.csv-tab.active::after {
+  content: '';
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+  bottom: -1px;
+
+  height: 2px;
+
+  background: #214d85;
+}
+
+/* =========================================================
+   LISTA CSV
+   ========================================================= */
+
+.csv-list {
+  max-height: 420px;
+
+  overflow-y: auto;
+
+  background: #ffffff;
+}
+
+/* =========================================================
+   ELEMENTO CSV
+   ========================================================= */
+
+.csv-item {
+  min-height: 64px;
+
+  box-sizing: border-box;
+
+  padding: 8px 14px;
+
+  display: grid;
+
+  grid-template-columns: 40px 1fr 1fr 1fr;
+
+  align-items: center;
+
+  column-gap: 12px;
+
+  margin-bottom: 10px;
+
+  border: 1px solid #e1e6ee;
+  border-radius: 7px;
+}
+
+/*.csv-item:last-child {
+  border-bottom: none;
+}*/
+
+/* =========================================================
+   IMMAGINE ELEMENTO
+   ========================================================= */
+
+.csv-item-image {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+
+  background: #edf2f8;
+  border: 1px solid #d5dce6;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: hidden;
+}
+
+.csv-item-image img {
+  width: 34px;
+  height: 34px;
+
+  object-fit: contain;
+}
+
+/* =========================================================
+   NOME SPRINT
+   ========================================================= */
+
+.csv-item-name {
+  color: #30343b;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   CHECKBOX SPRINT PILOTA
+   ========================================================= */
+
+.csv-pilot-checkbox {
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  margin: 0;
+
+  color: #535c6c;
+
+  font-size: 12px;
+
+  cursor: pointer;
+
+  white-space: nowrap;
+}
+
+.csv-pilot-checkbox input {
+  position: absolute;
+
+  opacity: 0;
+
+  pointer-events: none;
+}
+
+.csv-custom-checkbox {
+  width: 17px;
+  height: 17px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #8995aa;
+  border-radius: 4px;
+
+  background: #ffffff;
+
+  position: relative;
+}
+
+.csv-pilot-checkbox input:checked + .csv-custom-checkbox {
+  background: #214d85;
+
+  border-color: #214d85;
+}
+
+.csv-pilot-checkbox input:checked + .csv-custom-checkbox::after {
+  content: '✓';
+
+  position: absolute;
+
+  left: 2px;
+  top: -2px;
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: bold;
+}
+
+/* =========================================================
+   CARICA FILE CSV
+   ========================================================= */
+
+.csv-upload-link {
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #214d85;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+
+  text-decoration: underline;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+}
+
+.csv-upload-link:hover {
+  color: #173f76;
+}
+
+/* =========================================================
+   CSV MANCANTI
+   ========================================================= */
+
+.csv-missing {
+  height: 180px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #e1e6ee;
+  border-radius: 7px;
+
+  color: #8994a8;
+
+  font-size: 14px;
+}
+
+/* =========================================================
+   PULSANTE CHIUDI
+   ========================================================= */
+
+.csv-modal-actions {
+  display: flex;
+
+  justify-content: center;
+
+  margin-top: 20px;
+}
+
+.csv-close-button {
+  width: 100%;
+  height: 40px;
+
+  border: 1px solid #214d85;
+  border-radius: 7px;
+
+  background: #ffffff;
+
+  color: #214d85;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+.csv-close-button:hover {
+  background: #214c8513;
+}
+
+/* =========================================================
+   MODALE ELIMINA PROGETTO
+   ========================================================= */
+
+.delete-backdrop {
+  z-index: 10003;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.delete-modal {
+  width: 454px;
+  max-width: calc(100vw - 30px);
+  height: 257px;
+
+  box-sizing: border-box;
+
+  padding: 28px 40px;
+
+  background: #ffffff;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.22),
+    0 2px 6px rgba(0, 0, 0, 0.1);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* =========================================================
+   ICONA CESTINO
+   ========================================================= */
+
+.delete-icon {
+  width: 58px;
+  height: 58px;
+
+  margin-bottom: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-icon svg {
+  width: 54px;
+  height: 54px;
+
+  fill: none;
+
+  stroke: #d71945;
+
+  stroke-width: 2.5;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* =========================================================
+   TITOLO
+   ========================================================= */
+
+.delete-modal h2 {
+  margin: 0 0 14px;
+
+  color: #d71945;
+
+  font-size: 22px;
+  font-weight: 600;
+
+  line-height: 1.2;
+
+  text-align: center;
+}
+
+/* =========================================================
+   MESSAGGIO
+   ========================================================= */
+
+.delete-modal p {
+  margin: 0;
+
+  color: #30343b;
+
+  font-size: 14px;
+  font-weight: 400;
+
+  line-height: 1.4;
+
+  text-align: center;
+}
+
+/* =========================================================
+   PULSANTI
+   ========================================================= */
+
+.delete-modal-actions {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 8px;
+
+  margin-top: 32px;
+}
+
+.delete-cancel-button,
+.delete-confirm-button {
+  height: 40px;
+
+  border-radius: 7px;
+
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
+
+/* Annulla */
+
+.delete-cancel-button {
+  border: 1px solid #d71945;
+
+  background: #ffffff;
+
+  color: #d71945;
+}
+
+.delete-cancel-button:hover {
+  background: #fff5f7;
+}
+
+/* Elimina */
+
+.delete-confirm-button {
+  border: 1px solid #d71945;
+
+  background: #d71945;
+
+  color: #ffffff;
+}
+
+.delete-confirm-button:hover {
+  background: #c3163e;
+}
+
+/* =========================================================
+   DROPDOWN AZIONI PROGETTO
+   ========================================================= */
+
+.project-actions-menu {
+  position: fixed;
+
+  width: 180px;
+
+  box-sizing: border-box;
+
+  padding: 8px 0;
+
+  background: #ffffff;
+
+  border-radius: 2px;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.18),
+    0 1px 4px rgba(0, 0, 0, 0.08);
+
+  z-index: 10000;
+}
+
+/* =========================================================
+   ELEMENTI MENU
+   ========================================================= */
+
+.project-menu-item {
+  width: 100%;
+  height: 48px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 18px;
+
+  border: none;
+
+  background: transparent;
+
+  color: #214d85;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.project-menu-item:hover {
+  background: #f5f7fa;
+}
+
+.project-menu-item svg {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+
+  fill: none;
+
+  stroke: #214d85;
+
+  stroke-width: 1.7;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.project-menu-item span {
+  line-height: 1;
+}
+
+/* =========================================================
+   CSV
+   ========================================================= */
+
+.project-menu-item svg text {
+  fill: #214d85;
+  stroke: none;
+
+  font-family: Arial, sans-serif;
+  font-size: 6px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   ELIMINA
+   ========================================================= */
+
+.project-menu-item.delete-item {
+  margin: 2px 5px 0;
+
+  width: calc(100% - 10px);
+
+  height: 45px;
+
+  border-radius: 4px;
+
+  color: #d71945;
+
+  background: #fff1f4;
+}
+
+.project-menu-item.delete-item:hover {
+  background: #ffe6eb;
+}
+
+.project-menu-item.delete-item svg {
+  stroke: #d71945;
 }

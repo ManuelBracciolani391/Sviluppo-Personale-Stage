@@ -1,233 +1,707 @@
-<div class="projects-page">
-  <!-- Schede -->
-  <div class="tabs">
-    <button class="tab" [class.active]="activeTab === 'projects'" (click)="activeTab = 'projects'">
-      Progetti <span>8</span>
-    </button>
+<app-side-bar [titoloPagina]="'Gestione Progetti'">
+  <div class="projects-page">
+    <!-- Schede -->
+    <div class="tabs">
+      <button
+        class="tab"
+        [class.active]="activeTab === 'projects'"
+        (click)="activeTab = 'projects'"
+      >
+        Progetti <span>8</span>
+      </button>
 
-    <button
-      class="tab"
-      [class.active]="activeTab === 'timesheet'"
-      (click)="activeTab = 'timesheet'"
-    >
-      Timesheet <span>3</span>
-    </button>
-  </div>
+      <button
+        class="tab"
+        [class.active]="activeTab === 'timesheet'"
+        (click)="activeTab = 'timesheet'"
+      >
+        Timesheet <span>3</span>
+      </button>
+    </div>
 
-  <!-- Nuovo progetto -->
-  <div class="nuovo-progetto">
-    <button>
-      <span class="plus"><img src="/img/projects/add_circle.png" alt="" /></span>
-      Nuovo progetto
-    </button>
-  </div>
+    <!-- Nuovo progetto -->
+    <div class="nuovo-progetto">
+      <button type="button" (click)="openNewProjectModal()">
+        <span class="plus"><img src="/img/projects/add_circle.png" alt="" /></span>
+        Nuovo progetto
+      </button>
+    </div>
 
-  <!-- Contenuto Progetti -->
-  <div class="table-container" *ngIf="activeTab === 'projects'">
-    <nz-table
-      #projectsTable
-      [nzData]="projects"
-      [nzPageSize]="8"
-      [nzShowSizeChanger]="false"
-      [nzScroll]="{ x: '1100px' }"
-    >
-      <thead>
-        <tr>
-          <th class="col-project">
-            <div class="th-content">
-              <span>Progetti</span>
-              <span class="th-icons">
-                <img src="/img/projects/freccia-su.png" alt="" />
-                <img src="/img/projects/lente.png" alt="" />
-              </span>
-            </div>
-          </th>
-
-          <th class="col-manager">
-            <div class="th-content">
-              <span>Project manager</span>
-              <span class="th-icons">
-                <img src="/img/projects/freccia-su.png" alt="" />
-                <img src="/img/projects/lente.png" alt="" />
-              </span>
-            </div>
-          </th>
-
-          <th class="col-team">
-            <div class="th-content">
-              <span>Team leader</span>
-              <span class="th-icons">
-                <img src="/img/projects/freccia-su.png" alt="" />
-                <img src="/img/projects/lente.png" alt="" />
-              </span>
-            </div>
-          </th>
-
-          <th class="col-scrum">
-            <div class="th-content">
-              <span>Scrum master</span>
-              <span class="th-icons">
-                <img src="/img/projects/freccia-su.png" alt="" />
-                <img src="/img/projects/lente.png" alt="" />
-              </span>
-            </div>
-          </th>
-
-          <th class="col-status">
-            <div class="th-content">
-              <span>Stato</span>
-              <span class="th-icons">
-                <img src="/img/projects/freccia-giu.png" alt="" />
-                <img src="/img/projects/gerarchia.png" alt="" />
-              </span>
-            </div>
-          </th>
-
-          <th class="col-priority">
-            <div class="th-content">
-              <span>Priorità</span>
-              <span class="th-icons">
-                <img src="/img/projects/freccia-giu.png" alt="" />
-                <img src="/img/projects/gerarchia.png" alt="" />
-              </span>
-            </div>
-          </th>
-
-          <th class="col-delivery">
-            <div class="header-small">
-              <span>DELIVERY PLAN</span>
-              <img src="/img/projects/calendar.png" alt="" />
-            </div>
-          </th>
-
-          <th class="col-daily">
-            <div class="header-small">
-              <span>DAILY</span>
-              <img src="/img/projects/daily.png" alt="" />
-            </div>
-          </th>
-
-          <th class="col-review">
-            <div class="header-small">
-              <span>SPRINT REVIEW</span>
-              <img src="/img/projects/review.png" alt="" />
-            </div>
-          </th>
-
-          <th class="col-bug">
-            <div>
-              <img src="/img/projects/bug.png" alt="" />
-            </div>
-          </th>
-
-          <th class="col-pbi">
-            <div>
-              <img src="/img/projects/pbi.png" alt="" />
-            </div>
-          </th>
-
-          <th class="col-actions"></th>
-        </tr>
-      </thead>
-
-      <tbody>
-        <tr *ngFor="let project of projectsTable.data">
-          <!-- Progetto -->
-          <td class="project-cell">
-            <div class="project-info">
-              <div class="project-logo">
-                <img src="/img/projects/lampadina-progetto.png" alt="" />
+    <!-- Contenuto Progetti -->
+    <div class="table-container" *ngIf="activeTab === 'projects'">
+      <nz-table
+        #projectsTable
+        [nzData]="projects"
+        [nzPageSize]="8"
+        [nzShowSizeChanger]="false"
+        [nzScroll]="{ x: '1100px' }"
+      >
+        <thead>
+          <tr>
+            <th class="col-project">
+              <div class="th-content">
+                <span>Progetti</span>
+                <span class="th-icons">
+                  <img src="/img/projects/freccia-su.png" alt="" />
+                  <img src="/img/projects/lente.png" alt="" />
+                </span>
               </div>
+            </th>
 
-              <span class="project-name">
-                {{ project.name }}
-              </span>
-            </div>
-          </td>
+            <th class="col-manager">
+              <div class="th-content">
+                <span>Project manager</span>
+                <span class="th-icons">
+                  <img src="/img/projects/freccia-su.png" alt="" />
+                  <img src="/img/projects/lente.png" alt="" />
+                </span>
+              </div>
+            </th>
+
+            <th class="col-team">
+              <div class="th-content">
+                <span>Team leader</span>
+                <span class="th-icons">
+                  <img src="/img/projects/freccia-su.png" alt="" />
+                  <img src="/img/projects/lente.png" alt="" />
+                </span>
+              </div>
+            </th>
+
+            <th class="col-scrum">
+              <div class="th-content">
+                <span>Scrum master</span>
+                <span class="th-icons">
+                  <img src="/img/projects/freccia-su.png" alt="" />
+                  <img src="/img/projects/lente.png" alt="" />
+                </span>
+              </div>
+            </th>
+
+            <th class="col-status">
+              <div class="th-content">
+                <span>Stato</span>
+                <span class="th-icons">
+                  <img src="/img/projects/freccia-giu.png" alt="" />
+                  <img src="/img/projects/gerarchia.png" alt="" />
+                </span>
+              </div>
+            </th>
+
+            <th class="col-priority">
+              <div class="th-content">
+                <span>Priorità</span>
+                <span class="th-icons">
+                  <img src="/img/projects/freccia-giu.png" alt="" />
+                  <img src="/img/projects/gerarchia.png" alt="" />
+                </span>
+              </div>
+            </th>
+
+            <th class="col-delivery">
+              <div class="header-small">
+                <span>DELIVERY PLAN</span>
+                <img src="/img/projects/calendar.png" alt="" />
+              </div>
+            </th>
+
+            <th class="col-daily">
+              <div class="header-small">
+                <span>DAILY</span>
+                <img src="/img/projects/daily.png" alt="" />
+              </div>
+            </th>
+
+            <th class="col-review">
+              <div class="header-small">
+                <span>SPRINT REVIEW</span>
+                <img src="/img/projects/review.png" alt="" />
+              </div>
+            </th>
+
+            <th class="col-bug">
+              <div>
+                <img src="/img/projects/bug.png" alt="" />
+              </div>
+            </th>
+
+            <th class="col-pbi">
+              <div>
+                <img src="/img/projects/pbi.png" alt="" />
+              </div>
+            </th>
+
+            <th class="col-actions"></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let project of projectsTable.data">
+            <!-- Progetto -->
+            <td class="project-cell">
+              <div class="project-info">
+                <div class="project-logo">
+                  <img src="/img/projects/lampadina-progetto.png" alt="" />
+                </div>
+
+                <span class="project-name">
+                  {{ project.name }}
+                </span>
+              </div>
+            </td>
+
+            <!-- Project manager -->
+            <td class="people-cell">
+              {{ project.projectManager }}
+            </td>
+
+            <!-- Team leader -->
+            <td class="people-cell">
+              {{ project.teamLeader }}
+            </td>
+
+            <!-- Scrum master -->
+            <td class="people-cell">
+              {{ project.scrumMaster }}
+            </td>
+
+            <!-- Stato -->
+            <td class="td-stato">
+              <nz-tag class="status-tag" [nzColor]="getStatusColor(project.status)">
+                <span class="status-dot">.</span>
+                {{ project.status }}
+              </nz-tag>
+            </td>
+
+            <!-- Priorità -->
+            <td class="td-priorita">
+              <div
+                class="priority"
+                [class.priority-high]="project.priority === 'Alta'"
+                [class.priority-medium]="project.priority === 'Media'"
+                [class.priority-low]="project.priority === 'Bassa'"
+              >
+                <span class="priority-bars"
+                  ><img [src]="getPriorityImage(project.priority)" alt=""
+                /></span>
+                {{ project.priority }}
+              </div>
+            </td>
+
+            <!-- Delivery plan -->
+            <td class="center-cell">
+              <ng-container *ngIf="project.deliveryPlan !== '-'; else noPlan">
+                <a class="view-plan"><img src="/img/projects/view-plan.png" alt="" />View plan</a>
+              </ng-container>
+
+              <ng-template #noPlan>
+                <span>-</span>
+              </ng-template>
+            </td>
+
+            <!-- Daily -->
+            <td class="center-cell">
+              <span *ngIf="project.daily !== '-'; else dailyNo" class="check-icon"
+                ><img src="/img/projects/check.png" alt=""
+              /></span>
+
+              <ng-template #dailyNo>
+                <span class="cross-icon"><img src="/img/projects/cross.png" alt="" /></span>
+              </ng-template>
+            </td>
+
+            <!-- Sprint review -->
+            <td class="center-cell">
+              {{ project.sprintReview }}
+            </td>
+
+            <!-- Bug -->
+            <td class="center-cell-bug">2</td>
+
+            <!-- PBI -->
+            <td class="center-cell-pbi">3</td>
+
+            <!-- Azioni -->
+            <td class="actions-cell">
+              <button type="button" class="menu-dots" (click)="toggleProjectMenu(project, $event)">
+                ⋮
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+
+    <!-- Contenuto Timesheet -->
+    <div class="timesheet-placeholder" *ngIf="activeTab === 'timesheet'">
+      <h2>Timesheet</h2>
+      <p>Qui inseriremo successivamente la gestione dei timesheet.</p>
+    </div>
+
+    <!-- =========================================================
+     MODALE NUOVO PROGETTO
+     ========================================================= -->
+
+    <div class="modal-backdrop" *ngIf="showNewProjectModal">
+      <div class="new-project-modal">
+        <!-- Titolo -->
+        <div class="modal-header">
+          <h2>{{ isEditMode ? 'Modifica progetto' : 'Nuovo progetto' }}</h2>
+        </div>
+
+        <div class="modal-divider"></div>
+
+        <!-- Immagine progetto -->
+        <div class="project-image-container">
+          <div class="project-modal-image">
+            <img src="/img/projects/lampadina-progetto.png" alt="" />
+          </div>
+
+          <button type="button" class="edit-image-button">✎</button>
+        </div>
+
+        <!-- Form -->
+        <div class="project-form">
+          <!-- Nome -->
+          <div class="form-field">
+            <label>Nome</label>
+
+            <input type="text" placeholder="Nome progetto" [(ngModel)]="newProject.name" />
+          </div>
 
           <!-- Project manager -->
-          <td class="people-cell">
-            {{ project.projectManager }}
-          </td>
+          <div class="form-field">
+            <label>Project manager</label>
 
-          <!-- Team leader -->
-          <td class="people-cell">
-            {{ project.teamLeader }}
-          </td>
+            <div class="select-wrapper">
+              <select [(ngModel)]="newProject.projectManager">
+                <option value="" disabled>Seleziona utente</option>
+                <option value="Francesco Di Natale">Francesco Di Natale</option>
+                <option value="Oriana Costantino">Oriana Costantino</option>
+                <option value="Giuseppe Manzella">Giuseppe Manzella</option>
+              </select>
+            </div>
+          </div>
 
-          <!-- Scrum master -->
-          <td class="people-cell">
-            {{ project.scrumMaster }}
-          </td>
+          <!-- Data di inizio -->
+          <div class="form-field">
+            <label>Data di inizio</label>
+
+            <div class="date-wrapper">
+              <input type="date" [(ngModel)]="newProject.startDate" />
+              <img src="/img/projects/calendar.png" alt="" />
+            </div>
+          </div>
+
+          <!-- Caratteristiche -->
+          <div class="form-field characteristics-field">
+            <label>Caratteristiche</label>
+
+            <div class="characteristics">
+              <label class="checkbox-option">
+                <input type="checkbox" [(ngModel)]="newProject.daily" />
+                <span class="custom-checkbox"></span>
+                Daily
+              </label>
+
+              <label class="checkbox-option">
+                <input type="checkbox" [(ngModel)]="newProject.azure" />
+                <span class="custom-checkbox"></span>
+                Azure
+              </label>
+
+              <label class="checkbox-option">
+                <input type="checkbox" [(ngModel)]="newProject.uxUi" />
+                <span class="custom-checkbox"></span>
+                UX-UI
+              </label>
+            </div>
+          </div>
 
           <!-- Stato -->
-          <td>
-            <nz-tag class="status-tag" [nzColor]="getStatusColor(project.status)">
-              <span class="status-dot">.</span>
-              {{ project.status }}
-            </nz-tag>
-          </td>
+          <div class="form-field">
+            <label>Stato</label>
+
+            <div class="select-wrapper">
+              <select [(ngModel)]="newProject.status">
+                <option value="" disabled>Seleziona</option>
+                <option value="In corso">In corso</option>
+                <option value="In manutenzione">In manutenzione</option>
+                <option value="Concluso">Concluso</option>
+                <option value="Sospeso">Sospeso</option>
+              </select>
+            </div>
+          </div>
 
           <!-- Priorità -->
-          <td>
-            <div
-              class="priority"
-              [class.priority-high]="project.priority === 'Alta'"
-              [class.priority-medium]="project.priority === 'Media'"
-              [class.priority-low]="project.priority === 'Bassa'"
-            >
-              <span class="priority-bars"
-                ><img [src]="getPriorityImage(project.priority)" alt=""
-              /></span>
-              {{ project.priority }}
+          <div class="form-field">
+            <label>Priorità</label>
+
+            <div class="select-wrapper">
+              <select [(ngModel)]="newProject.priority">
+                <option value="" disabled>Seleziona</option>
+                <option value="Alta">Alta</option>
+                <option value="Media">Media</option>
+                <option value="Bassa">Bassa</option>
+              </select>
             </div>
-          </td>
+          </div>
+
+          <!-- Info -->
+          <div class="info-message">
+            <span class="info-icon">i</span>
+            <span>
+              Inserire anche nome del team nel caso il progetto sia configurato in più team
+            </span>
+          </div>
+
+          <!-- Nome progetto Azure -->
+          <div class="form-field">
+            <label>Nome progetto azure</label>
+
+            <input
+              type="text"
+              placeholder="Nome progetto"
+              [(ngModel)]="newProject.azureProjectName"
+            />
+          </div>
+
+          <!-- Nome team Azure -->
+          <div class="form-field">
+            <label>Nome team azure <span class="required">*</span></label>
+
+            <input type="text" placeholder="Nome team" [(ngModel)]="newProject.azureTeamName" />
+          </div>
+
+          <!-- Link bug -->
+          <div class="form-field">
+            <label>Link bug count</label>
+
+            <div class="input-icon-wrapper">
+              <input type="text" placeholder="Link" [(ngModel)]="newProject.bugLink" />
+              <span class="link-icon">↗</span>
+            </div>
+          </div>
+
+          <!-- Link PBI senza feature -->
+          <div class="form-field">
+            <label>Link PBi senza feature</label>
+
+            <div class="input-icon-wrapper">
+              <input type="text" placeholder="Link" [(ngModel)]="newProject.pbiNoFeatureLink" />
+              <span class="link-icon">↗</span>
+            </div>
+          </div>
+
+          <!-- Link PBI con feature passata -->
+          <div class="form-field">
+            <label>Link PBi con feature passata</label>
+
+            <div class="input-icon-wrapper">
+              <input type="text" placeholder="Link" [(ngModel)]="newProject.pbiPassedFeatureLink" />
+              <span class="link-icon">↗</span>
+            </div>
+          </div>
 
           <!-- Delivery plan -->
-          <td class="center-cell">
-            <ng-container *ngIf="project.deliveryPlan !== '-'; else noPlan">
-              <a class="view-plan"><img src="/img/projects/view-plan.png" alt="" />View plan</a>
-            </ng-container>
+          <div class="form-field delivery-upload">
+            <label>&nbsp;</label>
 
-            <ng-template #noPlan>
-              <span>-</span>
-            </ng-template>
-          </td>
+            <button type="button" class="upload-plan">
+              <span class="upload-icon">⇩</span>
+              Carica il delivery plan
+            </button>
+          </div>
 
-          <!-- Daily -->
-          <td class="center-cell">
-            <span *ngIf="project.daily !== '-'; else dailyNo" class="check-icon"
-              ><img src="/img/projects/check.png" alt=""
-            /></span>
+          <!-- Descrizione -->
+          <div class="description-field">
+            <label>Descrizione</label>
 
-            <ng-template #dailyNo>
-              <span class="cross-icon"><img src="/img/projects/cross.png" alt="" /></span>
-            </ng-template>
-          </td>
+            <textarea
+              maxlength="250"
+              placeholder="Scrivi qui..."
+              [(ngModel)]="newProject.description"
+            ></textarea>
 
-          <!-- Sprint review -->
-          <td class="center-cell">
-            {{ project.sprintReview }}
-          </td>
+            <span class="character-count"> {{ newProject.description.length }}/250 </span>
+          </div>
+        </div>
 
-          <!-- Bug -->
-          <td class="center-cell">2</td>
+        <!-- Pulsanti -->
+        <div class="modal-actions">
+          <button type="button" class="cancel-button" (click)="closeNewProjectModal()">
+            Annulla
+          </button>
 
-          <!-- PBI -->
-          <td class="center-cell">3</td>
+          <button type="button" class="save-button" (click)="saveProject()">Salva</button>
+        </div>
+      </div>
+    </div>
 
-          <!-- Azioni -->
-          <td class="actions-cell">
-            <span class="menu-dots">⋮</span>
-          </td>
-        </tr>
-      </tbody>
-    </nz-table>
+    <!-- =========================================================
+ MODALE PROGETTO CREATO
+ ========================================================= -->
+
+    <div class="modal-backdrop confirmation-backdrop" *ngIf="showProjectCreatedModal">
+      <div class="project-created-modal">
+        <!-- X -->
+        <button
+          type="button"
+          class="confirmation-close"
+          (click)="closeProjectCreatedModal()"
+          aria-label="Chiudi"
+        >
+          ×
+        </button>
+
+        <!-- Icona conferma -->
+        <div class="confirmation-icon">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <circle cx="24" cy="24" r="18"></circle>
+            <path d="M15 24l6 6 12-13"></path>
+          </svg>
+        </div>
+
+        <!-- Titolo -->
+        <h2>Progetto creato</h2>
+
+        <!-- Messaggio -->
+        <p>L’operazione è stata eseguita con successo</p>
+
+        <!-- Pulsante OK -->
+        <button type="button" class="confirmation-ok" (click)="closeProjectCreatedModal()">
+          Ok
+        </button>
+      </div>
+    </div>
+
+    <!-- =========================================================
+    MODALE NUOVA NOTA
+    ========================================================= -->
+
+    <div class="modal-backdrop note-backdrop" *ngIf="showNoteModal">
+      <div class="note-modal">
+        <!-- Titolo -->
+        <div class="note-modal-header">
+          <h2>Nuova nota</h2>
+        </div>
+
+        <div class="note-modal-divider"></div>
+
+        <!-- Progetto -->
+        <div class="note-project">
+          <div class="note-project-image">
+            <img src="/img/projects/lampadina-progetto.png" alt="" />
+          </div>
+
+          <span class="note-project-name">
+            {{ selectedNoteProject?.name }}
+          </span>
+        </div>
+
+        <!-- Nota -->
+        <textarea
+          class="note-textarea"
+          placeholder="Inserisci una nota"
+          [(ngModel)]="noteText"
+        ></textarea>
+
+        <!-- Pulsanti -->
+        <div class="note-modal-actions">
+          <button type="button" class="note-cancel-button" (click)="closeNoteModal()">
+            Annulla
+          </button>
+
+          <button type="button" class="note-save-button" (click)="saveNote()">Salva</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+ MODALE GESTIONE CSV
+ ========================================================= -->
+
+    <div class="modal-backdrop csv-backdrop" *ngIf="showCsvModal">
+      <div class="csv-modal">
+        <!-- Titolo -->
+        <div class="csv-modal-header">
+          <h2>Gestione CSV</h2>
+        </div>
+
+        <div class="csv-modal-divider"></div>
+
+        <!-- Progetto -->
+        <div class="csv-project">
+          <div class="csv-project-image">
+            <img src="/img/projects/lampadina-progetto.png" alt="" />
+          </div>
+
+          <span class="csv-project-name">
+            {{ selectedCsvProject?.name }}
+          </span>
+        </div>
+
+        <!-- Tab -->
+        <div class="csv-tabs">
+          <button
+            type="button"
+            class="csv-tab"
+            [class.active]="activeCsvTab === 'uploaded'"
+            (click)="activeCsvTab = 'uploaded'"
+          >
+            CSV caricati
+            <span>88</span>
+          </button>
+
+          <button
+            type="button"
+            class="csv-tab"
+            [class.active]="activeCsvTab === 'missing'"
+            (click)="activeCsvTab = 'missing'"
+          >
+            CSV mancati
+            <span>0</span>
+          </button>
+        </div>
+
+        <!-- Contenuto CSV caricati -->
+        <div class="csv-list" *ngIf="activeCsvTab === 'uploaded'">
+          <div class="csv-item" *ngFor="let item of csvItems">
+            <!-- Immagine provvisoria -->
+            <div class="csv-item-image">
+              <img src="/img/projects/lampadina-progetto.png" alt="" />
+            </div>
+
+            <!-- Nome -->
+            <span class="csv-item-name">
+              {{ item.name }}
+            </span>
+
+            <!-- Sprint pilota -->
+            <label class="csv-pilot-checkbox">
+              <input type="checkbox" [(ngModel)]="item.sprintPilot" />
+
+              <span class="csv-custom-checkbox"></span>
+
+              <span>Sprint pilota</span>
+            </label>
+
+            <!-- Carica CSV -->
+            <button type="button" class="csv-upload-link">Carica file CSV</button>
+          </div>
+        </div>
+
+        <!-- Contenuto CSV mancati -->
+        <div class="csv-missing" *ngIf="activeCsvTab === 'missing'">
+          <span>Nessun CSV mancante</span>
+        </div>
+
+        <!-- Chiudi -->
+        <div class="csv-modal-actions">
+          <button type="button" class="csv-close-button" (click)="closeCsvModal()">Chiudi</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+ MODALE ELIMINA PROGETTO
+ ========================================================= -->
+
+    <div class="modal-backdrop delete-backdrop" *ngIf="showDeleteModal">
+      <div class="delete-modal">
+        <!-- Icona cestino -->
+        <div class="delete-icon">
+          <svg viewBox="0 0 48 48" aria-hidden="true">
+            <path d="M9 13h30"></path>
+            <path d="M18 13V8h12v5"></path>
+            <path d="M13 13l2 27h18l2-27"></path>
+            <path d="M20 20v13"></path>
+            <path d="M28 20v13"></path>
+          </svg>
+        </div>
+
+        <!-- Titolo -->
+        <h2>Elimina progetto</h2>
+
+        <!-- Messaggio -->
+        <p>Questa operazione non potrà essere annullata</p>
+
+        <!-- Pulsanti -->
+        <div class="delete-modal-actions">
+          <button type="button" class="delete-cancel-button" (click)="closeDeleteModal()">
+            Annulla
+          </button>
+
+          <button type="button" class="delete-confirm-button" (click)="confirmDeleteProject()">
+            Elimina
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================
+     DROPDOWN AZIONI PROGETTO
+     ========================================================= -->
+
+    <div
+      class="project-actions-menu"
+      *ngIf="selectedProject"
+      [style.top.px]="menuPosition.top"
+      [style.left.px]="menuPosition.left"
+      (click)="$event.stopPropagation()"
+    >
+      <!-- Modifica -->
+      <button
+        type="button"
+        class="project-menu-item"
+        (click)="openEditProjectModal(selectedProject)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 20h4L19.5 8.5a2.12 2.12 0 0 0-3-3L5 17v3z"></path>
+          <path d="M14.5 6.5l3 3"></path>
+        </svg>
+
+        <span>Modifica</span>
+      </button>
+
+      <!-- Note -->
+      <button type="button" class="project-menu-item" (click)="openNoteModal(selectedProject)">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H10l-5 3v-3a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"
+          ></path>
+        </svg>
+
+        <span>Note</span>
+      </button>
+
+      <!-- CSV -->
+      <button type="button" class="project-menu-item" (click)="openCsvModal(selectedProject)">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 3h9l4 4v14H6z"></path>
+          <path d="M15 3v5h4"></path>
+          <text x="7.2" y="17.2">CSV</text>
+        </svg>
+
+        <span>CSV</span>
+      </button>
+
+      <!-- Elimina -->
+      <button
+        type="button"
+        class="project-menu-item delete-item"
+        (click)="openDeleteModal(selectedProject)"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 7h16"></path>
+          <path d="M9 7V4h6v3"></path>
+          <path d="M6 7l1 14h10l1-14"></path>
+          <path d="M10 11v6"></path>
+          <path d="M14 11v6"></path>
+        </svg>
+
+        <span>Elimina</span>
+      </button>
+    </div>
   </div>
-
-  <!-- Contenuto Timesheet -->
-  <div class="timesheet-placeholder" *ngIf="activeTab === 'timesheet'">
-    <h2>Timesheet</h2>
-    <p>Qui inseriremo successivamente la gestione dei timesheet.</p>
-  </div>
-</div>
+</app-side-bar>
