@@ -1,12 +1,9 @@
-/* Container principale */
 .allocazioni-container {
   padding: 20px;
-  background-color: #f8f9fa;
+  background: #f8f9fa;
   min-height: 100vh;
   font-family: inherit;
 }
-
-/* Header KPI */
 .kpi-header {
   display: flex;
   gap: 15px;
@@ -14,7 +11,7 @@
   flex-wrap: wrap;
 }
 .kpi-card {
-  background: #ffffff;
+  background: #fff;
   border-radius: 8px;
   padding: 15px 20px;
   flex: 1;
@@ -59,10 +56,8 @@
   color: #adb5bd;
   margin-top: 2px;
 }
-
-/* Legenda */
 .legend-panel {
-  background: #ffffff;
+  background: #fff;
   border-radius: 8px;
   margin-bottom: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -74,7 +69,7 @@
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  background: #ffffff;
+  background: #fff;
 }
 .legend-title {
   font-weight: bold;
@@ -131,19 +126,17 @@
   border-radius: 50%;
 }
 .dot-green {
-  background-color: #38a169;
+  background: #38a169;
 }
 .dot-orange {
-  background-color: #fd7e14;
+  background: #fd7e14;
 }
 .dot-pink {
-  background-color: #e83e8c;
+  background: #e83e8c;
 }
 .dot-blue {
-  background-color: #007bff;
+  background: #007bff;
 }
-
-/* Tabs */
 .tabs-header-wrapper {
   margin-bottom: 15px;
   border-bottom: 2px solid #dee2e6;
@@ -154,7 +147,7 @@
 }
 .tab-btn {
   background: none;
-  border: none;
+  border: 0;
   padding: 10px 5px;
   font-size: 15px;
   font-weight: 500;
@@ -166,17 +159,15 @@
   color: #2b4c7e;
   font-weight: bold;
 }
-.tab-btn.active::after {
+.tab-btn.active:after {
   content: '';
   position: absolute;
   bottom: -2px;
   left: 0;
   width: 100%;
   height: 3px;
-  background-color: #2b4c7e;
+  background: #2b4c7e;
 }
-
-/* Filtri */
 .filter-bar-vertical {
   display: flex;
   gap: 15px;
@@ -218,29 +209,25 @@
   padding: 8px 12px 8px 32px;
   border: 1px solid #ced4da;
   border-radius: 6px;
-  background: #ffffff;
+  background: #fff;
   font-size: 14px;
 }
 .filter-field-group select,
 .form-control {
   padding-left: 12px;
 }
-
-/* ================= TABELLA E ALLINEAMENTO ================= */
 .table-responsive {
-  background: #ffffff;
+  background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   overflow-x: auto;
   overflow-y: visible;
 }
-
 .allocation-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
-
 .allocation-table th,
 .allocation-table td {
   padding: 12px 14px;
@@ -249,25 +236,21 @@
   vertical-align: middle;
   height: 52px;
 }
-
 .sticky-col {
-  background-color: #ffffff;
+  background: #fff;
   width: 260px;
   min-width: 260px;
 }
-
 tr:hover td {
-  background-color: #f8f9fa;
+  background: #f8f9fa;
 }
-
 .blue-header-cell {
-  background-color: #2b4c7e !important;
-  color: #ffffff !important;
+  background: #2b4c7e !important;
+  color: #fff !important;
   font-weight: bold;
   text-align: center;
   overflow: visible !important;
 }
-
 .project-header {
   text-align: center;
   cursor: pointer;
@@ -275,22 +258,20 @@ tr:hover td {
   overflow: visible !important;
 }
 .project-header.highlighted-column {
-  background-color: #3b629b !important;
+  background: #3b629b !important;
 }
 .matrix-cell {
   text-align: center;
   cursor: pointer;
 }
 .matrix-cell.highlighted-column {
-  background-color: #edf2f7;
+  background: #edf2f7;
 }
 .tot-col {
   width: 75px;
   text-align: center;
   font-weight: bold;
 }
-
-/* LOGO PROGETTO E BADGE CONTATORE */
 .proj-logo-container {
   position: relative;
   display: inline-block;
@@ -301,7 +282,7 @@ tr:hover td {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: #ffffff;
+  background: #fff;
   border: 2px solid #38a169;
   display: flex;
   align-items: center;
@@ -329,13 +310,12 @@ tr:hover td {
 .proj-logo.selected {
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
 }
-
 .proj-count-badge {
   position: absolute;
   top: -6px;
   right: -8px;
-  background-color: #17a2b8;
-  color: #ffffff;
+  background: #17a2b8;
+  color: #fff;
   font-size: 11px;
   font-weight: bold;
   padding: 1px 6px;
@@ -344,9 +324,28 @@ tr:hover td {
   z-index: 5;
 }
 
-/* Necessità */
+/* BADGE DIFFICOLTÀ PROGETTO */
+.proj-difficulty-badge {
+  position: absolute;
+  bottom: -6px;
+  left: -8px;
+  width: 19px;
+  height: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff3cd;
+  color: #d69e00;
+  border: 2px solid #2b4c7e;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  line-height: 1;
+  z-index: 5;
+}
+
 .needs-header-row td {
-  background-color: #fff5f5;
+  background: #fff5f5;
 }
 .needs-title-cell {
   display: flex;
@@ -354,7 +353,7 @@ tr:hover td {
   align-items: center;
 }
 .badge-needs-label {
-  background-color: #fff0f0;
+  background: #fff0f0;
   color: #e53e3e;
   font-size: 10px;
   font-weight: bold;
@@ -367,7 +366,7 @@ tr:hover td {
   cursor: pointer;
 }
 .need-bubble {
-  background-color: #fff5f5;
+  background: #fff5f5;
   border: 1px solid #feb2b2;
   color: #e53e3e;
   border-radius: 50%;
@@ -380,44 +379,40 @@ tr:hover td {
   font-size: 12px;
   font-weight: bold;
 }
-
-/* Utente cella */
 .user-cell {
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
 }
+.avatar,
+.avatar-sm,
+.avatar-xs,
+.avatar-xxs,
+.avatar-lg {
+  border-radius: 50%;
+  object-fit: cover;
+}
 .avatar {
   width: 30px;
   height: 30px;
-  border-radius: 50%;
-  object-fit: cover;
   flex-shrink: 0;
 }
 .avatar-sm {
   width: 32px;
   height: 32px;
-  border-radius: 50%;
-  object-fit: cover;
 }
 .avatar-xs {
   width: 20px;
   height: 20px;
-  border-radius: 50%;
-  object-fit: cover;
 }
 .avatar-xxs {
   width: 16px;
   height: 16px;
-  border-radius: 50%;
-  object-fit: cover;
 }
 .avatar-lg {
   width: 48px;
   height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
 }
 .user-name {
   font-weight: 500;
@@ -426,7 +421,7 @@ tr:hover td {
   white-space: nowrap;
 }
 .badge-unallocated-pill {
-  background-color: #ffe3e3;
+  background: #ffe3e3;
   color: #c92a2a;
   font-size: 10px;
   padding: 2px 6px;
@@ -434,8 +429,6 @@ tr:hover td {
   margin-left: auto;
   flex-shrink: 0;
 }
-
-/* Ruoli */
 .cell-empty-plus {
   color: #adb5bd;
   font-size: 16px;
@@ -464,48 +457,45 @@ tr:hover td {
   color: #ffc107;
   margin-left: 2px;
 }
-
 .bg-frontend {
-  background-color: #f0f7ff;
+  background: #f0f7ff;
   color: #2b6cb0;
   border-color: #bee3f8;
 }
 .bg-backend {
-  background-color: #f0fff4;
+  background: #f0fff4;
   color: #2f855a;
   border-color: #c6f6d5;
 }
 .bg-fullstack {
-  background-color: #fffff0;
+  background: #fffff0;
   color: #b7791f;
   border-color: #feebc8;
 }
 .bg-designer {
-  background-color: #faf5ff;
+  background: #faf5ff;
   color: #6b46c1;
   border-color: #e9d8fd;
 }
 .bg-teamleader {
-  background-color: #e6fffa;
+  background: #e6fffa;
   color: #2c7a7b;
   border-color: #b2f5ea;
 }
 .bg-pm {
-  background-color: #fffaf0;
+  background: #fffaf0;
   color: #c05621;
   border-color: #feebc8;
 }
 .bg-sm {
-  background-color: #ebf8ff;
+  background: #ebf8ff;
   color: #2b6cb0;
   border-color: #bee3f8;
 }
-
-/* Timesheet check box blu */
 .timesheet-check-box-blue {
   width: 24px;
   height: 24px;
-  background-color: #2b4c7e;
+  background: #2b4c7e;
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -513,26 +503,23 @@ tr:hover td {
   margin: 0 auto;
 }
 .check-icon-white {
-  color: #ffffff;
+  color: #fff;
   font-weight: bold;
   font-size: 14px;
 }
-
-/* ================= MODALI ================= */
 .modal-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 }
 .modal-content {
-  background: #ffffff;
+  background: #fff;
   padding: 30px;
   border-radius: 12px;
   width: 440px;
@@ -588,22 +575,21 @@ tr:hover td {
 }
 .btn-icon-trash {
   background: none;
-  border: none;
+  border: 0;
   cursor: pointer;
   font-size: 16px;
   padding: 4px;
 }
 .btn-link-back {
   background: none;
-  border: none;
+  border: 0;
   color: #0056b3;
   font-size: 13px;
   cursor: pointer;
   font-weight: 500;
 }
-
 .radio-group-box {
-  background-color: #fff0f0;
+  background: #fff0f0;
   border: 1px solid #ffc9c9;
   border-radius: 8px;
   padding: 12px;
@@ -631,7 +617,6 @@ tr:hover td {
 .warn-icon {
   font-size: 14px;
 }
-
 .modal-user-detail-header {
   display: flex;
   align-items: center;
@@ -671,14 +656,14 @@ tr:hover td {
   border-radius: 50%;
 }
 .dot-status.green {
-  background-color: #38a169;
+  background: #38a169;
 }
 .dot-status.orange {
-  background-color: #fd7e14;
+  background: #fd7e14;
 }
 .overload-warning-footer {
   margin-top: 15px;
-  background-color: #fff3cd;
+  background: #fff3cd;
   color: #856404;
   padding: 8px 12px;
   border-radius: 6px;
@@ -686,7 +671,6 @@ tr:hover td {
   font-weight: bold;
   text-align: center;
 }
-
 .modal-header-needs {
   margin-bottom: 15px;
   border-bottom: 1px solid #dee2e6;
@@ -732,21 +716,21 @@ tr:hover td {
 }
 .btn-delete-icon {
   background: none;
-  border: none;
+  border: 0;
   cursor: pointer;
   font-size: 14px;
 }
 .btn-danger-sm {
   background: #dc3545;
-  color: white;
-  border: none;
+  color: #fff;
+  border: 0;
   padding: 4px 10px;
   border-radius: 4px;
   font-size: 12px;
   cursor: pointer;
 }
 .btn-outline-sm {
-  background: #ffffff;
+  background: #fff;
   border: 1px solid #ced4da;
   color: #495057;
   padding: 4px 10px;
@@ -772,7 +756,6 @@ tr:hover td {
   text-align: center;
   padding: 10px;
 }
-
 .modal-actions {
   display: flex;
   justify-content: space-between;
@@ -792,12 +775,12 @@ tr:hover td {
 }
 .btn-primary {
   background: #2b4c7e;
-  color: white;
-  border: none;
+  color: #fff;
+  border: 0;
   cursor: pointer;
 }
 .btn-outline {
-  background: #ffffff;
+  background: #fff;
   border: 1px solid #ced4da;
   color: #495057;
   cursor: pointer;

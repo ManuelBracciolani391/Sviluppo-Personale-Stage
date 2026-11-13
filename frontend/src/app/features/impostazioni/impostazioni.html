@@ -1,22 +1,21 @@
-
 <div class="app-shell">
   <aside class="sidebar">
     <div class="brand">
-      <img src="/img/impostazioni/LogoContainer.png">
+      <img src="/img/impostazioni/LogoContainer.png" />
     </div>
 
     <nav class="side-nav" aria-label="Navigazione principale">
       <button type="button" aria-label="Dashboard">
-        <img src="/img/impostazioni/Sidebar-item.png">
+        <img src="/img/impostazioni/Sidebar-item.png" />
       </button>
       <button type="button" aria-label="Organizzazione">
-        <img src="/img/impostazioni/Sidebar-item-1.png">
+        <img src="/img/impostazioni/Sidebar-item-1.png" />
       </button>
       <button type="button" aria-label="Progetti">
-        <img src="/img/impostazioni/Sidebar-item-2.png">
+        <img src="/img/impostazioni/Sidebar-item-2.png" />
       </button>
       <button type="button" aria-label="Statistiche">
-        <img src="/img/impostazioni/Sidebar-item-3.png">
+        <img src="/img/impostazioni/Sidebar-item-3.png" />
       </button>
     </nav>
   </aside>
@@ -27,32 +26,28 @@
         <span>Impostazioni</span>
         <span class="info-icon" aria-label="Informazioni">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" fill="none"
-                    stroke="currentColor" stroke-width="1.8" />
-            <path d="M12 11v5 M12 7.5h.01"
-                  fill="none" stroke="currentColor"
-                  stroke-width="2" stroke-linecap="round" />
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" />
+            <path
+              d="M12 11v5 M12 7.5h.01"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
           </svg>
         </span>
       </div>
 
       <div class="top-actions">
         <button type="button" aria-label="Notifiche">
-          <img src="/img/icone/icone-sidebar.png">
+          <img src="/img/icone/icone-sidebar.png" />
         </button>
         <button type="button" aria-label="Configurazione">
-          <img src="/img/icone/icone-sidebar-1.png">
+          <img src="/img/icone/icone-sidebar-1.png" />
         </button>
         <div class="avatar" aria-label="Profilo">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle
-              cx="12"
-              cy="8"
-              r="3.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.6"
-            />
+            <circle cx="12" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6" />
             <path
               d="M5 20.5c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"
               fill="none"
@@ -67,7 +62,7 @@
 
     <div class="settings-content">
       <label class="search-box">
-        <span><img src="/img/icone/icone-progetto.png"></span>
+        <span><img src="/img/icone/icone-progetto.png" /></span>
         <input type="search" placeholder="Cerca un'impostazione..." />
       </label>
 
@@ -78,9 +73,11 @@
             <div class="card-copy">
               <span>Gestione</span>
               <h3>Progetti / Corsi</h3>
-              <p>Crea e gestisci progetti, corsi <br> e relative informazioni.</p>
-              <small>
-                <img src="/img/icone/folder.png"> 18 progetti</small>
+              <p>
+                Crea e gestisci progetti, corsi <br />
+                e relative informazioni.
+              </p>
+              <small> <img src="/img/icone/folder.png" /> 18 progetti</small>
             </div>
             <div class="card-icon">
               <svg
@@ -94,7 +91,9 @@
                 stroke-linecap="round"
                 stroke-linejoin="round"
               >
-                <path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z" />
+                <path
+                  d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                />
               </svg>
             </div>
           </article>
@@ -103,13 +102,14 @@
             <div class="card-copy">
               <span>Gestione</span>
               <h3>Team</h3>
-              <p>Crea team e assegna <br>collaboratori.</p>
+              <p>Crea team e assegna <br />collaboratori.</p>
               <small>
-                <img src="/img/icone/groups.png">
-                8 team</small>
+                <img src="/img/icone/groups.png" />
+                8 team</small
+              >
             </div>
             <div class="card-icon">
-              <svg 
+              <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="50"
                 height="50"
@@ -129,10 +129,11 @@
             <div class="card-copy">
               <span>Gestione</span>
               <h3>Tipologie team</h3>
-              <p>Definisci le tipologie di team <br>disponibili nel sistema.</p>
+              <p>Definisci le tipologie di team <br />disponibili nel sistema.</p>
               <small>
-                <img src="/img/icone/account_tree.png">
-                7 tipologie</small>
+                <img src="/img/icone/account_tree.png" />
+                7 tipologie</small
+              >
             </div>
             <div class="card-icon">
               <svg
@@ -151,14 +152,21 @@
             </div>
           </article>
 
-          <article class="setting-card blue">
+          <article
+            class="setting-card blue"
+            [routerLink]="['/allocazioni']"
+            role="link"
+            tabindex="0"
+            aria-label="Apri Gestione allocazioni"
+          >
             <div class="card-copy">
               <span>Allocazione</span>
               <h3>Risorse</h3>
-              <p>Assegna le risorse ai progetti e <br>monitora il carico di lavoro.</p>
+              <p>Assegna le risorse ai progetti e <br />monitora il carico di lavoro.</p>
               <small>
-                <img src="/img/icone/perm_contact_calendar.png">
-                52 risorse allocate</small>
+                <img src="/img/icone/perm_contact_calendar.png" />
+                52 risorse allocate</small
+              >
             </div>
             <div class="card-icon">
               <svg
@@ -185,10 +193,11 @@
             <div class="card-copy">
               <span>Gestione</span>
               <h3>Esempio 1</h3>
-              <p>Crea e gestisci progetti, corsi <br>e relative informazioni.</p>
+              <p>Crea e gestisci progetti, corsi <br />e relative informazioni.</p>
               <small>
-                <img src="/img/icone/folder.png">
-                18 progetti</small>
+                <img src="/img/icone/folder.png" />
+                18 progetti</small
+              >
             </div>
             <div class="card-icon">
               <svg
@@ -203,7 +212,9 @@
                 stroke-linejoin="round"
                 aria-hidden="true"
               >
-                <path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z" />
+                <path
+                  d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5z"
+                />
                 <path d="M3.5 11h17" />
               </svg>
             </div>
@@ -213,10 +224,11 @@
             <div class="card-copy">
               <span>Gestione</span>
               <h3>Esempio 2</h3>
-              <p>Crea team e assegna <br>collaboratori.</p>
+              <p>Crea team e assegna <br />collaboratori.</p>
               <small>
-                <img src="/img/icone/groups.png">
-                8 team</small>
+                <img src="/img/icone/groups.png" />
+                8 team</small
+              >
             </div>
             <div class="card-icon">
               <svg
@@ -244,10 +256,11 @@
             <div class="card-copy">
               <span>Gestione</span>
               <h3>Utenti</h3>
-              <p>Crea e gestisci utenti, ruoli <br>e permessi di accesso.</p>
+              <p>Crea e gestisci utenti, ruoli <br />e permessi di accesso.</p>
               <small>
-                <img src="/img/icone/person.png">
-                52 utenti</small>
+                <img src="/img/icone/person.png" />
+                52 utenti</small
+              >
             </div>
             <div class="card-icon">
               <svg
@@ -268,10 +281,11 @@
             <div class="card-copy">
               <span>Gestione</span>
               <h3>Professori</h3>
-              <p>Gestisci i professori <br>e le loro informazioni.</p>
+              <p>Gestisci i professori <br />e le loro informazioni.</p>
               <small>
-                <img src="/img/icone/school.png">
-                4 professori</small>
+                <img src="/img/icone/school.png" />
+                4 professori</small
+              >
             </div>
             <div class="card-icon">
               <svg
@@ -297,10 +311,11 @@
             <div class="card-copy">
               <span>Gestione</span>
               <h3>Competenze trasversali</h3>
-              <p>Gestisci le competenze <br>trasversali del catalogo.</p>
+              <p>Gestisci le competenze <br />trasversali del catalogo.</p>
               <small>
-                <img src="/img/icone/Frame 1171279287.png">
-                23 competenze</small>
+                <img src="/img/icone/Frame 1171279287.png" />
+                23 competenze</small
+              >
             </div>
             <div class="card-icon">
               <svg
@@ -333,10 +348,11 @@
             <div class="card-copy">
               <span>Gestione</span>
               <h3>Tecnologie</h3>
-              <p>Gestisci lo stack tecnologico <br>e le competenze tecniche.</p>
+              <p>Gestisci lo stack tecnologico <br />e le competenze tecniche.</p>
               <small>
-                <img src="/img/icone/code.png">
-                2 tecnologie</small>
+                <img src="/img/icone/code.png" />
+                2 tecnologie</small
+              >
             </div>
             <div class="card-icon">
               <svg
@@ -362,10 +378,11 @@
             <div class="card-copy">
               <span>Gestione</span>
               <h3>Hobby</h3>
-              <p>Gestisci gli hobby disponibili <br>nel sistema.</p>
+              <p>Gestisci gli hobby disponibili <br />nel sistema.</p>
               <small>
-                <img src="/img/icone/stadia_controller.png">
-                10 hobby</small>
+                <img src="/img/icone/stadia_controller.png" />
+                10 hobby</small
+              >
             </div>
             <div class="card-icon">
               <svg
@@ -380,7 +397,9 @@
                 stroke-linejoin="round"
                 aria-hidden="true"
               >
-                <path d="M12 20s-8-4.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 6.5-8 11-8 11z" />
+                <path
+                  d="M12 20s-8-4.5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 6.5-8 11-8 11z"
+                />
               </svg>
             </div>
           </article>
@@ -389,10 +408,11 @@
             <div class="card-copy">
               <span>Gestione</span>
               <h3>Domande sondaggi</h3>
-              <p>Crea e gestisci le domande <br>dei questionari.</p>
-              <small> 
-                <img src="/img/icone/person_raised_hand.png">
-                34 domande</small>
+              <p>Crea e gestisci le domande <br />dei questionari.</p>
+              <small>
+                <img src="/img/icone/person_raised_hand.png" />
+                34 domande</small
+              >
             </div>
             <div class="card-icon">
               <svg
@@ -417,4 +437,3 @@
     </div>
   </main>
 </div>
-

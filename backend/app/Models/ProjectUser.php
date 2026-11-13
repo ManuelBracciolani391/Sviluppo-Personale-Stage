@@ -20,6 +20,7 @@ class ProjectUser extends Model
         'startwork_date',
         'endwork_date',
         'work_allocation',
+        'is_difficult',
     ];
 
     protected function casts(): array
@@ -28,6 +29,7 @@ class ProjectUser extends Model
             'startwork_date' => 'date',
             'endwork_date' => 'date',
             'work_allocation' => 'integer',
+            'is_difficult' => 'boolean',
         ];
     }
 

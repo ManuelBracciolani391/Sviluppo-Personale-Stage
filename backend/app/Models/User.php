@@ -67,18 +67,24 @@ class User extends Authenticatable
     }
 
     /**
-     * Relazione Many-to-Many con i Progetti (Gestione Allocazioni)
-     * Include i campi della tabella pivot utilizzati dai controller.
+     * Relazione Many-to-Many con i Progetti (Gestione Allocazioni).
+     * Include tutti i campi della pivot utilizzati nella gestione allocazioni.
      */
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class, 'project_user', 'user_id', 'project_id')
-            ->withPivot('assignmentrole_id', 'startwork_date', 'endwork_date', 'work_allocation')
+            ->withPivot(
+                'assignmentrole_id',
+                'startwork_date',
+                'endwork_date',
+                'work_allocation',
+                'is_difficult'
+            )
             ->withTimestamps();
     }
 
     /**
-     * Relazione Many-to-Many con i Progetti Timesheet (Tab Timesheet)
+     * Relazione Many-to-Many con i Progetti Timesheet (Tab Timesheet).
      */
     public function timesheetProjects(): BelongsToMany
     {

@@ -13,12 +13,14 @@
           <span class="val font-dark">{{ kpi.allocated_resources }}</span>
         </div>
       </div>
+
       <div class="kpi-card">
         <span class="label">Risorse non allocate</span>
         <div class="kpi-value-row">
           <span class="val font-dark">{{ kpi.unallocated_resources }}</span>
         </div>
       </div>
+
       <div class="kpi-card">
         <span class="label">Difficoltà allocazione</span>
         <div class="kpi-value-row">
@@ -26,6 +28,7 @@
           <span class="sub-muted">segnalate</span>
         </div>
       </div>
+
       <div class="kpi-card">
         <span class="label">Sovraccarico</span>
         <div class="kpi-value-row">
@@ -34,11 +37,12 @@
         </div>
         <span class="kpi-desc-sub">&gt;= 3 progetti</span>
       </div>
+
       <div
         class="kpi-card"
-        (click)="projects.length > 0 && onOpenNeedsModal(projects[0])"
+        (click)="onOpenAllNeedsModal()"
         style="cursor: pointer"
-        title="Clicca per gestire necessità"
+        title="Clicca per scegliere il progetto e gestire le necessità"
       >
         <span class="label">Necessità aperte</span>
         <div class="kpi-value-row">
@@ -48,47 +52,53 @@
       </div>
     </div>
 
-    <!-- PANNELLO LEGENDA VERTICALE -->
+    <!-- LEGENDA -->
     <div class="legend-panel">
       <div class="legend-header" (click)="toggleLegend()">
         <span class="legend-title">Legenda</span>
         <span class="legend-arrow" [class.collapsed]="!isLegendExpanded">▲</span>
       </div>
+
       <div class="legend-body-vertical" *ngIf="isLegendExpanded">
         <div class="legend-section">
           <div class="legend-item">
-            <span class="box-diff-sample"></span> <span>Difficoltà</span>
+            <span class="box-diff-sample"></span>
+            <span>Difficoltà</span>
           </div>
         </div>
 
         <div class="legend-section">
           <span class="legend-section-title">Progetti</span>
           <div class="legend-items-row">
-            <span class="legend-item"><span class="dot-sample dot-green"></span> In corso</span>
-            <span class="legend-item"
-              ><span class="dot-sample dot-orange"></span> Manutenzione</span
-            >
-            <span class="legend-item"><span class="dot-sample dot-pink"></span> Sospeso</span>
-            <span class="legend-item"><span class="dot-sample dot-blue"></span> Concluso</span>
+            <span class="legend-item"> <span class="dot-sample dot-green"></span> In corso </span>
+            <span class="legend-item">
+              <span class="dot-sample dot-orange"></span> Manutenzione
+            </span>
+            <span class="legend-item"> <span class="dot-sample dot-pink"></span> Sospeso </span>
+            <span class="legend-item"> <span class="dot-sample dot-blue"></span> Concluso </span>
           </div>
         </div>
 
         <div class="legend-section">
           <span class="legend-section-title">Ruoli</span>
           <div class="legend-items-row">
-            <span class="legend-item"><span class="badge-pill bg-frontend">F</span> Frontend</span>
-            <span class="legend-item"><span class="badge-pill bg-backend">B</span> Backend</span>
-            <span class="legend-item"
-              ><span class="badge-pill bg-fullstack">FB</span> Fullstack</span
-            >
-            <span class="legend-item"><span class="badge-pill bg-designer">D</span> Designer</span>
-            <span class="legend-item"
-              ><span class="badge-pill bg-teamleader">TL</span> Team Leader</span
-            >
-            <span class="legend-item"
-              ><span class="badge-pill bg-pm">PM</span> Project Manager</span
-            >
-            <span class="legend-item"><span class="badge-pill bg-sm">SM</span> Scrum Master</span>
+            <span class="legend-item">
+              <span class="badge-pill bg-frontend">F</span> Frontend
+            </span>
+            <span class="legend-item"> <span class="badge-pill bg-backend">B</span> Backend </span>
+            <span class="legend-item">
+              <span class="badge-pill bg-fullstack">FB</span> Fullstack
+            </span>
+            <span class="legend-item">
+              <span class="badge-pill bg-designer">D</span> Designer
+            </span>
+            <span class="legend-item">
+              <span class="badge-pill bg-teamleader">TL</span> Team Leader
+            </span>
+            <span class="legend-item">
+              <span class="badge-pill bg-pm">PM</span> Project Manager
+            </span>
+            <span class="legend-item"> <span class="badge-pill bg-sm">SM</span> Scrum Master </span>
           </div>
         </div>
       </div>
@@ -104,6 +114,7 @@
         >
           Progetti
         </button>
+
         <button
           class="tab-btn"
           [class.active]="activeTab === 'timesheet'"
@@ -111,6 +122,7 @@
         >
           Timesheet
         </button>
+
         <button class="tab-btn" [class.active]="activeTab === 'corsi'" (click)="switchTab('corsi')">
           Corsi
         </button>
@@ -135,21 +147,17 @@
       <div class="filter-field-group filter-dropdown-group" *ngIf="activeTab === 'progetti'">
         <label>Ruolo</label>
         <select [(ngModel)]="selectedRole" (change)="onFilterChange()">
-          <option value="">Seleziona</option>
-          <option value="Frontend">Frontend</option>
-          <option value="Backend">Backend</option>
-          <option value="Fullstack">Fullstack</option>
-          <option value="Designer">Designer</option>
-          <option value="Team Leader">Team Leader</option>
-          <option value="Project Manager">Project Manager</option>
-          <option value="Scrum Master">Scrum Master</option>
+          <option value="">Tutti i ruoli</option>
+          <option *ngFor="let role of assignmentRoles" [value]="role.alias">
+            {{ role.alias }}
+          </option>
         </select>
       </div>
 
       <div class="filter-field-group filter-dropdown-group" *ngIf="activeTab === 'progetti'">
         <label>Stato</label>
         <select [(ngModel)]="selectedStatus" (change)="onFilterChange()">
-          <option value="">Seleziona</option>
+          <option value="">Tutti gli stati</option>
           <option value="in_corso">In corso</option>
           <option value="manutenzione">Manutenzione</option>
           <option value="sospeso">Sospeso</option>
@@ -158,12 +166,13 @@
       </div>
     </div>
 
-    <!-- TABELLA PROGETTI -->
+    <!-- TABELLA PROGETTI NORMALI -->
     <div class="table-responsive" *ngIf="activeTab === 'progetti'">
       <table class="allocation-table">
         <thead>
           <tr>
             <th class="sticky-col blue-header-cell">PROGETTI ({{ projects.length }})</th>
+
             <th
               *ngFor="let proj of projects"
               class="project-header blue-header-cell"
@@ -179,14 +188,24 @@
                   <img
                     [src]="getProjectLogo(proj)"
                     (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
-                    [title]="proj.name"
+                    [title]="proj.alias"
                   />
                 </div>
-                <span class="proj-count-badge" *ngIf="proj.users_count !== undefined">{{
-                  proj.users_count
-                }}</span>
+
+                <span class="proj-count-badge">
+                  {{ proj.users?.length || 0 }}
+                </span>
+
+                <span
+                  *ngIf="hasProjectDifficulty(proj)"
+                  class="proj-difficulty-badge"
+                  title="Progetto con almeno un'allocazione difficile"
+                >
+                  !
+                </span>
               </div>
             </th>
+
             <th class="tot-col blue-header-cell">TOT.</th>
           </tr>
 
@@ -195,6 +214,7 @@
               <span class="text-bold-sm">RISORSE ({{ users.length }})</span>
               <span class="badge-needs-label">NECESSITÀ</span>
             </td>
+
             <td
               *ngFor="let proj of projects"
               class="needs-count-cell"
@@ -205,25 +225,32 @@
                 <span>{{ count }}</span>
               </div>
             </td>
+
             <td class="tot-col"></td>
           </tr>
         </thead>
+
         <tbody>
           <tr *ngFor="let user of users">
             <td class="sticky-col user-cell" (click)="onUserClick(user)">
               <img [src]="user.filestorage?.url || 'img/icone/default-avatar.png'" class="avatar" />
-              <span class="user-name">{{ user.first_name }} {{ user.last_name }}</span>
+
+              <span class="user-name"> {{ user.first_name }} {{ user.last_name }} </span>
+
               <span
                 class="badge-unallocated-pill"
                 *ngIf="!user.projects || user.projects.length === 0"
-                >Non allocato</span
               >
+                Non allocato
+              </span>
+
               <span
                 class="icon-warning-orange"
                 *ngIf="user.projects && user.projects.length >= 3"
                 title="Sovraccarico (>=3 progetti)"
-                >⚠️</span
               >
+                ⚠️
+              </span>
             </td>
 
             <td
@@ -240,71 +267,94 @@
                   [ngClass]="getRoleBadgeClass(alloc.pivot?.assignmentrole_id)"
                   [class.difficult]="alloc.pivot?.is_difficult"
                 >
-                  <span>{{ getRoleBadgeLabel(alloc.pivot?.assignmentrole_id) }}</span>
+                  <span>
+                    {{ getRoleBadgeLabel(alloc.pivot?.assignmentrole_id) }}
+                  </span>
+
                   <span
                     class="diff-toggle-star"
                     (click)="onToggleDifficulty(proj.id, user.id, $event)"
                     title="Segnala/Rimuovi difficoltà"
-                    >★</span
                   >
+                    ★
+                  </span>
                 </div>
               </ng-container>
+
               <ng-template #emptyCell>
                 <span class="cell-empty-plus">+</span>
               </ng-template>
             </td>
 
-            <td class="tot-col text-center font-bold">{{ user.projects?.length || 0 }}</td>
+            <td class="tot-col text-center font-bold">
+              {{ user.projects?.length || 0 }}
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
 
-    <!-- TAB TIMESHEET (Tabella interattiva che sfrutta correttamente timesheetUsers e getUserAllocationForProject) -->
+    <!-- TABELLA TIMESHEET -->
     <div class="table-responsive" *ngIf="activeTab === 'timesheet'">
       <table class="allocation-table">
         <thead>
           <tr>
-            <th class="sticky-col blue-header-cell">PROGETTI ({{ projects.length }})</th>
-            <th *ngFor="let proj of projects" class="project-header blue-header-cell">
+            <th class="sticky-col blue-header-cell">TIMESHEET ({{ timesheetProjects.length }})</th>
+
+            <th
+              *ngFor="let proj of timesheetProjects"
+              class="project-header blue-header-cell"
+              (click)="onTimesheetProjectHeaderClick(proj)"
+              title="Clicca per visualizzare la descrizione del progetto"
+              style="cursor: pointer"
+            >
               <div class="proj-logo-container">
-                <div class="proj-logo" [ngClass]="'status-' + (proj.status || 'in_corso')">
+                <div class="proj-logo">
                   <img
                     [src]="getProjectLogo(proj)"
                     (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
                     [title]="proj.name"
                   />
                 </div>
-                <span class="proj-count-badge">{{ proj.users_count || 0 }}</span>
+
+                <span class="proj-count-badge">
+                  {{ proj.users?.length || 0 }}
+                </span>
               </div>
             </th>
+
             <th class="tot-col blue-header-cell">TOT.</th>
           </tr>
         </thead>
+
         <tbody>
           <tr *ngFor="let tu of timesheetUsers">
-            <td class="sticky-col user-cell" (click)="onUserClick(tu)">
+            <td class="sticky-col user-cell">
               <img [src]="tu.filestorage?.url || 'img/icone/default-avatar.png'" class="avatar" />
-              <span class="user-name">{{ tu.first_name }} {{ tu.last_name }}</span>
+
+              <span class="user-name"> {{ tu.first_name }} {{ tu.last_name }} </span>
             </td>
 
-            <td *ngFor="let proj of projects" class="matrix-cell" (click)="onCellClick(tu, proj)">
-              <ng-container
-                *ngIf="getUserAllocationForProject(tu, proj.id) as alloc; else timesheetEmpty"
-              >
-                <div
-                  class="role-badge"
-                  [ngClass]="getRoleBadgeClass(alloc.pivot?.assignmentrole_id)"
-                >
-                  <span>{{ getRoleBadgeLabel(alloc.pivot?.assignmentrole_id) }}</span>
+            <td
+              *ngFor="let proj of timesheetProjects"
+              class="matrix-cell"
+              [class.timesheet-busy]="timesheetBusyKey === proj.id + '-' + tu.id"
+              (click)="onTimesheetCellClick(tu, proj)"
+            >
+              <ng-container *ngIf="getTimesheetAllocation(tu, proj.id); else timesheetEmpty">
+                <div class="role-badge">
+                  <span>✓</span>
                 </div>
               </ng-container>
+
               <ng-template #timesheetEmpty>
                 <span class="cell-empty-plus">+</span>
               </ng-template>
             </td>
 
-            <td class="tot-col text-center font-bold">{{ tu.projects?.length || 0 }}</td>
+            <td class="tot-col text-center font-bold">
+              {{ tu.timesheet_projects?.length || 0 }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -320,7 +370,155 @@
 
     <!-- ================= MODALI ================= -->
 
-    <!-- 1. MODALE AGGIUNTA RISORSA -->
+    <!-- 1. MODALE AGGIUNTA RISORSA A TIMESHEET -->
+    <div class="modal-backdrop" *ngIf="showTimesheetAssignModal">
+      <div class="modal-content">
+        <div class="modal-header-needs">
+          <div class="proj-title-row" *ngIf="selectedTimesheetProjectForModal">
+            <img
+              [src]="getProjectLogo(selectedTimesheetProjectForModal)"
+              (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
+              class="avatar-sm"
+            />
+
+            <div>
+              <h3>{{ selectedTimesheetProjectForModal.name }}</h3>
+              <span class="collab-sub-text"> Aggiungi una risorsa al Timesheet </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mt-3">
+          <label>Data di inizio *</label>
+          <input
+            type="date"
+            class="form-control"
+            [(ngModel)]="timesheetStartDate"
+            [disabled]="isSavingTimesheetMember"
+          />
+        </div>
+
+        <div class="modal-actions">
+          <button
+            class="btn-outline modal-btn-wide"
+            (click)="closeTimesheetAssignModal()"
+            [disabled]="isSavingTimesheetMember"
+          >
+            Annulla
+          </button>
+
+          <button
+            class="btn-primary modal-btn-wide"
+            (click)="confirmTimesheetAssignment()"
+            [disabled]="
+              isSavingTimesheetMember || selectedTimesheetUserId === null || !timesheetStartDate
+            "
+          >
+            {{ isSavingTimesheetMember ? 'Salvataggio...' : 'Conferma' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. MODALE DETTAGLIO ASSOCIAZIONE TIMESHEET -->
+    <div class="modal-backdrop" *ngIf="showTimesheetMemberModal">
+      <div class="modal-content">
+        <div class="modal-header-needs">
+          <div class="modal-user-header" *ngIf="selectedTimesheetUserDetail">
+            <img
+              [src]="selectedTimesheetUserDetail.filestorage?.url || 'img/icone/default-avatar.png'"
+              class="avatar-sm"
+            />
+
+            <div>
+              <h3>
+                {{ selectedTimesheetUserDetail.first_name }}
+                {{ selectedTimesheetUserDetail.last_name }}
+              </h3>
+              <span class="collab-sub-text"> Dettaglio associazione Timesheet </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mt-3" *ngIf="selectedTimesheetProjectDetail">
+          <label>Progetto</label>
+          <div class="form-control">
+            {{ selectedTimesheetProjectDetail.name }}
+          </div>
+        </div>
+
+        <div
+          class="form-group"
+          *ngIf="selectedTimesheetUserDetail && selectedTimesheetProjectDetail"
+        >
+          <label>Data di inizio</label>
+          <div class="form-control">
+            {{
+              getTimesheetStartDate(
+                selectedTimesheetUserDetail,
+                selectedTimesheetProjectDetail.id
+              ) || 'Data non disponibile'
+            }}
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button
+            class="btn-outline modal-btn-wide"
+            (click)="closeTimesheetMemberModal()"
+            [disabled]="isSavingTimesheetMember"
+          >
+            Chiudi
+          </button>
+
+          <button
+            class="btn-primary modal-btn-wide"
+            (click)="removeSelectedTimesheetMember()"
+            [disabled]="isSavingTimesheetMember"
+          >
+            {{ isSavingTimesheetMember ? 'Eliminazione...' : 'Elimina associazione' }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. MODALE DESCRIZIONE PROGETTO TIMESHEET -->
+    <div class="modal-backdrop" *ngIf="showTimesheetProjectModal">
+      <div class="modal-content">
+        <div class="modal-header-needs">
+          <div class="proj-title-row" *ngIf="selectedTimesheetProjectDetail">
+            <img
+              [src]="getProjectLogo(selectedTimesheetProjectDetail)"
+              (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
+              class="avatar-sm"
+            />
+
+            <div>
+              <h3>{{ selectedTimesheetProjectDetail.name }}</h3>
+              <span class="collab-sub-text">Descrizione progetto</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group mt-3">
+          <label>Descrizione</label>
+          <div class="empty-needs" *ngIf="!selectedTimesheetProjectDetail?.description">
+            Nessuna descrizione disponibile per questo progetto.
+          </div>
+          <p *ngIf="selectedTimesheetProjectDetail?.description">
+            {{ selectedTimesheetProjectDetail?.description }}
+          </p>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn-outline modal-btn-wide" (click)="closeTimesheetProjectModal()">
+            Chiudi
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. MODALE AGGIUNTA RISORSA A PROGETTO -->
     <div class="modal-backdrop" *ngIf="showAssignModal">
       <div class="modal-content">
         <div class="modal-user-header" *ngIf="selectedUserForModal && selectedProjectForModal">
@@ -328,17 +526,20 @@
             [src]="selectedUserForModal.filestorage?.url || 'img/icone/default-avatar.png'"
             class="avatar-sm"
           />
-          <span class="modal-title-user"
-            >{{ selectedUserForModal.first_name }} {{ selectedUserForModal.last_name }}</span
-          >
+
+          <span class="modal-title-user">
+            {{ selectedUserForModal.first_name }} {{ selectedUserForModal.last_name }}
+          </span>
+
           <span class="modal-arrow">&rarr;</span>
+
           <div class="modal-proj-mini-badge">
             <img
               [src]="getProjectLogo(selectedProjectForModal)"
               (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
               class="avatar-xs"
             />
-            <span>{{ selectedProjectForModal.name }}</span>
+            <span>{{ selectedProjectForModal.alias }}</span>
           </div>
         </div>
 
@@ -350,26 +551,46 @@
         <div class="form-group">
           <label>Ruolo *</label>
           <select [(ngModel)]="formRoleId" class="form-control">
-            <option [ngValue]="1">Frontend (F)</option>
-            <option [ngValue]="2">Backend (B)</option>
-            <option [ngValue]="3">Designer (D)</option>
-            <option [ngValue]="4">Fullstack (FB)</option>
-            <option [ngValue]="5">Team Leader (TL)</option>
-            <option [ngValue]="6">Project Manager (PM)</option>
-            <option [ngValue]="7">Scrum Master (SM)</option>
+            <option [ngValue]="null" disabled>Seleziona un ruolo</option>
+            <option *ngFor="let role of assignmentRoles" [ngValue]="role.id">
+              {{ role.alias }}
+            </option>
           </select>
         </div>
 
+        <div class="form-group">
+          <label>Percentuale di allocazione *</label>
+          <input
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            [(ngModel)]="formWorkAllocation"
+            class="form-control"
+          />
+        </div>
+
         <div class="modal-actions">
-          <button class="btn-outline modal-btn-wide" (click)="showAssignModal = false">
+          <button
+            class="btn-outline modal-btn-wide"
+            (click)="showAssignModal = false"
+            [disabled]="isSavingAllocation"
+          >
             Annulla
           </button>
-          <button class="btn-primary modal-btn-wide" (click)="confirmAssignment()">Conferma</button>
+
+          <button
+            class="btn-primary modal-btn-wide"
+            (click)="confirmAssignment()"
+            [disabled]="isSavingAllocation || assignmentRoles.length === 0"
+          >
+            {{ isSavingAllocation ? 'Salvataggio...' : 'Conferma' }}
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- 2. MODALE MODIFICA / ELIMINAZIONE ALLOCAZIONE -->
+    <!-- 5. MODALE MODIFICA / ELIMINAZIONE ALLOCAZIONE -->
     <div class="modal-backdrop" *ngIf="showEditModal">
       <div class="modal-content">
         <ng-container *ngIf="editModeView === 'details'">
@@ -379,25 +600,31 @@
                 [src]="selectedUserForModal.filestorage?.url || 'img/icone/default-avatar.png'"
                 class="avatar-sm"
               />
+
               <div>
-                <span class="modal-title-user"
-                  >{{ selectedUserForModal.first_name }} {{ selectedUserForModal.last_name }}</span
-                >
+                <span class="modal-title-user">
+                  {{ selectedUserForModal.first_name }} {{ selectedUserForModal.last_name }}
+                </span>
+
                 <div class="collab-sub-text">
                   Collocata su:
+
                   <img
                     [src]="getProjectLogo(selectedProjectForModal)"
                     (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
                     class="avatar-xxs"
                   />
-                  <b>{{ selectedProjectForModal.name }}</b>
+
+                  <b>{{ selectedProjectForModal.alias }}</b>
                 </div>
               </div>
             </div>
+
             <button
               class="btn-icon-trash"
               (click)="editModeView = 'confirm_delete'"
               title="Elimina o concludi"
+              [disabled]="isSavingAllocation"
             >
               🗑️
             </button>
@@ -411,22 +638,40 @@
           <div class="form-group">
             <label>Ruolo *</label>
             <select [(ngModel)]="formRoleId" class="form-control">
-              <option [ngValue]="1">Frontend (F)</option>
-              <option [ngValue]="2">Backend (B)</option>
-              <option [ngValue]="3">Designer (D)</option>
-              <option [ngValue]="4">Fullstack (FB)</option>
-              <option [ngValue]="5">Team Leader (TL)</option>
-              <option [ngValue]="6">Project Manager (PM)</option>
-              <option [ngValue]="7">Scrum Master (SM)</option>
+              <option [ngValue]="null" disabled>Seleziona un ruolo</option>
+              <option *ngFor="let role of assignmentRoles" [ngValue]="role.id">
+                {{ role.alias }}
+              </option>
             </select>
           </div>
 
+          <div class="form-group">
+            <label>Percentuale di allocazione *</label>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="1"
+              [(ngModel)]="formWorkAllocation"
+              class="form-control"
+            />
+          </div>
+
           <div class="modal-actions">
-            <button class="btn-outline modal-btn-wide" (click)="showEditModal = false">
+            <button
+              class="btn-outline modal-btn-wide"
+              (click)="showEditModal = false"
+              [disabled]="isSavingAllocation"
+            >
               Annulla
             </button>
-            <button class="btn-primary modal-btn-wide" (click)="confirmUpdateAllocation()">
-              Conferma
+
+            <button
+              class="btn-primary modal-btn-wide"
+              (click)="confirmUpdateAllocation()"
+              [disabled]="isSavingAllocation || assignmentRoles.length === 0"
+            >
+              {{ isSavingAllocation ? 'Salvataggio...' : 'Conferma' }}
             </button>
           </div>
         </ng-container>
@@ -438,17 +683,25 @@
                 [src]="selectedUserForModal?.filestorage?.url || 'img/icone/default-avatar.png'"
                 class="avatar-sm"
               />
+
               <div>
-                <span class="modal-title-user"
-                  >{{ selectedUserForModal?.first_name }}
-                  {{ selectedUserForModal?.last_name }}</span
-                >
+                <span class="modal-title-user">
+                  {{ selectedUserForModal?.first_name }}
+                  {{ selectedUserForModal?.last_name }}
+                </span>
+
                 <div class="collab-sub-text">
-                  Collocata su: <b>{{ selectedProjectForModal?.name }}</b>
+                  Collocata su:
+                  <b>{{ selectedProjectForModal?.alias }}</b>
                 </div>
               </div>
             </div>
-            <button class="btn-link-back" (click)="editModeView = 'details'">
+
+            <button
+              class="btn-link-back"
+              (click)="editModeView = 'details'"
+              [disabled]="isSavingAllocation"
+            >
               &larr; Indietro
             </button>
           </div>
@@ -458,6 +711,7 @@
               <input type="radio" name="actionType" value="delete" [(ngModel)]="modalActionType" />
               <span>Elimina collaboratore</span>
             </label>
+
             <label class="radio-option">
               <input
                 type="radio"
@@ -471,10 +725,10 @@
 
           <div class="warning-alert-box" *ngIf="modalActionType === 'conclude'">
             <span class="warn-icon">⚠️</span>
-            <span
-              >L'utente concluderà la sua collaborazione, i dati relativi alla sua partecipazione
-              nel team verranno salvati.</span
-            >
+            <span>
+              L'utente concluderà la sua collaborazione, i dati relativi alla sua partecipazione nel
+              team verranno salvati.
+            </span>
           </div>
 
           <div class="form-group mt-3" *ngIf="modalActionType === 'conclude'">
@@ -483,18 +737,27 @@
           </div>
 
           <div class="modal-actions">
-            <button class="btn-outline modal-btn-wide" (click)="showEditModal = false">
+            <button
+              class="btn-outline modal-btn-wide"
+              (click)="showEditModal = false"
+              [disabled]="isSavingAllocation"
+            >
               Annulla
             </button>
-            <button class="btn-primary modal-btn-wide" (click)="confirmTerminateAllocation()">
-              Conferma
+
+            <button
+              class="btn-primary modal-btn-wide"
+              (click)="confirmTerminateAllocation()"
+              [disabled]="isSavingAllocation"
+            >
+              {{ isSavingAllocation ? 'Salvataggio...' : 'Conferma' }}
             </button>
           </div>
         </ng-container>
       </div>
     </div>
 
-    <!-- 3. MODALE DETTAGLIO RISORSA -->
+    <!-- 6. MODALE DETTAGLIO RISORSA -->
     <div class="modal-backdrop" *ngIf="showUserDetailModal">
       <div class="modal-content modal-content-wide">
         <div class="modal-user-detail-header" *ngIf="selectedUserDetail">
@@ -502,10 +765,13 @@
             [src]="selectedUserDetail.filestorage?.url || 'img/icone/default-avatar.png'"
             class="avatar-lg"
           />
+
           <div>
             <h3>{{ selectedUserDetail.first_name }} {{ selectedUserDetail.last_name }}</h3>
+
             <p class="modal-user-subtitle">
-              {{ selectedUserDetail.projects?.length || 0 }} progetti &bull; 2 con difficoltà
+              {{ selectedUserDetail.projects?.length || 0 }} progetti &bull;
+              {{ getUserDifficultyCount(selectedUserDetail) }} con difficoltà
             </p>
           </div>
         </div>
@@ -518,8 +784,10 @@
                 [class.orange]="p.pivot?.is_difficult"
                 [class.green]="!p.pivot?.is_difficult"
               ></span>
-              <span>{{ p.name }}</span>
+
+              <span>{{ p.alias }}</span>
             </div>
+
             <span class="badge-role" [ngClass]="getRoleBadgeClass(p.pivot?.assignmentrole_id)">
               {{ getRoleBadgeLabel(p.pivot?.assignmentrole_id) }}
             </span>
@@ -541,84 +809,133 @@
       </div>
     </div>
 
-    <!-- 4. MODALE GESTIONE NECESSITÀ -->
+    <!-- 7. MODALE GESTIONE NECESSITÀ -->
     <div class="modal-backdrop" *ngIf="showNeedsModal">
       <div class="modal-content">
-        <div class="modal-header-needs" *ngIf="selectedProjectForNeeds">
-          <div class="proj-title-row">
-            <img
-              [src]="getProjectLogo(selectedProjectForNeeds)"
-              (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
-              class="avatar-sm"
-            />
-            <div>
-              <h3>{{ selectedProjectForNeeds.name }}</h3>
-              <span class="badge-status-green-pill">● In corso</span>
-            </div>
-          </div>
-        </div>
-
-        <h4 class="needs-section-title">Necessità aperte</h4>
-
-        <div class="needs-items-list">
-          <div *ngFor="let need of selectedProjectForNeeds?.needs" class="need-item-row">
-            <div class="need-role-display">
-              <span class="badge-pill bg-frontend">F</span>
-              <span>{{ need.role }}</span>
-            </div>
-
-            <div class="need-delete-actions" *ngIf="needToDeleteId === need.id; else trashIconBtn">
-              <button class="btn-danger-sm" (click)="removeProjectNeed(need.id)">Elimina</button>
-              <button class="btn-outline-sm" (click)="needToDeleteId = null">Annulla</button>
-            </div>
-            <ng-template #trashIconBtn>
-              <button
-                class="btn-delete-icon"
-                (click)="needToDeleteId = need.id"
-                title="Rimuovi necessità"
-              >
-                🗑️
-              </button>
-            </ng-template>
-          </div>
-
-          <div
-            *ngIf="!selectedProjectForNeeds?.needs || selectedProjectForNeeds?.needs?.length === 0"
-            class="empty-needs"
+        <div class="form-group mb-3">
+          <label>Progetto *</label>
+          <select
+            class="form-control"
+            [ngModel]="selectedNeedsProjectId"
+            (ngModelChange)="onNeedsProjectChange($event)"
           >
-            Nessuna necessità aperta.
-          </div>
-        </div>
-
-        <div class="mt-3" *ngIf="!showAddNeedForm">
-          <button class="btn-add-need-dashed" (click)="showAddNeedForm = true">
-            + Aggiungi necessità
-          </button>
-        </div>
-
-        <div class="form-group mt-3" *ngIf="showAddNeedForm">
-          <label>Ruolo mancante</label>
-          <select [(ngModel)]="newNeedRole" class="form-control">
-            <option value="Frontend">Frontend (F)</option>
-            <option value="Backend">Backend (B)</option>
-            <option value="Designer">Designer (D)</option>
-            <option value="Fullstack">Fullstack (FB)</option>
-            <option value="Team Leader">Team Leader (TL)</option>
-            <option value="Project Manager">Project Manager (PM)</option>
-            <option value="Scrum Master">Scrum Master (SM)</option>
+            <option [ngValue]="null">Seleziona un progetto</option>
+            <option *ngFor="let project of projects" [ngValue]="project.id">
+              {{ project.alias }}
+            </option>
           </select>
         </div>
 
+        <ng-container *ngIf="selectedProjectForNeeds">
+          <div class="modal-header-needs">
+            <div class="proj-title-row">
+              <img
+                [src]="getProjectLogo(selectedProjectForNeeds)"
+                (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
+                class="avatar-sm"
+              />
+
+              <div>
+                <h3>{{ selectedProjectForNeeds.alias }}</h3>
+                <span class="badge-status-green-pill">● In corso</span>
+              </div>
+            </div>
+          </div>
+
+          <h4 class="needs-section-title">Necessità aperte</h4>
+
+          <div class="needs-items-list">
+            <div *ngFor="let need of selectedProjectForNeeds.needs" class="need-item-row">
+              <div class="need-role-display">
+                <span class="badge-pill" [ngClass]="getRoleBadgeClass(need.assignmentrole_id)">
+                  {{ getRoleBadgeLabel(need.assignmentrole_id) }}
+                </span>
+
+                <span>
+                  {{ need.assignment_role?.alias || 'Ruolo non disponibile' }}
+                </span>
+              </div>
+
+              <div
+                class="need-delete-actions"
+                *ngIf="needToDeleteId === need.id; else trashIconBtn"
+              >
+                <button
+                  class="btn-danger-sm"
+                  (click)="removeProjectNeed(need.id)"
+                  [disabled]="isSavingNeed"
+                >
+                  {{ isSavingNeed ? 'Eliminazione...' : 'Elimina' }}
+                </button>
+
+                <button
+                  class="btn-outline-sm"
+                  (click)="needToDeleteId = null"
+                  [disabled]="isSavingNeed"
+                >
+                  Annulla
+                </button>
+              </div>
+
+              <ng-template #trashIconBtn>
+                <button
+                  class="btn-delete-icon"
+                  (click)="needToDeleteId = need.id"
+                  title="Rimuovi necessità"
+                  [disabled]="isSavingNeed"
+                >
+                  🗑️
+                </button>
+              </ng-template>
+            </div>
+
+            <div
+              *ngIf="!selectedProjectForNeeds.needs || selectedProjectForNeeds.needs.length === 0"
+              class="empty-needs"
+            >
+              Nessuna necessità aperta.
+            </div>
+          </div>
+
+          <div class="mt-3" *ngIf="!showAddNeedForm">
+            <button class="btn-add-need-dashed" (click)="showAddNeedForm = true">
+              + Aggiungi necessità
+            </button>
+          </div>
+
+          <div class="form-group mt-3" *ngIf="showAddNeedForm">
+            <label>Ruolo mancante</label>
+
+            <select [(ngModel)]="newNeedRole" class="form-control">
+              <option [ngValue]="null" disabled>Seleziona un ruolo</option>
+
+              <option *ngFor="let role of assignmentRoles" [ngValue]="role.id">
+                {{ role.alias }}
+              </option>
+            </select>
+          </div>
+        </ng-container>
+
+        <div *ngIf="!selectedProjectForNeeds" class="empty-needs">
+          Seleziona un progetto per visualizzare o aggiungere le necessità.
+        </div>
+
         <div class="modal-actions mt-4">
-          <button class="btn-outline modal-btn-wide" (click)="showNeedsModal = false">
-            Annulla
+          <button
+            class="btn-outline modal-btn-wide"
+            (click)="showNeedsModal = false"
+            [disabled]="isSavingNeed"
+          >
+            Chiudi
           </button>
+
           <button
             class="btn-primary modal-btn-wide"
             (click)="addProjectNeed()"
-            *ngIf="showAddNeedForm"
+            *ngIf="showAddNeedForm && selectedProjectForNeeds"
+            [disabled]="isSavingNeed || !newNeedRole"
           >
-            Salva
+            {{ isSavingNeed ? 'Salvataggio...' : 'Salva' }}
           </button>
         </div>
       </div>

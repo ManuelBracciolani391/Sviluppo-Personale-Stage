@@ -4,12 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\TimesheetProject;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class TimesheetProjectMemberController extends Controller
 {
-    
     public function index($timesheetProjectId)
     {
         $project = TimesheetProject::with('users')->find($timesheetProjectId);
@@ -27,7 +25,6 @@ class TimesheetProjectMemberController extends Controller
         ], 200);
     }
 
-    
     public function store(Request $request, $timesheetProjectId)
     {
         $project = TimesheetProject::find($timesheetProjectId);
@@ -41,11 +38,17 @@ class TimesheetProjectMemberController extends Controller
 
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
+            'start_date' => 'required|date',
         ]);
 
-        
-        if (!$project->users()->where('user_id', $validated['user_id'])->exists()) {
-            $project->users()->attach($validated['user_id']);
+        $alreadyAssigned = $project->users()
+            ->where('user_id', $validated['user_id'])
+            ->exists();
+
+        if (!$alreadyAssigned) {
+            $project->users()->attach($validated['user_id'], [
+                'start_date' => $validated['start_date'],
+            ]);
         }
 
         return response()->json([
@@ -55,7 +58,6 @@ class TimesheetProjectMemberController extends Controller
         ], 200);
     }
 
-    
     public function destroy($timesheetProjectId, $userId)
     {
         $project = TimesheetProject::find($timesheetProjectId);

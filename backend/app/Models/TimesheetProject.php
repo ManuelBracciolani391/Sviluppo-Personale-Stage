@@ -32,7 +32,13 @@ class TimesheetProject extends Model
 
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'timesheet_project_user', 'timesheet_project_id', 'user_id')
-                    ->withTimestamps();
+        return $this->belongsToMany(
+            User::class,
+            'timesheet_project_user',
+            'timesheet_project_id',
+            'user_id'
+        )
+        ->withPivot('start_date')
+        ->withTimestamps();
     }
 }
