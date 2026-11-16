@@ -8,21 +8,72 @@
     <!-- BARRA HEADER KPI -->
     <div class="kpi-header" *ngIf="kpi">
       <div class="kpi-card">
-        <span class="label">Risorse allocate</span>
+        <div
+          class="kpi-label-row"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 5px;
+          "
+        >
+          <span class="label" style="margin-bottom: 0">Risorse allocate</span>
+          <img
+            src="img/icone/risorse_allocate.png"
+            alt="Risorse allocate"
+            style="width: 28px; height: 28px; object-fit: contain; flex-shrink: 0"
+          />
+        </div>
         <div class="kpi-value-row">
           <span class="val font-dark">{{ kpi.allocated_resources }}</span>
         </div>
       </div>
 
       <div class="kpi-card">
-        <span class="label">Risorse non allocate</span>
+        <div
+          class="kpi-label-row"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 5px;
+          "
+        >
+          <span class="label" style="margin-bottom: 0">Risorse non allocate</span>
+          <img
+            src="img/icone/risorse_non_allocate.png"
+            alt="Risorse non allocate"
+            style="width: 28px; height: 28px; object-fit: contain; flex-shrink: 0"
+          />
+        </div>
         <div class="kpi-value-row">
           <span class="val font-dark">{{ kpi.unallocated_resources }}</span>
         </div>
       </div>
 
       <div class="kpi-card">
-        <span class="label">Difficoltà allocazione</span>
+        <div
+          class="kpi-label-row"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 5px;
+          "
+        >
+          <span class="label" style="margin-bottom: 0">Difficoltà allocazione</span>
+          <img
+            src="img/icone/difficolta_allocazione.png"
+            alt="Difficoltà allocazione"
+            style="width: 28px; height: 28px; object-fit: contain; flex-shrink: 0"
+          />
+        </div>
         <div class="kpi-value-row">
           <span class="val text-kpi-yellow">{{ kpi.difficulty_allocations }}</span>
           <span class="sub-muted">segnalate</span>
@@ -30,7 +81,24 @@
       </div>
 
       <div class="kpi-card">
-        <span class="label">Sovraccarico</span>
+        <div
+          class="kpi-label-row"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 5px;
+          "
+        >
+          <span class="label" style="margin-bottom: 0">Sovraccarico</span>
+          <img
+            src="img/icone/sovraccarico.png"
+            alt="Sovraccarico"
+            style="width: 28px; height: 28px; object-fit: contain; flex-shrink: 0"
+          />
+        </div>
         <div class="kpi-value-row">
           <span class="val text-kpi-orange">{{ kpi.overloaded_resources }}</span>
           <span class="sub-muted">risorse</span>
@@ -44,7 +112,24 @@
         style="cursor: pointer"
         title="Clicca per scegliere il progetto e gestire le necessità"
       >
-        <span class="label">Necessità aperte</span>
+        <div
+          class="kpi-label-row"
+          style="
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+            margin-bottom: 5px;
+          "
+        >
+          <span class="label" style="margin-bottom: 0">Necessità aperte</span>
+          <img
+            src="img/icone/necessita_aperte.png"
+            alt="Necessità aperte"
+            style="width: 28px; height: 28px; object-fit: contain; flex-shrink: 0"
+          />
+        </div>
         <div class="kpi-value-row">
           <span class="val text-kpi-red">{{ kpi.open_needs }}</span>
           <span class="sub-muted">ruoli da coprire</span>
@@ -162,6 +247,20 @@
           <option value="manutenzione">Manutenzione</option>
           <option value="sospeso">Sospeso</option>
           <option value="concluso">Concluso</option>
+        </select>
+      </div>
+
+      <!-- FILTRO RUOLO TIMESHEET -->
+      <div class="filter-field-group filter-dropdown-group" *ngIf="activeTab === 'timesheet'">
+        <label>Ruolo</label>
+        <select
+          [ngModel]="selectedTimesheetRole"
+          (ngModelChange)="onTimesheetRoleFilterChange($event)"
+        >
+          <option value="">Tutti i ruoli</option>
+          <option *ngFor="let role of timesheetRoleOptions" [value]="role">
+            {{ role }}
+          </option>
         </select>
       </div>
     </div>
@@ -328,7 +427,7 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let tu of timesheetUsers">
+          <tr *ngFor="let tu of filteredTimesheetUsers">
             <td class="sticky-col user-cell">
               <img [src]="tu.filestorage?.url || 'img/icone/default-avatar.png'" class="avatar" />
 
@@ -354,6 +453,12 @@
 
             <td class="tot-col text-center font-bold">
               {{ tu.timesheet_projects?.length || 0 }}
+            </td>
+          </tr>
+
+          <tr *ngIf="filteredTimesheetUsers.length === 0">
+            <td class="empty-needs" [attr.colspan]="timesheetProjects.length + 2">
+              Nessuna risorsa trovata con i filtri selezionati.
             </td>
           </tr>
         </tbody>
@@ -383,7 +488,7 @@
 
             <div>
               <h3>{{ selectedTimesheetProjectForModal.name }}</h3>
-              <span class="collab-sub-text"> Aggiungi una risorsa al Timesheet </span>
+              <span class="collab-sub-text">Aggiungi una risorsa al Timesheet</span>
             </div>
           </div>
         </div>
@@ -435,7 +540,7 @@
                 {{ selectedTimesheetUserDetail.first_name }}
                 {{ selectedTimesheetUserDetail.last_name }}
               </h3>
-              <span class="collab-sub-text"> Dettaglio associazione Timesheet </span>
+              <span class="collab-sub-text">Dettaglio associazione Timesheet</span>
             </div>
           </div>
         </div>
@@ -592,7 +697,8 @@
 
     <!-- 5. MODALE MODIFICA / ELIMINAZIONE ALLOCAZIONE -->
     <div class="modal-backdrop" *ngIf="showEditModal">
-      <div class="modal-content">
+      <div class="modal-content allocation-edit-modal">
+        <!-- SCHERMATA 1: DETTAGLIO ALLOCAZIONE -->
         <ng-container *ngIf="editModeView === 'details'">
           <div class="modal-header-actions">
             <div class="modal-user-header" *ngIf="selectedUserForModal && selectedProjectForModal">
@@ -608,13 +714,11 @@
 
                 <div class="collab-sub-text">
                   Collocata su:
-
                   <img
                     [src]="getProjectLogo(selectedProjectForModal)"
                     (error)="$event.target.src = 'img/icone/lampadina-progetto.png'"
                     class="avatar-xxs"
                   />
-
                   <b>{{ selectedProjectForModal.alias }}</b>
                 </div>
               </div>
@@ -622,8 +726,8 @@
 
             <button
               class="btn-icon-trash"
-              (click)="editModeView = 'confirm_delete'"
-              title="Elimina o concludi"
+              (click)="openTerminationChoice()"
+              title="Elimina o concludi collaborazione"
               [disabled]="isSavingAllocation"
             >
               🗑️
@@ -632,12 +736,17 @@
 
           <div class="form-group mt-3">
             <label>Data di inizio *</label>
-            <input type="date" [(ngModel)]="formStartDate" class="form-control" />
+            <input
+              type="date"
+              [(ngModel)]="formStartDate"
+              class="form-control"
+              [disabled]="isSavingAllocation"
+            />
           </div>
 
           <div class="form-group">
             <label>Ruolo *</label>
-            <select [(ngModel)]="formRoleId" class="form-control">
+            <select [(ngModel)]="formRoleId" class="form-control" [disabled]="isSavingAllocation">
               <option [ngValue]="null" disabled>Seleziona un ruolo</option>
               <option *ngFor="let role of assignmentRoles" [ngValue]="role.id">
                 {{ role.alias }}
@@ -654,13 +763,14 @@
               step="1"
               [(ngModel)]="formWorkAllocation"
               class="form-control"
+              [disabled]="isSavingAllocation"
             />
           </div>
 
           <div class="modal-actions">
             <button
               class="btn-outline modal-btn-wide"
-              (click)="showEditModal = false"
+              (click)="closeEditModal()"
               [disabled]="isSavingAllocation"
             >
               Annulla
@@ -676,7 +786,8 @@
           </div>
         </ng-container>
 
-        <ng-container *ngIf="editModeView === 'confirm_delete'">
+        <!-- SCHERMATA 2: SCELTA OPERAZIONE -->
+        <ng-container *ngIf="editModeView === 'action_choice'">
           <div class="modal-top-nav">
             <div class="modal-user-header">
               <img
@@ -706,40 +817,175 @@
             </button>
           </div>
 
-          <div class="radio-group-box">
-            <label class="radio-option">
-              <input type="radio" name="actionType" value="delete" [(ngModel)]="modalActionType" />
-              <span>Elimina collaboratore</span>
-            </label>
+          <h4 class="termination-title">Gestione collaborazione</h4>
 
-            <label class="radio-option">
+          <p class="termination-description">Seleziona l'operazione che desideri effettuare.</p>
+
+          <div class="termination-options">
+            <label class="termination-option" [class.selected]="modalActionType === 'delete'">
               <input
                 type="radio"
                 name="actionType"
-                value="conclude"
+                [value]="'delete'"
                 [(ngModel)]="modalActionType"
               />
-              <span>Concludi collaborazione</span>
+
+              <span class="termination-option-content">
+                <strong>Elimina collaboratore</strong>
+                <small>Rimuovi la risorsa dal progetto.</small>
+              </span>
             </label>
-          </div>
 
-          <div class="warning-alert-box" *ngIf="modalActionType === 'conclude'">
-            <span class="warn-icon">⚠️</span>
-            <span>
-              L'utente concluderà la sua collaborazione, i dati relativi alla sua partecipazione nel
-              team verranno salvati.
-            </span>
-          </div>
+            <label class="termination-option" [class.selected]="modalActionType === 'conclude'">
+              <input
+                type="radio"
+                name="actionType"
+                [value]="'conclude'"
+                [(ngModel)]="modalActionType"
+              />
 
-          <div class="form-group mt-3" *ngIf="modalActionType === 'conclude'">
-            <label>Data fine collaborazione *</label>
-            <input type="date" [(ngModel)]="formEndWorkDate" class="form-control" />
+              <span class="termination-option-content">
+                <strong>Concludi collaborazione</strong>
+                <small>Registra la conclusione della collaborazione.</small>
+              </span>
+            </label>
           </div>
 
           <div class="modal-actions">
             <button
               class="btn-outline modal-btn-wide"
-              (click)="showEditModal = false"
+              (click)="closeEditModal()"
+              [disabled]="isSavingAllocation"
+            >
+              Annulla
+            </button>
+
+            <button
+              class="btn-primary modal-btn-wide"
+              (click)="goToTerminationConfirmation()"
+              [disabled]="isSavingAllocation || !modalActionType"
+            >
+              Continua
+            </button>
+          </div>
+        </ng-container>
+
+        <!-- SCHERMATA 3: CONFERMA ELIMINAZIONE -->
+        <ng-container *ngIf="editModeView === 'confirm_delete'">
+          <div class="modal-top-nav">
+            <div class="modal-user-header">
+              <img
+                [src]="selectedUserForModal?.filestorage?.url || 'img/icone/default-avatar.png'"
+                class="avatar-sm"
+              />
+
+              <div>
+                <span class="modal-title-user">
+                  {{ selectedUserForModal?.first_name }}
+                  {{ selectedUserForModal?.last_name }}
+                </span>
+
+                <div class="collab-sub-text">
+                  Collocata su:
+                  <b>{{ selectedProjectForModal?.alias }}</b>
+                </div>
+              </div>
+            </div>
+
+            <button
+              class="btn-link-back"
+              (click)="editModeView = 'action_choice'"
+              [disabled]="isSavingAllocation"
+            >
+              &larr; Indietro
+            </button>
+          </div>
+
+          <h4 class="termination-title">Elimina collaboratore</h4>
+
+          <div class="termination-warning">
+            <span class="warn-icon">!</span>
+            <span>
+              Stai per eliminare il collaboratore dal progetto. L'associazione verrà rimossa. Vuoi
+              procedere?
+            </span>
+          </div>
+
+          <div class="modal-actions">
+            <button
+              class="btn-outline modal-btn-wide"
+              (click)="closeEditModal()"
+              [disabled]="isSavingAllocation"
+            >
+              Annulla
+            </button>
+
+            <button
+              class="btn-danger-primary modal-btn-wide"
+              (click)="confirmTerminateAllocation()"
+              [disabled]="isSavingAllocation"
+            >
+              {{ isSavingAllocation ? 'Eliminazione...' : 'Conferma' }}
+            </button>
+          </div>
+        </ng-container>
+
+        <!-- SCHERMATA 4: CONFERMA CONCLUSIONE -->
+        <ng-container *ngIf="editModeView === 'confirm_conclude'">
+          <div class="modal-top-nav">
+            <div class="modal-user-header">
+              <img
+                [src]="selectedUserForModal?.filestorage?.url || 'img/icone/default-avatar.png'"
+                class="avatar-sm"
+              />
+
+              <div>
+                <span class="modal-title-user">
+                  {{ selectedUserForModal?.first_name }}
+                  {{ selectedUserForModal?.last_name }}
+                </span>
+
+                <div class="collab-sub-text">
+                  Collocata su:
+                  <b>{{ selectedProjectForModal?.alias }}</b>
+                </div>
+              </div>
+            </div>
+
+            <button
+              class="btn-link-back"
+              (click)="editModeView = 'action_choice'"
+              [disabled]="isSavingAllocation"
+            >
+              &larr; Indietro
+            </button>
+          </div>
+
+          <h4 class="termination-title">Concludi collaborazione</h4>
+
+          <div class="termination-warning">
+            <span class="warn-icon">!</span>
+            <span>
+              L'utente concluderà la sua collaborazione. I dati relativi alla sua partecipazione nel
+              team verranno salvati.
+            </span>
+          </div>
+
+          <div class="form-group mt-3">
+            <label>Data fine collaborazione *</label>
+            <input
+              type="date"
+              [(ngModel)]="formEndWorkDate"
+              class="form-control"
+              [min]="formStartDate"
+              [disabled]="isSavingAllocation"
+            />
+          </div>
+
+          <div class="modal-actions">
+            <button
+              class="btn-outline modal-btn-wide"
+              (click)="closeEditModal()"
               [disabled]="isSavingAllocation"
             >
               Annulla
@@ -748,7 +994,7 @@
             <button
               class="btn-primary modal-btn-wide"
               (click)="confirmTerminateAllocation()"
-              [disabled]="isSavingAllocation"
+              [disabled]="isSavingAllocation || !formEndWorkDate"
             >
               {{ isSavingAllocation ? 'Salvataggio...' : 'Conferma' }}
             </button>

@@ -1,15 +1,32 @@
+/* =========================================================
+   FONT
+========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;500;600;700&display=swap');
+
+/* =========================================================
+   CONTENITORE PRINCIPALE
+========================================================= */
+
 .allocazioni-container {
   padding: 20px;
   background: #f8f9fa;
   min-height: 100vh;
-  font-family: inherit;
+  font-family: 'Lato', sans-serif;
+  color: #252b35;
 }
+
+/* =========================================================
+   KPI
+========================================================= */
+
 .kpi-header {
   display: flex;
   gap: 15px;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
+
 .kpi-card {
   background: #fff;
   border-radius: 8px;
@@ -21,41 +38,76 @@
   flex-direction: column;
   justify-content: center;
 }
+
+.kpi-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.kpi-label-row .label {
+  margin-bottom: 0;
+}
+
+.kpi-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  margin-bottom: 0;
+  flex-shrink: 0;
+}
+
 .kpi-card .label {
   font-size: 13px;
   color: #6c757d;
   margin-bottom: 5px;
 }
+
 .kpi-value-row {
   display: flex;
   align-items: baseline;
   gap: 8px;
 }
+
 .kpi-card .val {
   font-size: 22px;
   font-weight: bold;
 }
+
 .font-dark {
   color: #212529;
 }
+
 .text-kpi-yellow {
   color: #ffc107;
 }
+
 .text-kpi-orange {
   color: #fd7e14;
 }
+
 .text-kpi-red {
   color: #dc3545;
 }
+
 .sub-muted {
   font-size: 12px;
   color: #6c757d;
 }
+
 .kpi-desc-sub {
   font-size: 11px;
   color: #adb5bd;
   margin-top: 2px;
 }
+
+/* =========================================================
+   LEGENDA
+========================================================= */
+
 .legend-panel {
   background: #fff;
   border-radius: 8px;
@@ -63,6 +115,7 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   overflow: hidden;
 }
+
 .legend-header {
   padding: 12px 20px;
   display: flex;
@@ -71,17 +124,21 @@
   cursor: pointer;
   background: #fff;
 }
+
 .legend-title {
   font-weight: bold;
   color: #333;
 }
+
 .legend-arrow {
   font-size: 12px;
   transition: transform 0.2s;
 }
+
 .legend-arrow.collapsed {
   transform: rotate(180deg);
 }
+
 .legend-body-vertical {
   padding: 15px 20px;
   border-top: 1px solid #dee2e6;
@@ -89,23 +146,27 @@
   flex-direction: column;
   gap: 12px;
 }
+
 .legend-section {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
+
 .legend-section-title {
   font-size: 12px;
   font-weight: bold;
   color: #6c757d;
   text-transform: uppercase;
 }
+
 .legend-items-row {
   display: flex;
   gap: 18px;
   flex-wrap: wrap;
   align-items: center;
 }
+
 .legend-item {
   display: flex;
   align-items: center;
@@ -113,6 +174,7 @@
   font-size: 13px;
   color: #495057;
 }
+
 .box-diff-sample {
   width: 14px;
   height: 14px;
@@ -120,31 +182,43 @@
   background: #fff3cd;
   border-radius: 3px;
 }
+
 .dot-sample {
   width: 10px;
   height: 10px;
   border-radius: 50%;
 }
+
 .dot-green {
   background: #38a169;
 }
+
 .dot-orange {
   background: #fd7e14;
 }
+
 .dot-pink {
   background: #e83e8c;
 }
+
 .dot-blue {
   background: #007bff;
 }
+
+/* =========================================================
+   TAB
+========================================================= */
+
 .tabs-header-wrapper {
   margin-bottom: 15px;
   border-bottom: 2px solid #dee2e6;
 }
+
 .tabs-bar {
   display: flex;
   gap: 20px;
 }
+
 .tab-btn {
   background: none;
   border: 0;
@@ -154,11 +228,14 @@
   color: #6c757d;
   cursor: pointer;
   position: relative;
+  font-family: inherit;
 }
+
 .tab-btn.active {
   color: #2b4c7e;
   font-weight: bold;
 }
+
 .tab-btn.active:after {
   content: '';
   position: absolute;
@@ -168,40 +245,52 @@
   height: 3px;
   background: #2b4c7e;
 }
+
+/* =========================================================
+   FILTRI
+========================================================= */
+
 .filter-bar-vertical {
   display: flex;
   gap: 15px;
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
+
 .filter-field-group {
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
+
 .filter-field-group label {
   font-size: 12px;
   font-weight: bold;
   color: #495057;
 }
+
 .search-group-wide {
   flex: 2;
   min-width: 250px;
 }
+
 .filter-dropdown-group {
   flex: 1;
   min-width: 180px;
 }
+
 .search-input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
+
 .search-icon-lens {
   position: absolute;
   left: 10px;
   font-size: 14px;
 }
+
 .search-input-wrapper input,
 .filter-field-group select,
 .form-control {
@@ -211,11 +300,18 @@
   border-radius: 6px;
   background: #fff;
   font-size: 14px;
+  font-family: inherit;
 }
+
 .filter-field-group select,
 .form-control {
   padding-left: 12px;
 }
+
+/* =========================================================
+   TABELLA ALLOCAZIONI
+========================================================= */
+
 .table-responsive {
   background: #fff;
   border-radius: 8px;
@@ -223,11 +319,13 @@
   overflow-x: auto;
   overflow-y: visible;
 }
+
 .allocation-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
+
 .allocation-table th,
 .allocation-table td {
   padding: 12px 14px;
@@ -236,14 +334,17 @@
   vertical-align: middle;
   height: 52px;
 }
+
 .sticky-col {
   background: #fff;
   width: 260px;
   min-width: 260px;
 }
+
 tr:hover td {
   background: #f8f9fa;
 }
+
 .blue-header-cell {
   background: #2b4c7e !important;
   color: #fff !important;
@@ -251,33 +352,44 @@ tr:hover td {
   text-align: center;
   overflow: visible !important;
 }
+
 .project-header {
   text-align: center;
   cursor: pointer;
   min-width: 90px;
   overflow: visible !important;
 }
+
 .project-header.highlighted-column {
   background: #3b629b !important;
 }
+
 .matrix-cell {
   text-align: center;
   cursor: pointer;
 }
+
 .matrix-cell.highlighted-column {
   background: #edf2f7;
 }
+
 .tot-col {
   width: 75px;
   text-align: center;
   font-weight: bold;
 }
+
+/* =========================================================
+   LOGHI PROGETTO E BADGE
+========================================================= */
+
 .proj-logo-container {
   position: relative;
   display: inline-block;
   margin: 0 auto;
   overflow: visible;
 }
+
 .proj-logo {
   width: 36px;
   height: 36px;
@@ -290,44 +402,57 @@ tr:hover td {
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
 .proj-logo img {
   width: 20px;
   height: 20px;
   object-fit: contain;
 }
+
 .proj-logo.status-in_corso {
   border-color: #38a169;
 }
+
 .proj-logo.status-manutenzione {
   border-color: #fd7e14;
 }
+
 .proj-logo.status-sospeso {
   border-color: #e83e8c;
 }
+
 .proj-logo.status-concluso {
   border-color: #17a2b8;
 }
+
 .proj-logo.selected {
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
 }
+
 .proj-count-badge {
   position: absolute;
   top: -6px;
   right: -8px;
-  background: #17a2b8;
-  color: #fff;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  color: #000;
   font-size: 11px;
   font-weight: bold;
-  padding: 1px 6px;
-  border-radius: 10px;
-  border: 2px solid #2b4c7e;
+  padding: 0;
+  border-radius: 50%;
+  border: 2px solid #808080;
   z-index: 5;
+  box-sizing: border-box;
 }
 
-/* BADGE DIFFICOLTÀ PROGETTO */
 .proj-difficulty-badge {
   position: absolute;
-  bottom: -6px;
+  top: -6px;
+  bottom: auto;
   left: -8px;
   width: 19px;
   height: 19px;
@@ -344,14 +469,20 @@ tr:hover td {
   z-index: 5;
 }
 
+/* =========================================================
+   NECESSITÀ
+========================================================= */
+
 .needs-header-row td {
   background: #fff5f5;
 }
+
 .needs-title-cell {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .badge-needs-label {
   background: #fff0f0;
   color: #e53e3e;
@@ -361,10 +492,12 @@ tr:hover td {
   border-radius: 4px;
   border: 1px solid #feb2b2;
 }
+
 .needs-count-cell {
   text-align: center;
   cursor: pointer;
 }
+
 .need-bubble {
   background: #fff5f5;
   border: 1px solid #feb2b2;
@@ -379,12 +512,18 @@ tr:hover td {
   font-size: 12px;
   font-weight: bold;
 }
+
+/* =========================================================
+   UTENTI
+========================================================= */
+
 .user-cell {
   display: flex;
   align-items: center;
   gap: 10px;
   cursor: pointer;
 }
+
 .avatar,
 .avatar-sm,
 .avatar-xs,
@@ -393,33 +532,40 @@ tr:hover td {
   border-radius: 50%;
   object-fit: cover;
 }
+
 .avatar {
   width: 30px;
   height: 30px;
   flex-shrink: 0;
 }
+
 .avatar-sm {
   width: 32px;
   height: 32px;
 }
+
 .avatar-xs {
   width: 20px;
   height: 20px;
 }
+
 .avatar-xxs {
   width: 16px;
   height: 16px;
 }
+
 .avatar-lg {
   width: 48px;
   height: 48px;
 }
+
 .user-name {
   font-weight: 500;
   color: #212529;
   font-size: 13px;
   white-space: nowrap;
 }
+
 .badge-unallocated-pill {
   background: #ffe3e3;
   color: #c92a2a;
@@ -429,10 +575,16 @@ tr:hover td {
   margin-left: auto;
   flex-shrink: 0;
 }
+
 .cell-empty-plus {
   color: #adb5bd;
   font-size: 16px;
 }
+
+/* =========================================================
+   BADGE RUOLI
+========================================================= */
+
 .badge-pill,
 .role-badge {
   display: inline-flex;
@@ -447,51 +599,65 @@ tr:hover td {
   border-width: 1px;
   border-style: solid;
 }
+
 .role-badge.difficult {
   border: 2px solid #ffc107 !important;
   box-shadow: 0 0 0 1px rgba(255, 193, 7, 0.4);
 }
+
 .diff-toggle-star {
   font-size: 10px;
   cursor: pointer;
   color: #ffc107;
   margin-left: 2px;
 }
+
 .bg-frontend {
   background: #f0f7ff;
   color: #2b6cb0;
   border-color: #bee3f8;
 }
+
 .bg-backend {
   background: #f0fff4;
   color: #2f855a;
   border-color: #c6f6d5;
 }
+
 .bg-fullstack {
   background: #fffff0;
   color: #b7791f;
   border-color: #feebc8;
 }
+
 .bg-designer {
   background: #faf5ff;
   color: #6b46c1;
   border-color: #e9d8fd;
 }
+
 .bg-teamleader {
   background: #e6fffa;
   color: #2c7a7b;
   border-color: #b2f5ea;
 }
+
 .bg-pm {
   background: #fffaf0;
   color: #c05621;
   border-color: #feebc8;
 }
+
 .bg-sm {
   background: #ebf8ff;
   color: #2b6cb0;
   border-color: #bee3f8;
 }
+
+/* =========================================================
+   TIMESHEET
+========================================================= */
+
 .timesheet-check-box-blue {
   width: 24px;
   height: 24px;
@@ -502,48 +668,64 @@ tr:hover td {
   justify-content: center;
   margin: 0 auto;
 }
+
 .check-icon-white {
   color: #fff;
   font-weight: bold;
   font-size: 14px;
 }
+
+/* =========================================================
+   MODALI GENERICHE
+========================================================= */
+
 .modal-backdrop {
   position: fixed;
   inset: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(35, 48, 66, 0.28);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 15px;
+  box-sizing: border-box;
 }
+
 .modal-content {
   background: #fff;
   padding: 30px;
-  border-radius: 12px;
+  border-radius: 8px;
   width: 440px;
-  max-width: 90%;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  max-width: 100%;
+  box-shadow: 0 4px 14px rgba(25, 50, 80, 0.16);
+  box-sizing: border-box;
+  font-family: 'Lato', sans-serif;
 }
+
 .modal-content-wide {
   width: 480px;
 }
+
 .modal-user-header {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 15px;
 }
+
 .modal-title-user {
-  font-weight: bold;
+  font-weight: 600;
   font-size: 15px;
-  color: #212529;
+  color: #252b35;
 }
+
 .modal-arrow {
   color: #6c757d;
   font-weight: bold;
 }
+
 .modal-proj-mini-badge {
   display: flex;
   align-items: center;
@@ -554,17 +736,20 @@ tr:hover td {
   font-size: 13px;
   font-weight: 500;
 }
+
 .modal-header-actions {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
 }
+
 .modal-top-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
 }
+
 .collab-sub-text {
   font-size: 12px;
   color: #6c757d;
@@ -573,21 +758,30 @@ tr:hover td {
   gap: 4px;
   margin-top: 2px;
 }
+
 .btn-icon-trash {
   background: none;
   border: 0;
   cursor: pointer;
   font-size: 16px;
   padding: 4px;
+  font-family: inherit;
 }
+
 .btn-link-back {
   background: none;
   border: 0;
-  color: #0056b3;
+  color: #20477f;
   font-size: 13px;
   cursor: pointer;
   font-weight: 500;
+  font-family: inherit;
 }
+
+/* =========================================================
+   RADIO E AVVISI GENERICI
+========================================================= */
+
 .radio-group-box {
   background: #fff0f0;
   border: 1px solid #ffc9c9;
@@ -597,6 +791,7 @@ tr:hover td {
   gap: 20px;
   margin: 15px 0;
 }
+
 .radio-option {
   display: flex;
   align-items: center;
@@ -605,6 +800,7 @@ tr:hover td {
   font-weight: 500;
   cursor: pointer;
 }
+
 .warning-alert-box {
   display: flex;
   align-items: flex-start;
@@ -614,20 +810,28 @@ tr:hover td {
   margin-bottom: 15px;
   line-height: 1.4;
 }
+
 .warn-icon {
   font-size: 14px;
 }
+
+/* =========================================================
+   DETTAGLIO UTENTE
+========================================================= */
+
 .modal-user-detail-header {
   display: flex;
   align-items: center;
   gap: 15px;
   margin-bottom: 20px;
 }
+
 .modal-user-subtitle {
   font-size: 13px;
   color: #6c757d;
   margin-top: 2px;
 }
+
 .project-list-detail {
   display: flex;
   flex-direction: column;
@@ -635,6 +839,7 @@ tr:hover td {
   max-height: 220px;
   overflow-y: auto;
 }
+
 .project-item-row {
   display: flex;
   justify-content: space-between;
@@ -643,6 +848,7 @@ tr:hover td {
   background: #f8f9fa;
   border-radius: 6px;
 }
+
 .proj-info-left {
   display: flex;
   align-items: center;
@@ -650,17 +856,21 @@ tr:hover td {
   font-size: 13px;
   font-weight: 500;
 }
+
 .dot-status {
   width: 8px;
   height: 8px;
   border-radius: 50%;
 }
+
 .dot-status.green {
   background: #38a169;
 }
+
 .dot-status.orange {
   background: #fd7e14;
 }
+
 .overload-warning-footer {
   margin-top: 15px;
   background: #fff3cd;
@@ -671,27 +881,36 @@ tr:hover td {
   font-weight: bold;
   text-align: center;
 }
+
+/* =========================================================
+   MODALE NECESSITÀ
+========================================================= */
+
 .modal-header-needs {
   margin-bottom: 15px;
   border-bottom: 1px solid #dee2e6;
   padding-bottom: 10px;
 }
+
 .proj-title-row {
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
 .badge-status-green-pill {
   font-size: 11px;
   color: #38a169;
   font-weight: 500;
 }
+
 .needs-section-title {
   font-size: 14px;
   font-weight: bold;
   color: #212529;
   margin-bottom: 10px;
 }
+
 .needs-items-list {
   display: flex;
   flex-direction: column;
@@ -699,6 +918,7 @@ tr:hover td {
   max-height: 180px;
   overflow-y: auto;
 }
+
 .need-item-row {
   display: flex;
   justify-content: space-between;
@@ -707,6 +927,7 @@ tr:hover td {
   background: #f8f9fa;
   border-radius: 6px;
 }
+
 .need-role-display {
   display: flex;
   align-items: center;
@@ -714,12 +935,14 @@ tr:hover td {
   font-size: 13px;
   font-weight: 500;
 }
+
 .btn-delete-icon {
   background: none;
   border: 0;
   cursor: pointer;
   font-size: 14px;
 }
+
 .btn-danger-sm {
   background: #dc3545;
   color: #fff;
@@ -728,7 +951,9 @@ tr:hover td {
   border-radius: 4px;
   font-size: 12px;
   cursor: pointer;
+  font-family: inherit;
 }
+
 .btn-outline-sm {
   background: #fff;
   border: 1px solid #ced4da;
@@ -737,7 +962,9 @@ tr:hover td {
   border-radius: 4px;
   font-size: 12px;
   cursor: pointer;
+  font-family: inherit;
 }
+
 .btn-add-need-dashed {
   width: 100%;
   background: none;
@@ -749,45 +976,750 @@ tr:hover td {
   cursor: pointer;
   text-align: center;
   font-size: 13px;
+  font-family: inherit;
 }
+
 .empty-needs {
   font-size: 13px;
   color: #6c757d;
   text-align: center;
   padding: 10px;
 }
+
+/* =========================================================
+   PULSANTI MODALI GENERICHE
+========================================================= */
+
 .modal-actions {
   display: flex;
   justify-content: space-between;
   gap: 15px;
   margin-top: 25px;
 }
+
 .modal-actions-center {
   justify-content: center;
 }
+
 .modal-btn-wide {
   flex: 1;
   padding: 11px 20px;
   font-size: 14px;
   font-weight: bold;
-  border-radius: 8px;
+  border-radius: 6px;
   text-align: center;
+  font-family: inherit;
 }
+
 .btn-primary {
-  background: #2b4c7e;
+  background: #20477f;
   color: #fff;
-  border: 0;
+  border: 1px solid #20477f;
   cursor: pointer;
 }
+
 .btn-outline {
   background: #fff;
-  border: 1px solid #ced4da;
-  color: #495057;
+  border: 1px solid #20477f;
+  color: #20477f;
   cursor: pointer;
 }
+
 .btn-full-width {
   width: 100%;
   padding: 11px;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: bold;
+  font-family: inherit;
+}
+
+/* =========================================================
+   MODALI ALLOCAZIONE
+   RIFERIMENTO FIGMA - STEP 1, 2, 3 E 4
+========================================================= */
+
+.allocation-edit-modal {
+  width: 372px;
+  max-width: calc(100vw - 30px);
+  padding: 15px;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(35, 65, 105, 0.18);
+  box-sizing: border-box;
+  font-family: 'Lato', sans-serif;
+  color: #252b35;
+}
+
+/* Intestazione */
+
+.allocation-edit-modal .modal-top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 14px;
+  min-height: 38px;
+}
+
+.allocation-edit-modal .modal-user-header {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  margin: 0;
+}
+
+.allocation-edit-modal .avatar,
+.allocation-edit-modal .avatar-sm,
+.allocation-edit-modal .avatar-lg {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  flex-shrink: 0;
+  border: 1px solid #edf0f4;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.allocation-edit-modal .modal-title-user {
+  color: #252b35;
+  font-size: 14px;
+  line-height: 1.25;
+  font-weight: 600;
+  margin: 0;
+}
+
+.allocation-edit-modal .collab-sub-text {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 3px;
+  color: #6c7482;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.allocation-edit-modal .modal-proj-mini-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #252b35;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+/* Cestino */
+
+.allocation-edit-modal .btn-icon-trash {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  flex-shrink: 0;
+  padding: 3px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #d7193f;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.allocation-edit-modal .btn-icon-trash:hover {
+  background: #fff0f2;
+}
+
+/* Pulsante indietro */
+
+.allocation-edit-modal .btn-link-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  color: #20477f;
+  font-size: 11px;
+  line-height: 1.3;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.allocation-edit-modal .btn-link-back:hover {
+  color: #16345d;
+}
+
+/* Campi dello step 1 */
+
+.allocation-edit-modal .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 11px 0;
+}
+
+.allocation-edit-modal .form-group label {
+  color: #252b35;
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.allocation-edit-modal .form-control {
+  display: block;
+  width: 100%;
+  min-height: 30px;
+  box-sizing: border-box;
+  padding: 6px 9px;
+  border: 1px solid #d9dee7;
+  border-radius: 6px;
+  background: #fff;
+  color: #343a40;
+  font-size: 11px;
+  line-height: 1.3;
+  font-family: 'Lato', sans-serif;
+}
+
+.allocation-edit-modal .form-control:focus {
+  outline: none;
+  border-color: #20477f;
+  box-shadow: 0 0 0 2px rgba(32, 71, 127, 0.1);
+}
+
+.allocation-edit-modal select.form-control {
+  cursor: pointer;
+}
+
+/* Titoli e descrizioni degli step */
+
+.allocation-edit-modal .termination-title {
+  margin: 7px 0 5px;
+  color: #252b35;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.allocation-edit-modal .termination-description {
+  margin: 0 0 12px;
+  color: #6c7482;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Fascia rosa delle opzioni */
+
+.allocation-edit-modal .termination-options {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+  gap: 18px;
+  width: 100%;
+  min-height: 36px;
+  box-sizing: border-box;
+  padding: 8px 11px;
+  margin: 0 0 14px;
+  background: #fce8ed;
+  border: 0;
+  border-radius: 6px;
+}
+
+/* Singole opzioni */
+
+.allocation-edit-modal .termination-option {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 0;
+  min-height: 20px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  cursor: pointer;
+  transition: none;
+}
+
+.allocation-edit-modal .termination-option:hover,
+.allocation-edit-modal .termination-option.selected {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Radio */
+
+.allocation-edit-modal .termination-option input {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  min-width: 13px;
+  margin: 0;
+  accent-color: #20477f;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* Testi delle opzioni */
+
+.allocation-edit-modal .termination-option-content {
+  display: block;
+  min-width: 0;
+}
+
+.allocation-edit-modal .termination-option-content strong {
+  display: inline;
+  color: #252b35;
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.allocation-edit-modal .termination-option-content small {
+  display: none;
+}
+
+/* Avviso eliminazione / conclusione */
+
+.allocation-edit-modal .termination-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 0 0 13px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #c81035;
+  font-size: 11px;
+  line-height: 1.35;
+  font-weight: 400;
+}
+
+.allocation-edit-modal .termination-warning .warn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+  margin-top: 1px;
+  color: #fff;
+  background: #c81035;
+  border-radius: 50%;
+  font-size: 10px;
+  line-height: 14px;
+}
+
+/* Campo data nello step 4 */
+
+.allocation-edit-modal .form-group input[type='date'] {
+  min-height: 30px;
+  font-size: 11px;
+}
+
+.allocation-edit-modal .form-group input[type='date']::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.75;
+}
+
+/* Pulsanti degli step */
+
+.allocation-edit-modal .modal-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 0;
+  width: 100%;
+}
+
+.allocation-edit-modal .modal-btn-wide {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 30px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: 'Lato', sans-serif;
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+/* Annulla */
+
+.allocation-edit-modal .btn-outline {
+  border: 1px solid #20477f;
+  background: #fff;
+  color: #20477f;
+}
+
+.allocation-edit-modal .btn-outline:hover {
+  background: #f3f6fb;
+}
+
+/* Conferma */
+
+.allocation-edit-modal .btn-primary {
+  border: 1px solid #20477f;
+  background: #20477f;
+  color: #fff;
+}
+
+.allocation-edit-modal .btn-primary:hover {
+  border-color: #183963;
+  background: #183963;
+}
+
+/* Conferma eliminazione */
+
+.allocation-edit-modal .btn-danger-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 30px;
+  padding: 6px 12px;
+  border: 1px solid #20477f;
+  border-radius: 6px;
+  background: #20477f;
+  color: #fff;
+  font-family: 'Lato', sans-serif;
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.allocation-edit-modal .btn-danger-primary:hover {
+  border-color: #183963;
+  background: #183963;
+}
+
+.allocation-edit-modal button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   BADGE RUOLO NEL DETTAGLIO UTENTE
+========================================================= */
+
+.badge-role {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 5px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: bold;
+  border: 1px solid;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2000;
+  padding: 12px 18px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-family: 'Lato', sans-serif;
+}
+
+.toast-notification.success {
+  background: #28a745;
+}
+
+.toast-notification.error {
+  background: #dc3545;
+}
+
+/* =========================================================
+   ELEMENTI DI SUPPORTO
+========================================================= */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #495057;
+}
+
+.form-control {
+  box-sizing: border-box;
+  padding: 9px 12px;
+}
+
+.empty-tab-view {
+  display: flex;
+  justify-content: center;
+  padding: 35px 15px;
+}
+
+.empty-card {
+  width: 100%;
+  max-width: 520px;
+  padding: 30px;
+  text-align: center;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.empty-card h3 {
+  margin: 0 0 10px;
+  color: #2b4c7e;
+  font-size: 18px;
+}
+
+.empty-card p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 13px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.mt-4 {
+  margin-top: 1.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.icon-warning-orange {
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.needs-count-cell:hover {
+  background: #fff0f0;
+}
+
+.matrix-cell:hover {
+  background: #f1f5f9;
+}
+
+.matrix-cell.timesheet-busy {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   RESPONSIVE TABLET
+========================================================= */
+
+@media (max-width: 768px) {
+  .allocazioni-container {
+    padding: 12px;
+  }
+
+  .kpi-card {
+    min-width: 140px;
+  }
+
+  .sticky-col {
+    width: 210px;
+    min-width: 210px;
+  }
+
+  .filter-bar-vertical {
+    gap: 10px;
+  }
+
+  .search-group-wide,
+  .filter-dropdown-group {
+    flex: 1 1 100%;
+    min-width: 100%;
+  }
+
+  .modal-content {
+    padding: 22px;
+  }
+
+  .allocation-edit-modal {
+    padding: 15px;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+  .allocation-edit-modal {
+    width: calc(100vw - 24px);
+    max-width: 372px;
+    padding: 14px;
+  }
+
+  .allocation-edit-modal .termination-options {
+    gap: 10px;
+    padding: 8px;
+  }
+
+  .allocation-edit-modal .termination-option {
+    gap: 5px;
+  }
+
+  .allocation-edit-modal .termination-option-content strong {
+    font-size: 10px;
+    white-space: normal;
+  }
+
+  .allocation-edit-modal .modal-actions {
+    gap: 8px;
+  }
+
+  .allocation-edit-modal .modal-btn-wide,
+  .allocation-edit-modal .btn-danger-primary {
+    padding: 7px 8px;
+    font-size: 10px;
+  }
+
+  .allocation-edit-modal .termination-warning {
+    font-size: 10px;
+  }
+
+  .tabs-bar {
+    gap: 12px;
+  }
+
+  .tab-btn {
+    font-size: 14px;
+  }
+}
+
+/* =========================================================
+   UNIFORMITÀ FONT - MODALI GESTIONE ALLOCAZIONI
+========================================================= */
+
+/* Titoli */
+.allocation-edit-modal .modal-title-user {
+  font-size: 15px;
+}
+
+.allocation-edit-modal .termination-title {
+  font-size: 16px;
+}
+
+/* Sottotitoli e descrizioni */
+.allocation-edit-modal .collab-sub-text {
+  font-size: 13px;
+}
+
+.allocation-edit-modal .termination-description {
+  font-size: 13px;
+}
+
+/* Etichette dei campi */
+.allocation-edit-modal .form-group label {
+  font-size: 13px;
+}
+
+/* Campi di input e select */
+.allocation-edit-modal .form-control {
+  font-size: 13px;
+}
+
+/* Opzioni elimina/concludi */
+.allocation-edit-modal .termination-option-content strong {
+  font-size: 13px;
+}
+
+/* Avvisi */
+.allocation-edit-modal .termination-warning {
+  font-size: 13px;
+}
+
+/* Pulsanti */
+.allocation-edit-modal .modal-btn-wide,
+.allocation-edit-modal .btn-danger-primary {
+  font-size: 13px;
+}
+
+/* Pulsante indietro */
+.allocation-edit-modal .btn-link-back {
+  font-size: 13px;
+}
+
+/* Icona cestino */
+.allocation-edit-modal .btn-icon-trash {
+  font-size: 17px;
+}
+
+/* Data */
+.allocation-edit-modal .form-group input[type='date'] {
+  font-size: 13px;
+}
+
+/* Coerenza su mobile */
+@media (max-width: 480px) {
+  .allocation-edit-modal .termination-option-content strong,
+  .allocation-edit-modal .modal-btn-wide,
+  .allocation-edit-modal .btn-danger-primary,
+  .allocation-edit-modal .termination-warning {
+    font-size: 12px;
+  }
 }

@@ -43,11 +43,15 @@ export class Allocazioni implements OnInit, OnDestroy {
   ========================================================= */
 
   kpi: AllocationKPI | null = null;
-
   projects: Project[] = [];
   users: User[] = [];
 
+  // Catalogo completo: utilizzato nelle modali.
   assignmentRoles: AssignmentRole[] = [];
+
+  // Solo ruoli presenti nelle allocazioni attive:
+  // utilizzato nel filtro Ruolo.
+  activeAssignmentRoles: AssignmentRole[] = [];
 
   /* =========================================================
      DATI TIMESHEET
@@ -55,8 +59,10 @@ export class Allocazioni implements OnInit, OnDestroy {
 
   timesheetProjects: TimesheetProject[] = [];
   timesheetUsers: TimesheetUser[] = [];
-
   timesheetBusyKey: string | null = null;
+
+  // Filtro ruolo indipendente per la scheda Timesheet.
+  selectedTimesheetRole: string = '';
 
   /* =========================================================
      FILTRI
@@ -65,15 +71,13 @@ export class Allocazioni implements OnInit, OnDestroy {
   searchQuery: string = '';
   selectedRole: string = '';
   selectedStatus: string = '';
-
   prioritizedProjectId: number | null = null;
-
   isLegendExpanded: boolean = true;
 
   private searchDebounceTimer: ReturnType<typeof setTimeout> | null = null;
-
   private allocationsRequestId = 0;
   private timesheetRequestId = 0;
+  private toastTimer: ReturnType<typeof setTimeout> | null = null;
 
   /* =========================================================
      MODALI
@@ -93,7 +97,6 @@ export class Allocazioni implements OnInit, OnDestroy {
 
   selectedUserDetail: User | null = null;
   selectedProjectForNeeds: Project | null = null;
-
   selectedNeedsProjectId: number | null = null;
 
   selectedTimesheetProjectForModal: TimesheetProject | null = null;
@@ -111,7 +114,6 @@ export class Allocazioni implements OnInit, OnDestroy {
   formStartDate: string = '';
   formRoleId: number | null = null;
   formWorkAllocation: number = 100;
-
   isSavingAllocation: boolean = false;
 
   /* =========================================================
@@ -121,13 +123,12 @@ export class Allocazioni implements OnInit, OnDestroy {
   timesheetStartDate: string = '';
 
   /* =========================================================
-     MODIFICA / ELIMINAZIONE
+     MODIFICA / ELIMINAZIONE / CONCLUSIONE
   ========================================================= */
 
-  editModeView: 'details' | 'confirm_delete' = 'details';
+  editModeView: 'details' | 'action_choice' | 'confirm_delete' | 'confirm_conclude' = 'details';
 
-  modalActionType: 'delete' | 'conclude' = 'delete';
-
+  modalActionType: 'delete' | 'conclude' | null = null;
   formEndWorkDate: string = '';
 
   /* =========================================================
@@ -135,11 +136,8 @@ export class Allocazioni implements OnInit, OnDestroy {
   ========================================================= */
 
   newNeedRole: number | null = null;
-
   showAddNeedForm: boolean = false;
-
   needToDeleteId: number | null = null;
-
   isSavingNeed: boolean = false;
 
   /* =========================================================
@@ -147,7 +145,6 @@ export class Allocazioni implements OnInit, OnDestroy {
   ========================================================= */
 
   toastMessage: string | null = null;
-
   toastType: 'success' | 'error' = 'success';
 
   /* =========================================================
@@ -172,6 +169,10 @@ export class Allocazioni implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.searchDebounceTimer) {
       clearTimeout(this.searchDebounceTimer);
+    }
+
+    if (this.toastTimer) {
+      clearTimeout(this.toastTimer);
     }
 
     this.allocationsRequestId++;
@@ -329,15 +330,23 @@ export class Allocazioni implements OnInit, OnDestroy {
         this.kpi = res.kpi || null;
         this.projects = res.projects || [];
         this.users = res.users || [];
+
+        // Catalogo completo per le modali.
         this.assignmentRoles = res.assignment_roles || [];
 
+        // Ruoli attivi indipendenti dai filtri applicati alla tabella.
+        this.activeAssignmentRoles = res.active_assignment_roles || [];
+
+        // Selezione ruolo: viene mantenuta finché il ruolo
+        // esiste ancora tra quelli effettivamente attivi.
         if (
           this.selectedRole &&
-          !this.assignmentRoles.some((role) => role.alias === this.selectedRole)
+          !this.activeAssignmentRoles.some((role) => role.alias === this.selectedRole)
         ) {
           this.selectedRole = '';
         }
 
+        // Incarico predefinito per le modali.
         if (!this.formRoleId || !this.assignmentRoles.some((role) => role.id === this.formRoleId)) {
           this.formRoleId = this.getDefaultAssignmentRoleId();
         }
@@ -350,7 +359,6 @@ export class Allocazioni implements OnInit, OnDestroy {
         }
 
         this.applyUserSorting();
-
         this.cdr.detectChanges();
       },
 
@@ -390,6 +398,51 @@ export class Allocazioni implements OnInit, OnDestroy {
   }
 
   /* =========================================================
+     FILTRO RUOLO TIMESHEET
+  ========================================================= */
+
+  get timesheetRoleOptions(): string[] {
+    const roles = new Set<string>();
+
+    this.timesheetUsers.forEach((user: any) => {
+      const userRoles = Array.isArray(user.roles) ? user.roles : [];
+
+      userRoles.forEach((role: any) => {
+        const alias = typeof role === 'string' ? role : role?.alias;
+
+        if (alias && typeof alias === 'string') {
+          roles.add(alias.trim());
+        }
+      });
+    });
+
+    return Array.from(roles).sort((a, b) => a.localeCompare(b));
+  }
+
+  get filteredTimesheetUsers(): TimesheetUser[] {
+    if (!this.selectedTimesheetRole) {
+      return this.timesheetUsers;
+    }
+
+    return this.timesheetUsers.filter((user: any) => {
+      const userRoles = Array.isArray(user.roles) ? user.roles : [];
+
+      return userRoles.some((role: any) => {
+        const alias = typeof role === 'string' ? role : role?.alias;
+
+        return (
+          typeof alias === 'string' &&
+          alias.trim().toLowerCase() === this.selectedTimesheetRole.trim().toLowerCase()
+        );
+      });
+    });
+  }
+
+  onTimesheetRoleFilterChange(role: string): void {
+    this.selectedTimesheetRole = role;
+  }
+
+  /* =========================================================
      ORDINAMENTO UTENTI
   ========================================================= */
 
@@ -397,6 +450,7 @@ export class Allocazioni implements OnInit, OnDestroy {
     this.users.sort((a, b) => {
       if (this.prioritizedProjectId) {
         const aAssigned = this.getUserAllocationForProject(a, this.prioritizedProjectId) ? 1 : 0;
+
         const bAssigned = this.getUserAllocationForProject(b, this.prioritizedProjectId) ? 1 : 0;
 
         if (aAssigned !== bAssigned) {
@@ -438,6 +492,13 @@ export class Allocazioni implements OnInit, OnDestroy {
           return nameA.localeCompare(nameB);
         });
 
+        if (
+          this.selectedTimesheetRole &&
+          !this.timesheetRoleOptions.includes(this.selectedTimesheetRole)
+        ) {
+          this.selectedTimesheetRole = '';
+        }
+
         this.cdr.detectChanges();
       },
 
@@ -460,11 +521,6 @@ export class Allocazioni implements OnInit, OnDestroy {
     return user.timesheet_projects?.find((project) => project.id === projectId);
   }
 
-  /**
-   * Gestisce il clic sulla cella Timesheet.
-   * Se la risorsa è già associata apre il dettaglio.
-   * Se non è associata apre il modulo di assegnazione.
-   */
   onTimesheetCellClick(user: TimesheetUser, project: TimesheetProject): void {
     if (this.timesheetBusyKey !== null || this.isSavingTimesheetMember) {
       return;
@@ -482,9 +538,6 @@ export class Allocazioni implements OnInit, OnDestroy {
     this.showTimesheetMemberModal = true;
   }
 
-  /**
-   * Apre la modale per aggiungere una risorsa al Timesheet.
-   */
   openTimesheetAssignModal(user: TimesheetUser, project: TimesheetProject): void {
     if (this.timesheetBusyKey !== null || this.isSavingTimesheetMember) {
       return;
@@ -496,9 +549,6 @@ export class Allocazioni implements OnInit, OnDestroy {
     this.showTimesheetAssignModal = true;
   }
 
-  /**
-   * Chiude la modale di assegnazione.
-   */
   closeTimesheetAssignModal(): void {
     if (this.isSavingTimesheetMember) {
       return;
@@ -510,9 +560,6 @@ export class Allocazioni implements OnInit, OnDestroy {
     this.timesheetStartDate = '';
   }
 
-  /**
-   * Conferma l'aggiunta della risorsa al Timesheet.
-   */
   confirmTimesheetAssignment(): void {
     const project = this.selectedTimesheetProjectForModal;
     const userId = this.selectedTimesheetUserId;
@@ -569,9 +616,6 @@ export class Allocazioni implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Chiude il dettaglio dell'associazione Timesheet.
-   */
   closeTimesheetMemberModal(): void {
     if (this.timesheetBusyKey !== null) {
       return;
@@ -582,10 +626,6 @@ export class Allocazioni implements OnInit, OnDestroy {
     this.selectedTimesheetProjectDetail = null;
   }
 
-  /**
-   * Rimuove la risorsa dal progetto Timesheet.
-   * La rimozione avviene soltanto dopo il clic esplicito sul pulsante.
-   */
   removeSelectedTimesheetMember(): void {
     const user = this.selectedTimesheetUserDetail;
     const project = this.selectedTimesheetProjectDetail;
@@ -622,9 +662,6 @@ export class Allocazioni implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Restituisce la data di inizio dell'associazione.
-   */
   getTimesheetStartDate(user: TimesheetUser, projectId: number): string {
     const allocation = this.getTimesheetAllocation(user, projectId);
     const startDate = allocation?.pivot?.start_date;
@@ -651,21 +688,14 @@ export class Allocazioni implements OnInit, OnDestroy {
     this.prioritizedProjectId = this.prioritizedProjectId === projectId ? null : projectId;
 
     this.applyUserSorting();
-
     this.cdr.detectChanges();
   }
 
-  /**
-   * Apre la modale con la descrizione del progetto Timesheet.
-   */
   onTimesheetProjectHeaderClick(project: TimesheetProject): void {
     this.selectedTimesheetProjectDetail = project;
     this.showTimesheetProjectModal = true;
   }
 
-  /**
-   * Chiude la modale descrittiva del progetto Timesheet.
-   */
   closeTimesheetProjectModal(): void {
     this.showTimesheetProjectModal = false;
     this.selectedTimesheetProjectDetail = null;
@@ -675,18 +705,10 @@ export class Allocazioni implements OnInit, OnDestroy {
      DIFFICOLTÀ
   ========================================================= */
 
-  /**
-   * Verifica se un valore di difficoltà è attivo.
-   * Gestisce sia true che 1, come restituiti dal backend.
-   */
   private isDifficultyActive(value: unknown): boolean {
     return value === true || value === 1 || value === '1';
   }
 
-  /**
-   * Restituisce true se almeno una risorsa allocata
-   * sul progetto presenta una difficoltà segnalata.
-   */
   hasProjectDifficulty(project: Project): boolean {
     return (
       project.users?.some((user) => this.isDifficultyActive(user.pivot?.is_difficult)) ?? false
@@ -785,6 +807,8 @@ export class Allocazioni implements OnInit, OnDestroy {
 
     if (existingAllocation) {
       this.editModeView = 'details';
+      this.modalActionType = null;
+      this.formEndWorkDate = '';
 
       const pivotData = existingAllocation.pivot;
 
@@ -809,6 +833,61 @@ export class Allocazioni implements OnInit, OnDestroy {
 
       this.showAssignModal = true;
     }
+  }
+
+  /* =========================================================
+     APERTURA SCELTA ELIMINAZIONE / CONCLUSIONE
+  ========================================================= */
+
+  openTerminationChoice(): void {
+    if (this.isSavingAllocation) {
+      return;
+    }
+
+    this.modalActionType = null;
+    this.formEndWorkDate = '';
+    this.editModeView = 'action_choice';
+  }
+
+  selectTerminationAction(action: 'delete' | 'conclude'): void {
+    this.modalActionType = action;
+  }
+
+  goToTerminationConfirmation(): void {
+    if (!this.modalActionType) {
+      this.showToast('Seleziona un’operazione prima di continuare', 'error');
+      return;
+    }
+
+    if (this.modalActionType === 'delete') {
+      this.editModeView = 'confirm_delete';
+    } else {
+      this.editModeView = 'confirm_conclude';
+      this.formEndWorkDate = '';
+    }
+  }
+
+  backToTerminationChoices(): void {
+    this.editModeView = 'action_choice';
+  }
+
+  backToEditDetails(): void {
+    this.modalActionType = null;
+    this.formEndWorkDate = '';
+    this.editModeView = 'details';
+  }
+
+  closeEditModal(): void {
+    if (this.isSavingAllocation) {
+      return;
+    }
+
+    this.showEditModal = false;
+    this.editModeView = 'details';
+    this.modalActionType = null;
+    this.formEndWorkDate = '';
+    this.selectedUserForModal = null;
+    this.selectedProjectForModal = null;
   }
 
   /* =========================================================
@@ -975,21 +1054,54 @@ export class Allocazioni implements OnInit, OnDestroy {
       return;
     }
 
+    const actionType = this.modalActionType;
+
+    if (!actionType) {
+      this.showToast('Seleziona un’operazione da eseguire', 'error');
+      return;
+    }
+
+    if (actionType === 'conclude' && !this.formEndWorkDate) {
+      this.showToast('Seleziona la data di fine collaborazione', 'error');
+      return;
+    }
+
+    const endDate =
+      actionType === 'conclude' ? this.formatIsoDate(this.formEndWorkDate) : undefined;
+
+    if (
+      actionType === 'conclude' &&
+      endDate &&
+      this.formStartDate &&
+      endDate < this.formatIsoDate(this.formStartDate)
+    ) {
+      this.showToast('La data di fine non può precedere quella di inizio', 'error');
+      return;
+    }
+
     this.isSavingAllocation = true;
 
     this.allocationService
       .terminateAllocation(
         this.selectedProjectForModal.id,
         this.selectedUserForModal.id,
-        this.modalActionType,
-        this.formEndWorkDate ? this.formatIsoDate(this.formEndWorkDate) : undefined,
+        actionType,
+        endDate,
       )
       .subscribe({
         next: () => {
           this.isSavingAllocation = false;
           this.showEditModal = false;
 
-          this.showToast('Collaborazione conclusa / rimossa', 'success');
+          if (actionType === 'delete') {
+            this.showToast('Collaborazione eliminata correttamente', 'success');
+          } else {
+            this.showToast('Collaborazione conclusa correttamente', 'success');
+          }
+
+          this.modalActionType = null;
+          this.formEndWorkDate = '';
+          this.editModeView = 'details';
 
           this.refreshActiveView();
         },
@@ -999,7 +1111,10 @@ export class Allocazioni implements OnInit, OnDestroy {
 
           this.isSavingAllocation = false;
 
-          this.showToast('Errore terminazione collaborazione', 'error');
+          this.showToast(
+            err?.error?.message || 'Errore durante l’operazione sulla collaborazione',
+            'error',
+          );
 
           this.cdr.detectChanges();
         },
@@ -1106,10 +1221,15 @@ export class Allocazioni implements OnInit, OnDestroy {
     this.toastMessage = message;
     this.toastType = type;
 
+    if (this.toastTimer) {
+      clearTimeout(this.toastTimer);
+    }
+
     this.cdr.detectChanges();
 
-    setTimeout(() => {
+    this.toastTimer = setTimeout(() => {
       this.toastMessage = null;
+      this.toastTimer = null;
       this.cdr.detectChanges();
     }, 3500);
   }

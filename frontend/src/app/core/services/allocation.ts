@@ -80,7 +80,13 @@ export interface AllocationIndexResponse {
   kpi: AllocationKPI;
   projects: Project[];
   users: User[];
+
+  // Catalogo completo: utilizzato nelle modali.
   assignment_roles: AssignmentRole[];
+
+  // Solo incarichi presenti nelle allocazioni attive:
+  // utilizzato esclusivamente nel filtro Ruolo.
+  active_assignment_roles: AssignmentRole[];
 }
 
 /* =========================================================

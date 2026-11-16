@@ -45,8 +45,7 @@ class AllocationManagementController extends Controller
 
         /*
          * Catalogo completo degli incarichi disponibili.
-         * Gli incarichi eliminati logicamente sono esclusi
-         * automaticamente grazie a SoftDeletes.
+         * Utilizzato dalle modali di assegnazione e necessità.
          */
         $assignmentRoles = AssignmentRole::query()
             ->orderBy('alias')
@@ -64,11 +63,14 @@ class AllocationManagementController extends Controller
         $totalUsers = (clone $visibleUsersQuery)->count();
 
         /*
-         * Assegnazioni attive:
+         * Query base delle assegnazioni attive.
+         *
+         * Condizioni:
          * - progetto normale;
-         * - startwork_date <= oggi;
-         * - endwork_date assente oppure >= oggi;
-         * - deleted_at assente.
+         * - utente visibile e non eliminato;
+         * - assegnazione non eliminata logicamente;
+         * - data di inizio <= oggi;
+         * - data di fine assente oppure >= oggi.
          */
         $activeAllocations = DB::table('project_user')
             ->join('projects', 'projects.id', '=', 'project_user.project_id')
@@ -84,17 +86,46 @@ class AllocationManagementController extends Controller
                     ->orWhereDate('project_user.endwork_date', '>=', $today);
             });
 
+        /*
+         * RUOLI ATTIVI PER IL FILTRO ANGULAR.
+         *
+         * Questa query è indipendente dai filtri di ricerca,
+         * stato progetto e ruolo selezionato.
+         *
+         * Vengono restituiti soltanto gli incarichi realmente
+         * presenti nelle assegnazioni attive dei progetti normali.
+         */
+        $activeAssignmentRoleIds = (clone $activeAllocations)
+            ->whereNotNull('project_user.assignmentrole_id')
+            ->select('project_user.assignmentrole_id')
+            ->distinct()
+            ->pluck('project_user.assignmentrole_id');
+
+        $activeAssignmentRoles = AssignmentRole::query()
+            ->whereIn('id', $activeAssignmentRoleIds)
+            ->orderBy('alias')
+            ->get([
+                'id',
+                'alias',
+            ]);
+
+        /*
+         * KPI: utenti allocati.
+         */
         $allocatedUsersCount = (clone $activeAllocations)
             ->distinct('project_user.user_id')
             ->count('project_user.user_id');
 
+        /*
+         * KPI: utenti non allocati.
+         */
         $unallocatedUsersCount = max(
             0,
             $totalUsers - $allocatedUsersCount
         );
 
         /*
-         * Utenti con almeno tre assegnazioni attive.
+         * KPI: utenti con almeno tre assegnazioni attive.
          */
         $overloadedUsersCount = (clone $activeAllocations)
             ->select('project_user.user_id')
@@ -104,14 +135,14 @@ class AllocationManagementController extends Controller
             ->count();
 
         /*
-         * Numero di assegnazioni attive considerate difficili.
+         * KPI: assegnazioni attive considerate difficili.
          */
         $difficultyCount = (clone $activeAllocations)
             ->where('project_user.is_difficult', true)
             ->count();
 
         /*
-         * Necessità associate esclusivamente ai progetti normali.
+         * KPI: necessità associate esclusivamente ai progetti normali.
          */
         $openNeedsCount = Necessity::whereHas(
             'project',
@@ -122,8 +153,10 @@ class AllocationManagementController extends Controller
         )->count();
 
         /*
-         * Progetti normali.
-         * I membri restituiti sono soltanto quelli con assegnazione attiva.
+         * PROGETTI NORMALI.
+         *
+         * I membri restituiti sono soltanto quelli con assegnazione
+         * attiva alla data odierna.
          */
         $projectsQuery = $this->normalProjectsQuery()
             ->with([
@@ -143,18 +176,18 @@ class AllocationManagementController extends Controller
                 'needs.assignmentRole',
             ]);
 
+        /*
+         * Filtro per stato progetto.
+         */
         if ($request->filled('project_status')) {
-            $status = $request->input('project_status');
+            $status = mb_strtolower(
+                str_replace('_', ' ', trim($request->input('project_status')))
+            );
 
-            /*
-             * Compatibilità con il vecchio valore frontend.
-             * Nel database il valore corretto è "in corso".
-             */
-            if ($status === 'in_corso') {
-                $status = 'in corso';
-            }
-
-            $projectsQuery->where('status', $status);
+            $projectsQuery->whereRaw(
+                "LOWER(REPLACE(projects.status, '_', ' ')) = ?",
+                [$status]
+            );
         }
 
         $projects = $projectsQuery->get();
@@ -179,7 +212,9 @@ class AllocationManagementController extends Controller
         });
 
         /*
-         * Utenti visibili con le sole assegnazioni attive
+         * UTENTI VISIBILI.
+         *
+         * Vengono caricate esclusivamente le assegnazioni attive
          * ai progetti normali.
          */
         $usersQuery = User::with([
@@ -202,6 +237,9 @@ class AllocationManagementController extends Controller
             'assignmentRoles',
         ])->where('isAllocation_visible', true);
 
+        /*
+         * Filtro per nome e cognome.
+         */
         if ($request->filled('search')) {
             $search = $request->input('search');
 
@@ -216,18 +254,48 @@ class AllocationManagementController extends Controller
         }
 
         /*
-         * Il filtro degli incarichi deve usare assignmentRoles,
-         * non i ruoli applicativi della relazione roles.
+         * Filtro incarico.
+         *
+         * Controlla direttamente project_user, così vengono
+         * considerati soltanto gli incarichi delle assegnazioni
+         * attive ai progetti normali.
+         *
+         * Non utilizza la relazione assignmentRoles, che potrebbe
+         * comprendere associazioni storiche.
          */
         if ($request->filled('role_alias')) {
             $roleAlias = $request->input('role_alias');
 
-            $usersQuery->whereHas(
-                'assignmentRoles',
-                function ($query) use ($roleAlias) {
-                    $query->where('alias', $roleAlias);
-                }
-            );
+            $usersQuery->whereExists(function ($query) use ($roleAlias, $today) {
+                $query->select(DB::raw(1))
+                    ->from('project_user')
+                    ->join(
+                        'assignmentroles',
+                        'assignmentroles.id',
+                        '=',
+                        'project_user.assignmentrole_id'
+                    )
+                    ->join(
+                        'projects',
+                        'projects.id',
+                        '=',
+                        'project_user.project_id'
+                    )
+                    ->whereColumn('project_user.user_id', 'users.id')
+                    ->where('assignmentroles.alias', $roleAlias)
+                    ->whereNull('project_user.deleted_at')
+                    ->where('projects.is_timesheet', false)
+                    ->where('projects.is_course', false)
+                    ->whereDate('project_user.startwork_date', '<=', $today)
+                    ->where(function ($dateQuery) use ($today) {
+                        $dateQuery->whereNull('project_user.endwork_date')
+                            ->orWhereDate(
+                                'project_user.endwork_date',
+                                '>=',
+                                $today
+                            );
+                    });
+            });
         }
 
         $users = $usersQuery
@@ -235,6 +303,16 @@ class AllocationManagementController extends Controller
             ->orderBy('first_name')
             ->get();
 
+        /*
+         * RISPOSTA API.
+         *
+         * assignment_roles:
+         * catalogo completo per le modali.
+         *
+         * active_assignment_roles:
+         * soltanto gli incarichi presenti nelle allocazioni attive,
+         * per il filtro Ruolo.
+         */
         return response()->json([
             'success' => true,
 
@@ -250,10 +328,8 @@ class AllocationManagementController extends Controller
             'projects' => $projects,
             'users' => $users,
 
-            /*
-             * Catalogo dinamico degli incarichi per il frontend.
-             */
             'assignment_roles' => $assignmentRoles,
+            'active_assignment_roles' => $activeAssignmentRoles,
         ], 200);
     }
 
@@ -466,16 +542,12 @@ class AllocationManagementController extends Controller
             }
 
             /*
-             * SODDISFAZIONE AUTOMATICA DELLA NECESSITÀ
+             * SODDISFAZIONE AUTOMATICA DELLA NECESSITÀ.
              *
-             * Dopo aver assegnato la risorsa, cerchiamo una
-             * necessità dello stesso progetto e dello stesso incarico.
+             * Dopo aver assegnato la risorsa, cerchiamo una necessità
+             * dello stesso progetto e dello stesso incarico.
              *
-             * Ne eliminiamo soltanto una: un'assegnazione soddisfa
-             * una sola necessità.
-             *
-             * lockForUpdate evita che due assegnazioni simultanee
-             * eliminino la stessa necessità.
+             * Un'assegnazione soddisfa una sola necessità.
              */
             $need = $project->needs()
                 ->where(
