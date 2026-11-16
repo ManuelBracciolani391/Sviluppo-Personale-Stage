@@ -1,0 +1,1060 @@
+<app-side-bar [titoloPagina]="'Gestione Utente'">
+  <section class="gestione-utente-content">
+    <!-- Pulsante Nuovo Utente -->
+    <div class="nuovo-utente">
+      <button type="button" (click)="apriModaleNuovoUtente()">
+        <span class="pulsante">⊕</span>
+        Nuovo Utente
+      </button>
+    </div>
+
+    <!-- Tabella utenti -->
+    <div class="tabella-utenti">
+      <table>
+        <!-- Larghezza delle colonne -->
+        <colgroup>
+          <col class="col-nome" />
+          <col class="col-assunzione" />
+          <col class="col-ruolo" />
+          <col class="col-incarico" />
+          <col class="col-competenza" />
+          <col class="col-visibilita" />
+          <col class="col-azioni" />
+        </colgroup>
+
+        <thead>
+          <tr>
+            <th>
+              Nome e Cognome
+              <span class="ordinamento">↑ ↓</span>
+            </th>
+
+            <th>
+              Data di assunzione
+              <span class="ordinamento">↓</span>
+            </th>
+
+            <th>
+              Ruolo
+              <span class="filtro">▼</span>
+            </th>
+
+            <th>
+              Incarico
+              <span class="filtro">▼</span>
+            </th>
+
+            <th>
+              Competenza
+              <span class="filtro">▼</span>
+            </th>
+
+            <th>
+              Visibilità allocazione
+              <span class="filtro">▼</span>
+            </th>
+
+            <th class="col-actions"></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (utente of utenti; track utente.id) {
+            <tr>
+              <td class="nome-utente">
+                {{ utente.nome }}
+              </td>
+
+              <td>
+                {{ utente.dataAssunzione }}
+              </td>
+
+              <td>
+                {{ utente.ruolo }}
+              </td>
+
+              <td>
+                {{ utente.incarico }}
+              </td>
+
+              <td>
+                {{ utente.competenza }}
+              </td>
+
+              <td>
+                {{ utente.visibilita }}
+              </td>
+
+              <td class="azioni">
+                <button
+                  type="button"
+                  class="menu-azioni"
+                  aria-label="Apri azioni utente"
+                  (click)="toggleUserMenu(utente, $event)"
+                >
+                  ⋮
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Utenti disabilitati -->
+    <div class="utenti-disabilitati">
+      <button
+        type="button"
+        class="intestazione-disabilitati"
+        (click)="toggleUtentiDisabilitati()"
+        [attr.aria-expanded]="utentiDisabilitatiAperti"
+      >
+        <span class="icona-disabilitata">⊘</span>
+
+        <span>Utenti disabilitati</span>
+
+        <span class="freccia" [class.freccia-aperta]="utentiDisabilitatiAperti"> ⌄ </span>
+      </button>
+    </div>
+
+    <!-- Paginazione -->
+    <div class="paginazione">
+      <button type="button" class="pagina-freccia" disabled>‹</button>
+
+      <button type="button" class="pagina attiva">1</button>
+
+      <button type="button" class="pagina">2</button>
+
+      <button type="button" class="pagina">3</button>
+
+      <button type="button" class="pagina">…</button>
+
+      <button type="button" class="pagina">99</button>
+
+      <button type="button" class="pagina-freccia">›</button>
+    </div>
+
+    @if (utentiDisabilitatiAperti) {
+      <div class="tabella-disabilitati">
+        <table>
+          <colgroup>
+            <col class="disabilitati-col-nome" />
+            <col class="disabilitati-col-assunzione" />
+            <col class="disabilitati-col-dimissione" />
+            <col class="disabilitati-col-azioni" />
+          </colgroup>
+
+          <thead>
+            <tr>
+              <th>
+                Nome e Cognome
+                <span class="ordinamento">↑ ↓</span>
+              </th>
+
+              <th>
+                Data di assunzione
+                <span class="ordinamento">↑</span>
+              </th>
+
+              <th>
+                Data di dimissione
+                <span class="ordinamento">↑</span>
+              </th>
+
+              <th></th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (utente of utentiDisabilitati; track utente.id) {
+              <tr>
+                <td class="nome-disabilitato">
+                  <span class="avatar-disabilitato">👨🏻‍💼</span>
+                  {{ utente.nome }}
+                </td>
+
+                <td>
+                  {{ utente.dataAssunzione }}
+                </td>
+
+                <td>
+                  {{ utente.dataDimissione }}
+                </td>
+
+                <td class="azioni-disabilitati">
+                  <button
+                    type="button"
+                    class="riabilita-utente"
+                    (click)="apriModaleRiabilita(utente)"
+                  >
+                    <span>↶</span>
+                    Riabilita utente
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginazione utenti disabilitati -->
+      <div class="paginazione paginazione-disabilitati">
+        <button type="button" class="pagina-freccia" disabled>‹</button>
+
+        <button type="button" class="pagina attiva">1</button>
+
+        <button type="button" class="pagina">2</button>
+
+        <button type="button" class="pagina">3</button>
+
+        <button type="button" class="pagina">...</button>
+
+        <button type="button" class="pagina">99</button>
+
+        <button type="button" class="pagina-freccia">›</button>
+      </div>
+    }
+
+    @if (selectedUser) {
+      <div
+        class="user-actions-menu"
+        [style.top.px]="menuPosition.top"
+        [style.left.px]="menuPosition.left"
+        (click)="$event.stopPropagation()"
+      >
+        <!-- Modifica -->
+        <button
+          type="button"
+          class="user-menu-item"
+          (click)="apriModificaUtente(selectedUser); closeUserMenu()"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M4 20h4L19.5 8.5a2.12 2.12 0 0 0-3-3L5 17v3z"></path>
+            <path d="M14.5 6.5l3 3"></path>
+          </svg>
+
+          <span>Modifica</span>
+        </button>
+
+        <!-- Ferie e permessi -->
+        <button type="button" class="user-menu-item" (click)="apriModaleFeriePermessi()">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8"></circle>
+            <path d="M12 7v5l3 2"></path>
+          </svg>
+
+          <span>Ferie e permessi</span>
+        </button>
+
+        <!-- Disabilita -->
+        <button
+          type="button"
+          class="user-menu-item disable-item"
+          (click)="apriModaleDisabilita(selectedUser); closeUserMenu()"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 7h14"></path>
+            <path d="M9 7V4h6v3"></path>
+            <path d="M7 7l1 14h8l1-14"></path>
+          </svg>
+
+          <span>Disabilita</span>
+        </button>
+      </div>
+    }
+
+    <!-- =========================================
+     MODALE NUOVO UTENTE
+========================================= -->
+
+    @if (modaleNuovoUtenteAperta) {
+      <div class="modal-overlay" (click)="chiudiModaleNuovoUtente()">
+        <div class="modal-nuovo-utente" (click)="$event.stopPropagation()">
+          <!-- Titolo -->
+          <div class="modal-header">
+            <h2>{{ modalitaModifica ? 'Modifica utente' : 'Nuovo utente' }}</h2>
+          </div>
+
+          <!-- Schede -->
+          <div class="modal-tabs">
+            <button
+              type="button"
+              class="modal-tab"
+              [class.active]="schedaNuovoUtente === 'anagrafica'"
+              (click)="cambiaSchedaNuovoUtente('anagrafica')"
+            >
+              Anagrafica
+            </button>
+
+            <button
+              type="button"
+              class="modal-tab"
+              [class.active]="schedaNuovoUtente === 'contratto'"
+              (click)="cambiaSchedaNuovoUtente('contratto')"
+            >
+              Contratto
+            </button>
+          </div>
+
+          <!-- CONTENUTO ANAGRAFICA -->
+          @if (schedaNuovoUtente === 'anagrafica') {
+            <div class="modal-content">
+              <div class="form-grid">
+                <!-- Nome -->
+                <div class="form-group">
+                  <label for="nome">Nome</label>
+                  <input id="nome" type="text" placeholder="Nome utente" />
+                </div>
+
+                <!-- Cognome -->
+                <div class="form-group">
+                  <label for="cognome">Cognome</label>
+                  <input id="cognome" type="text" placeholder="Cognome utente" />
+                </div>
+
+                <!-- Genere -->
+                <div class="form-group">
+                  <label for="genere">Genere</label>
+                  <select id="genere">
+                    <option value="">Seleziona</option>
+                    <option value="maschio">Maschio</option>
+                    <option value="femmina">Femmina</option>
+                    <option value="altro">Altro</option>
+                  </select>
+                </div>
+
+                <!-- Data di nascita -->
+                <div class="form-group">
+                  <label for="dataNascita">Data di nascita</label>
+                  <input id="dataNascita" type="date" />
+                </div>
+
+                <!-- Email di accesso -->
+                <div class="form-group">
+                  <label for="emailAccesso">Email di accesso</label>
+                  <input id="emailAccesso" type="email" placeholder="es: email@nomeazienda.it" />
+                </div>
+
+                <!-- Email Azure -->
+                <div class="form-group">
+                  <label for="emailAzure">Email Azure</label>
+                  <input id="emailAzure" type="email" placeholder="es: emailazure@email.com" />
+                </div>
+
+                <!-- Email Aziendale -->
+                <div class="form-group">
+                  <label for="emailAziendale">Email Aziendale</label>
+                  <input
+                    id="emailAziendale"
+                    type="email"
+                    placeholder="es: email@sapegisinovazione.com"
+                  />
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- CONTENUTO CONTRATTO -->
+          @if (schedaNuovoUtente === 'contratto') {
+            <div class="modal-content contratto-content">
+              <!-- Prima riga -->
+              <div class="contratto-grid">
+                <div class="form-group">
+                  <label for="dataAssunzione">Data di assunzione</label>
+                  <input id="dataAssunzione" type="date" />
+                </div>
+
+                <div class="form-group">
+                  <label for="dataInizioContratto">Data di inizio contratto</label>
+                  <input id="dataInizioContratto" type="date" />
+                </div>
+
+                <div class="form-group">
+                  <label for="oreSettimanali">Ore settimanali</label>
+                  <input
+                    id="oreSettimanali"
+                    type="number"
+                    min="0"
+                    max="40"
+                    [value]="oreSettimanali"
+                    (input)="aggiornaOreSettimanali($event)"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label for="ruoloContratto">Ruolo</label>
+                  <select id="ruoloContratto">
+                    <option value="">Seleziona</option>
+                    <option>Admin</option>
+                    <option>Project Manager</option>
+                    <option>Team Leader</option>
+                    <option>User</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="incaricoContratto">Incarico</label>
+                  <select id="incaricoContratto">
+                    <option value="">Seleziona</option>
+                    <option>Sviluppatore Full-stack</option>
+                    <option>Sviluppatore Front-end</option>
+                    <option>Sviluppatore Back-end</option>
+                    <option>UX-UI Designer</option>
+                    <option>Scrum Master</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="competenzeContratto">Competenze</label>
+                  <select id="competenzeContratto">
+                    <option value="">Seleziona</option>
+                    <option>Junior</option>
+                    <option>Middle</option>
+                    <option>Senior</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Altro e visibilità -->
+              <div class="contratto-opzioni">
+                <div class="form-group">
+                  <label for="altroContratto">Altro</label>
+                  <input id="altroContratto" type="text" placeholder="Seleziona" />
+                </div>
+
+                <div class="visibilita-contratto">
+                  <label>Visualizzazione in Allocazione</label>
+
+                  <label class="switch-contratto">
+                    <input type="checkbox" checked />
+                    <span class="switch-slider"></span>
+                  </label>
+
+                  <small> L'utente sarà visibile nella sezione Allocazione Risorse </small>
+                </div>
+              </div>
+
+              <!-- Tirocinante -->
+              <label class="checkbox-contratto">
+                <input type="checkbox" checked />
+                Tirocinante
+              </label>
+
+              <!-- Distribuzione oraria -->
+              <div class="distribuzione-oraria">
+                <h3>Distribuzione oraria</h3>
+
+                <div class="giorni-orario">
+                  @for (giorno of giorniLavorativi; track giorno.nome; let i = $index) {
+                    <div class="riga-orario">
+                      <span class="nome-giorno">
+                        {{ giorno.nome }}
+                      </span>
+
+                      <input
+                        class="input-orario"
+                        type="time"
+                        [value]="giorno.inizio"
+                        [disabled]="giorno.nonLavorativo"
+                        (change)="aggiornaGiorno(i, 'inizio', $event)"
+                      />
+
+                      <input
+                        class="input-orario"
+                        type="time"
+                        [value]="giorno.fine"
+                        [disabled]="giorno.nonLavorativo"
+                        (change)="aggiornaGiorno(i, 'fine', $event)"
+                      />
+
+                      <span class="badge-ore">
+                        <span>◷</span>
+                        {{ giorno.ore }}h
+                      </span>
+
+                      <label class="checkbox-non-lavorativo">
+                        <input
+                          type="checkbox"
+                          [checked]="giorno.nonLavorativo"
+                          (change)="cambiaGiornoNonLavorativo(i, $event)"
+                        />
+                        Non lavorativo
+                      </label>
+                    </div>
+                  }
+                </div>
+
+                <div class="totale-orario">Totale: {{ totaleOre }} h</div>
+              </div>
+            </div>
+          }
+
+          <!-- Pulsanti -->
+          <div class="modal-footer">
+            <button type="button" class="btn-annulla" (click)="chiudiModaleNuovoUtente()">
+              Annulla
+            </button>
+
+            <button type="button" class="btn-salva" (click)="salvaNuovoUtente()">Salva</button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- =========================================
+     MODALE CONFERMA UTENTE CREATO
+========================================= -->
+
+    @if (modaleConfermaAperta) {
+      <div class="conferma-overlay" (click)="chiudiModaleConferma()">
+        <div class="modale-conferma" (click)="$event.stopPropagation()">
+          <div class="conferma-intestazione">
+            <button
+              type="button"
+              class="chiudi-conferma"
+              aria-label="Chiudi"
+              (click)="chiudiModaleConferma()"
+            >
+              ×
+            </button>
+          </div>
+
+          <div class="conferma-contenuto">
+            <!-- Icona spunta -->
+            <svg class="icona-successo" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="9"></circle>
+              <path d="M8 12l2.5 2.5L16 9"></path>
+            </svg>
+
+            <h2>Utente creato</h2>
+
+            <p>L'operazione è stata eseguita con successo</p>
+
+            <button type="button" class="btn-conferma-ok" (click)="chiudiModaleConferma()">
+              Ok
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- MODALE CONFERMA RIABILITAZIONE -->
+    @if (modaleRiabilitaAperta) {
+      <div class="riabilita-overlay" (click)="chiudiModaleRiabilita()">
+        <div class="modale-riabilita" (click)="$event.stopPropagation()">
+          <button type="button" class="chiudi-riabilita" (click)="chiudiModaleRiabilita()">
+            ×
+          </button>
+
+          <h3>Sei sicuro di volere riabilitare l'utente?</h3>
+
+          <div class="utente-riabilita-info">
+            <div class="utente-riabilita-avatar"></div>
+
+            <div>
+              <strong>
+                {{ utenteDaRiabilitare?.nome }}
+              </strong>
+
+              <small>Utente disabilitato</small>
+            </div>
+          </div>
+
+          <div class="azioni-riabilita">
+            <button type="button" class="btn-annulla-riabilita" (click)="chiudiModaleRiabilita()">
+              Annulla
+            </button>
+
+            <button type="button" class="btn-conferma-riabilita" (click)="confermaRiabilitazione()">
+              Riabilita utente
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- MODALE UTENTE RIABILITATO -->
+    @if (modaleUtenteRiabilitatoAperta) {
+      <div class="riabilita-overlay">
+        <div class="modale-utente-riabilitato">
+          <button
+            type="button"
+            class="chiudi-riabilitato"
+            (click)="chiudiModaleUtenteRiabilitato()"
+          >
+            ×
+          </button>
+
+          <div class="contenuto-riabilitato">
+            <svg class="icona-riabilitato" viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="15" stroke="#07518A" stroke-width="2" />
+
+              <path
+                d="M13 20L18 25L27 15"
+                stroke="#07518A"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+
+            <h2>Utente riabilitato</h2>
+
+            <p>L'operazione è stata eseguita con successo</p>
+
+            <button
+              type="button"
+              class="btn-ok-riabilitato"
+              (click)="chiudiModaleUtenteRiabilitato()"
+            >
+              Ok
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (modaleDisabilitaAperta) {
+      <div class="riabilita-overlay">
+        <div class="modale-disabilita-conferma" (click)="$event.stopPropagation()">
+          <!-- Titolo -->
+          <h3>Sei sicuro di voler disabilitare l'utente?</h3>
+
+          <!-- Avviso -->
+          <div class="avviso-disabilita">
+            <span class="icona-avviso-disabilita">!</span>
+            <p>
+              Questa operazione non potrà essere annullata e molti dati dell'utente andranno persi.
+            </p>
+          </div>
+
+          <!-- Informazioni utente -->
+          <div class="utente-disabilita-info">
+            <div class="avatar-disabilita"></div>
+
+            <div>
+              <strong>{{ utenteDaDisabilitare?.nome }}</strong>
+              <small>{{ utenteDaDisabilitare?.ruolo }}</small>
+            </div>
+          </div>
+
+          <!-- Data di dimissioni -->
+          <div class="campo-data-disabilita">
+            <label for="dataDimissioni">Data di dimissioni</label>
+
+            <input type="date" id="dataDimissioni" name="dataDimissioni" />
+          </div>
+
+          <!-- Pulsanti -->
+          <div class="azioni-disabilita">
+            <button type="button" class="btn-annulla-disabilita" (click)="chiudiModaleDisabilita()">
+              Annulla
+            </button>
+
+            <button
+              type="button"
+              class="btn-conferma-disabilita"
+              (click)="confermaDisabilitazione()"
+            >
+              Salva
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (modaleDisabilitaDettagliAperta) {
+      <div class="riabilita-overlay">
+        <div class="modale-disabilita-dettagli" (click)="$event.stopPropagation()">
+          <!-- Titolo -->
+          <div class="header-disabilita-dettagli">
+            <!-- Icona utente disabilitato -->
+            <svg
+              class="icona-utente-disabilita"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 32 32"
+              fill="none"
+            >
+              <path d="M16 16a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" fill="#d0002a" />
+              <path
+                d="M6 27c.8-5.2 4.5-8 10-8 2.1 0 3.9.5 5.3 1.4"
+                stroke="#d0002a"
+                stroke-width="2.5"
+                stroke-linecap="round"
+              />
+              <path d="M5 5 27 27" stroke="#d0002a" stroke-width="2.8" stroke-linecap="round" />
+            </svg>
+
+            <h3>Disabilita utente</h3>
+          </div>
+
+          <!-- Avviso -->
+          <div class="avviso-disabilita-dettagli">
+            <span class="icona-avviso-disabilita-dettagli">!</span>
+
+            <p>Stai per disabilitare questo utente. Conferma l'operazione per procedere.</p>
+          </div>
+
+          <!-- Informazioni utente -->
+          <div class="utente-disabilita-dettagli">
+            <div class="avatar-disabilita"></div>
+
+            <div>
+              <strong>{{ utenteDaDisabilitare?.nome }}</strong>
+              <small>{{ utenteDaDisabilitare?.ruolo }}</small>
+            </div>
+          </div>
+
+          <!-- Data di dimissioni -->
+          <div class="campo-data-disabilita">
+            <label for="dataDimissioniFinale"> Data di dimissioni </label>
+
+            <input type="date" id="dataDimissioniFinale" name="dataDimissioniFinale" />
+          </div>
+
+          <!-- Pulsanti -->
+          <div class="azioni-disabilita">
+            <button
+              type="button"
+              class="btn-annulla-disabilita"
+              (click)="modaleDisabilitaDettagliAperta = false"
+            >
+              Annulla
+            </button>
+
+            <button
+              type="button"
+              class="btn-conferma-disabilita"
+              (click)="disabilitaUtenteDefinitivamente()"
+            >
+              Disabilita
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (modaleUtenteDisabilitatoAperta) {
+      <div class="riabilita-overlay">
+        <div class="modale-utente-disabilitato" (click)="$event.stopPropagation()">
+          <!-- Icona di conferma -->
+          <div class="icona-successo-disabilitazione">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="21" stroke="#07518a" stroke-width="2.5" />
+              <path
+                d="M14 24.5L21 31L34 17"
+                stroke="#07518a"
+                stroke-width="3"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+
+          <!-- Titolo -->
+          <h3>Utente disabilitato</h3>
+
+          <!-- Messaggio -->
+          <p>L'utente è stato disabilitato correttamente.</p>
+
+          <!-- Pulsante -->
+          <div class="azioni-utente-disabilitato">
+            <button
+              type="button"
+              class="btn-ok-utente-disabilitato"
+              (click)="chiudiModaleUtenteDisabilitato()"
+            >
+              Ok
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (modaleFeriePermessiAperta) {
+      <div class="riabilita-overlay">
+        <div class="modale-gestione-ferie-permessi" (click)="$event.stopPropagation()">
+          <!-- INTESTAZIONE -->
+          <div class="header-gestione-ferie">
+            <h2>Gestione Ferie e Permessi</h2>
+
+            <button type="button" class="btn-chiudi-ferie" (click)="chiudiModaleFeriePermessi()">
+              &times;
+            </button>
+          </div>
+
+          <!-- DATI UTENTE -->
+          <div class="utente-gestione-ferie">
+            <strong>{{ utenteFeriePermessi?.nome }}</strong>
+            <span>{{ utenteFeriePermessi?.incarico }}</span>
+          </div>
+
+          <!-- SCHEDE -->
+          <div class="schede-gestione-ferie">
+            <button
+              type="button"
+              [class.scheda-attiva]="schedaFeriePermessi === 'ferie'"
+              (click)="cambiaSchedaFeriePermessi('ferie')"
+            >
+              Ferie
+            </button>
+
+            <button
+              type="button"
+              [class.scheda-attiva]="schedaFeriePermessi === 'permessi'"
+              (click)="cambiaSchedaFeriePermessi('permessi')"
+            >
+              Permessi
+            </button>
+
+            <button
+              type="button"
+              [class.scheda-attiva]="schedaFeriePermessi === 'rol'"
+              (click)="cambiaSchedaFeriePermessi('rol')"
+            >
+              R.O.L.
+            </button>
+          </div>
+
+          <!-- CONTENUTO FERIE -->
+
+          @if (schedaFeriePermessi === 'ferie') {
+            <div class="contenuto-scheda-ferie">
+              <!-- RIEPILOGO FERIE RESIDUE -->
+              <div class="riepilogo-ferie">
+                <div class="riepilogo-ferie-titolo">
+                  <span class="icona-ferie">✚</span>
+                  <strong>Ferie residue</strong>
+                </div>
+
+                <div class="riepilogo-ferie-valore">
+                  <strong>7</strong>
+                  <span>gg</span>
+                  <small>(maturazione 2,16 gg/mese)</small>
+                </div>
+
+                <div class="icona-orologio">
+                  <span></span>
+                </div>
+              </div>
+
+              <!-- ANNO E TIPO DI CONTRATTO -->
+              <div class="impostazioni-ferie">
+                <div class="selettore-anno">
+                  <button type="button">&#8249;</button>
+                  <span>2026</span>
+                  <button type="button">&#8250;</button>
+                </div>
+
+                <div class="tipo-contratto">
+                  <label>
+                    <input type="radio" name="tipoContratto" checked />
+                    Full-time
+                  </label>
+
+                  <label>
+                    <input type="radio" name="tipoContratto" />
+                    Part-time
+                  </label>
+                </div>
+              </div>
+
+              <!-- TABELLA FERIE -->
+              <div class="tabella-ferie">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Mese</th>
+                      <th>Gg. residui</th>
+                      <th>Rateo</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                      <td>Gennaio</td>
+                      <td><input type="number" value="4" /></td>
+                      <td><input type="number" value="4" /></td>
+                    </tr>
+                    <tr>
+                      <td>Febbraio</td>
+                      <td><input type="number" value="4" /></td>
+                      <td><input type="number" value="4" /></td>
+                    </tr>
+                    <tr>
+                      <td>Marzo</td>
+                      <td><input type="number" value="4" /></td>
+                      <td><input type="number" value="4" /></td>
+                    </tr>
+                    <tr>
+                      <td>Aprile</td>
+                      <td><input type="number" value="4" /></td>
+                      <td><input type="number" value="4" /></td>
+                    </tr>
+                    <tr>
+                      <td>Maggio</td>
+                      <td><input type="number" value="4" /></td>
+                      <td><input type="number" value="4" /></td>
+                    </tr>
+                    <tr>
+                      <td>Giugno</td>
+                      <td><input type="number" value="4" /></td>
+                      <td><input type="number" value="4" /></td>
+                    </tr>
+                    <tr>
+                      <td>Luglio</td>
+                      <td><input type="number" value="4" /></td>
+                      <td><input type="number" value="4" /></td>
+                    </tr>
+                    <tr>
+                      <td>Agosto</td>
+                      <td><input type="number" value="4" /></td>
+                      <td><input type="number" value="4" /></td>
+                    </tr>
+                    <tr>
+                      <td>Settembre</td>
+                      <td><input type="number" value="4" /></td>
+                      <td><input type="number" value="4" /></td>
+                    </tr>
+                    <tr>
+                      <td>Ottobre</td>
+                      <td><input type="number" value="4" /></td>
+                      <td><input type="number" value="4" /></td>
+                    </tr>
+                    <tr>
+                      <td>Novembre</td>
+                      <td><input type="number" value="0" /></td>
+                      <td><input type="number" value="0" /></td>
+                    </tr>
+                    <tr>
+                      <td>Dicembre</td>
+                      <td><input type="number" value="0" /></td>
+                      <td><input type="number" value="0" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          }
+
+          <!-- CONTENUTO PERMESSI -->
+          @if (schedaFeriePermessi === 'permessi') {
+            <div class="contenuto-scheda-permessi">
+              <!-- RIEPILOGO PERMESSI -->
+              <div class="riepilogo-ferie">
+                <div class="riepilogo-ferie-titolo">
+                  <span class="icona-permessi">◷</span>
+                  <strong>Permessi</strong>
+                </div>
+
+                <div class="riepilogo-ferie-valore">
+                  <strong>4</strong>
+                  <span>hh</span>
+                  <small>(maturazione 2,86 hh/mese)</small>
+                </div>
+
+                <div class="icona-orologio">
+                  <span></span>
+                </div>
+              </div>
+
+              <!-- MODIFICA DATI -->
+              <div class="modifica-dati-permessi">
+                <h3>Modifica dati</h3>
+
+                <div class="campi-permessi">
+                  <div class="campo-permessi">
+                    <label for="dataPermessi"> Data di riferimento/attuale </label>
+
+                    <input type="date" id="dataPermessi" />
+                  </div>
+
+                  <div class="campo-permessi">
+                    <label for="oreResiduePermessi"> Ore residue </label>
+
+                    <input type="number" id="oreResiduePermessi" placeholder="Digita qui" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- CONTENUTO R.O.L. -->
+          @if (schedaFeriePermessi === 'rol') {
+            <div class="contenuto-scheda-rol">
+              <!-- RIEPILOGHI R.O.L. -->
+              <div class="riepiloghi-rol">
+                <!-- ORE RESIDUE -->
+                <div class="riepilogo-rol">
+                  <div class="riepilogo-rol-titolo">
+                    <span class="icona-permessi">◷</span>
+                    <strong>R.O.L.</strong>
+                  </div>
+
+                  <div class="riepilogo-rol-valore">
+                    <strong>4</strong>
+                    <span>hh</span>
+                    <small>(maturazione 4,07 hh/mese)</small>
+                  </div>
+
+                  <div class="icona-orologio">
+                    <span></span>
+                  </div>
+                </div>
+
+                <!-- ORE MATURATE -->
+                <div class="riepilogo-rol">
+                  <div class="riepilogo-rol-titolo">
+                    <strong>Maturati</strong>
+                  </div>
+
+                  <div class="riepilogo-rol-valore">
+                    <strong>10</strong>
+                    <span>hh</span>
+                  </div>
+
+                  <div class="icona-orologio">
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- MODIFICA DATI -->
+              <div class="modifica-dati-rol">
+                <h3>Modifica dati</h3>
+
+                <div class="campi-rol">
+                  <div class="campo-rol">
+                    <label for="oreResidueRol">Ore residue</label>
+                    <input type="number" id="oreResidueRol" placeholder="Digita qui" />
+                  </div>
+
+                  <div class="campo-rol">
+                    <label for="oreMaturateRol">Ore maturate</label>
+                    <input type="number" id="oreMaturateRol" placeholder="Digita qui" />
+                  </div>
+
+                  <div class="campo-rol campo-rol-data">
+                    <label for="dataRol">Data di riferimento/attuale</label>
+                    <input type="date" id="dataRol" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+
+          <!-- AZIONI -->
+          <div class="azioni-gestione-ferie">
+            <button type="button" class="btn-annulla-ferie" (click)="chiudiModaleFeriePermessi()">
+              Annulla
+            </button>
+
+            <button type="button" class="btn-salva-ferie" (click)="chiudiModaleFeriePermessi()">
+              Salva
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </section>
+</app-side-bar>

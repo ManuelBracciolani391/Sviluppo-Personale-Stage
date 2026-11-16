@@ -4,6 +4,7 @@ import { LoginComponent } from './features/login/login';
 import { Home } from './features/home/home';
 import { Impostazioni } from './features/impostazioni/impostazioni';
 import { Projects } from './features/projects/projects';
+import { GestioneUtente } from './features/gestione-utente/gestione-utente';
 
 export const routes: Routes = [
   // Rotta pubblica di login
@@ -23,7 +24,12 @@ export const routes: Routes = [
   },
   {
      path: 'projects',
-    component: Projects,
+     component: Projects,
+  },
+
+  {
+    path: 'gestione-utente',
+    component: GestioneUtente,
   },
 
   // Qualsiasi altra rotta non definita reindirizza al login
