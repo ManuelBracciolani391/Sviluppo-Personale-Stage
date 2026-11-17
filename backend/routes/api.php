@@ -63,6 +63,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::patch('/{id}/restore', 'restore')->name('restore');
             Route::get('/index', 'index')->name('index');
             Route::post('/store', 'store')->name('store');
+            Route::get('/options', [UserController::class, 'options'])
+                ->name('options');
             Route::get('/{user}', 'show')->name('show');
             Route::put('/{user}', 'update')->name('update');
             Route::patch('/{user}', 'update')->name('patch');

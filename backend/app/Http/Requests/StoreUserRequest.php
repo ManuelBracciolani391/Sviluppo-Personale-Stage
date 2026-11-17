@@ -19,7 +19,7 @@ class StoreUserRequest extends FormRequest
         return [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'gender' => ['nullable', 'string', 'max:20'],
+            'gender' => ['nullable', Rule::in(['male', 'female'])],
             'birth_date' => ['nullable', 'date'],
             'hiring_date' => ['nullable', 'date'],
             'is_intern' => ['required', 'boolean'],

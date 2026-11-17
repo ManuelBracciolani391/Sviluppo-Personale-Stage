@@ -17,9 +17,24 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
+use App\Models\Role;
+use App\Models\AssignmentRole;
 
 class UserController extends Controller
-{
+{   
+
+    public function options(): JsonResponse
+    {
+        return response()->json([
+            'roles' => Role::select('id', 'alias')
+                ->orderBy('alias')
+                ->get(),
+
+            'assignment_roles' => AssignmentRole::select('id', 'alias')
+                ->orderBy('alias')
+                ->get(),
+        ]);
+    }
     /*
     |--------------------------------------------------------------------------
     | LISTA UTENTI
