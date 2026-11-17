@@ -217,6 +217,23 @@
             </button>
           </div>
 
+          @if (errore) {
+            <div
+              role="alert"
+              style="
+                margin: 12px 24px;
+                padding: 12px 16px;
+                border: 1px solid #dc2626;
+                border-radius: 6px;
+                background-color: #fef2f2;
+                color: #b91c1c;
+                font-size: 14px;
+              "
+            >
+              {{ errore }}
+            </div>
+          }
+
           <!-- ANAGRAFICA -->
           @if (schedaNuovoUtente === 'anagrafica') {
             <div class="modal-content">
@@ -249,7 +266,6 @@
                     <option value="">Seleziona</option>
                     <option value="male">Maschio</option>
                     <option value="female">Femmina</option>
-                    <option value="altro">Altro</option>
                   </select>
                 </div>
 
@@ -375,7 +391,6 @@
                   <select id="competenzeContratto" name="expertise" [(ngModel)]="form.expertise">
                     <option value="">Seleziona</option>
                     <option value="Junior">Junior</option>
-                    <option value="Middle">Middle</option>
                     <option value="Senior">Senior</option>
                   </select>
                 </div>
@@ -418,6 +433,13 @@
               <div class="distribuzione-oraria">
                 <h3>Distribuzione oraria</h3>
 
+                @if (distribuzioneBloccata) {
+                  <p class="nota-distribuzione">
+                    Con un contratto di 40 ore settimanali, l'orario è fissato dalle 09:00 alle
+                    18:00 dal lunedì al venerdì e non è modificabile.
+                  </p>
+                }
+
                 <div class="giorni-orario">
                   @for (giorno of giorniLavorativi; track giorno.nome; let i = $index) {
                     <div class="riga-orario">
@@ -427,7 +449,7 @@
                         class="input-orario"
                         type="time"
                         [value]="giorno.inizio"
-                        [disabled]="giorno.nonLavorativo"
+                        [disabled]="distribuzioneBloccata || giorno.nonLavorativo"
                         (change)="aggiornaGiorno(i, 'inizio', $event)"
                       />
 
@@ -435,7 +457,7 @@
                         class="input-orario"
                         type="time"
                         [value]="giorno.fine"
-                        [disabled]="giorno.nonLavorativo"
+                        [disabled]="distribuzioneBloccata || giorno.nonLavorativo"
                         (change)="aggiornaGiorno(i, 'fine', $event)"
                       />
 
@@ -448,6 +470,7 @@
                         <input
                           type="checkbox"
                           [checked]="giorno.nonLavorativo"
+                          [disabled]="distribuzioneBloccata"
                           (change)="cambiaGiornoNonLavorativo(i, $event)"
                         />
                         Non lavorativo
@@ -763,8 +786,8 @@
 
             <button
               type="button"
-              [class.scheda-attiva]="schedaFeriePermessi === 'permessi'"
-              (click)="cambiaSchedaFeriePermessi('permessi')"
+              [class.scheda-attiva]="schedaFeriePermessi === 'permesso'"
+              (click)="cambiaSchedaFeriePermessi('permesso')"
             >
               Permessi
             </button>
@@ -778,220 +801,382 @@
             </button>
           </div>
 
-          <!-- FERIE -->
-          @if (schedaFeriePermessi === 'ferie') {
-            <div class="contenuto-scheda-ferie">
-              <div class="riepilogo-ferie">
-                <div class="riepilogo-ferie-titolo">
-                  <span class="icona-ferie">✚</span>
-                  <strong>Ferie residue</strong>
-                </div>
-
-                <div class="riepilogo-ferie-valore">
-                  <strong>7</strong>
-                  <span>gg</span>
-                  <small>(maturazione 2,16 gg/mese)</small>
-                </div>
-
-                <div class="icona-orologio"><span></span></div>
-              </div>
-
-              <div class="impostazioni-ferie">
-                <div class="selettore-anno">
-                  <button type="button">&#8249;</button>
-                  <span>2026</span>
-                  <button type="button">&#8250;</button>
-                </div>
-
-                <div class="tipo-contratto">
-                  <label>
-                    <input type="radio" name="tipoContratto" checked />
-                    Full-time
-                  </label>
-
-                  <label>
-                    <input type="radio" name="tipoContratto" />
-                    Part-time
-                  </label>
-                </div>
-              </div>
-
-              <div class="tabella-ferie">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Mese</th>
-                      <th>Gg. residui</th>
-                      <th>Rateo</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                      <td>Gennaio</td>
-                      <td><input type="number" value="4" /></td>
-                      <td><input type="number" value="4" /></td>
-                    </tr>
-                    <tr>
-                      <td>Febbraio</td>
-                      <td><input type="number" value="4" /></td>
-                      <td><input type="number" value="4" /></td>
-                    </tr>
-                    <tr>
-                      <td>Marzo</td>
-                      <td><input type="number" value="4" /></td>
-                      <td><input type="number" value="4" /></td>
-                    </tr>
-                    <tr>
-                      <td>Aprile</td>
-                      <td><input type="number" value="4" /></td>
-                      <td><input type="number" value="4" /></td>
-                    </tr>
-                    <tr>
-                      <td>Maggio</td>
-                      <td><input type="number" value="4" /></td>
-                      <td><input type="number" value="4" /></td>
-                    </tr>
-                    <tr>
-                      <td>Giugno</td>
-                      <td><input type="number" value="4" /></td>
-                      <td><input type="number" value="4" /></td>
-                    </tr>
-                    <tr>
-                      <td>Luglio</td>
-                      <td><input type="number" value="4" /></td>
-                      <td><input type="number" value="4" /></td>
-                    </tr>
-                    <tr>
-                      <td>Agosto</td>
-                      <td><input type="number" value="4" /></td>
-                      <td><input type="number" value="4" /></td>
-                    </tr>
-                    <tr>
-                      <td>Settembre</td>
-                      <td><input type="number" value="4" /></td>
-                      <td><input type="number" value="4" /></td>
-                    </tr>
-                    <tr>
-                      <td>Ottobre</td>
-                      <td><input type="number" value="4" /></td>
-                      <td><input type="number" value="4" /></td>
-                    </tr>
-                    <tr>
-                      <td>Novembre</td>
-                      <td><input type="number" value="0" /></td>
-                      <td><input type="number" value="0" /></td>
-                    </tr>
-                    <tr>
-                      <td>Dicembre</td>
-                      <td><input type="number" value="0" /></td>
-                      <td><input type="number" value="0" /></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          @if (errore) {
+            <div
+              role="alert"
+              style="
+                margin: 12px 20px;
+                padding: 12px 16px;
+                border: 1px solid #dc2626;
+                border-radius: 6px;
+                background: #fef2f2;
+                color: #b91c1c;
+                font-size: 14px;
+              "
+            >
+              {{ errore }}
             </div>
           }
 
-          <!-- PERMESSI -->
-          @if (schedaFeriePermessi === 'permessi') {
-            <div class="contenuto-scheda-permessi">
-              <div class="riepilogo-ferie">
-                <div class="riepilogo-ferie-titolo">
-                  <span class="icona-permessi">◷</span>
-                  <strong>Permessi</strong>
-                </div>
-
-                <div class="riepilogo-ferie-valore">
-                  <strong>4</strong>
-                  <span>hh</span>
-                  <small>(maturazione 2,86 hh/mese)</small>
-                </div>
-
-                <div class="icona-orologio"><span></span></div>
-              </div>
-
-              <div class="modifica-dati-permessi">
-                <h3>Modifica dati</h3>
-
-                <div class="campi-permessi">
-                  <div class="campo-permessi">
-                    <label for="dataPermessi">Data di riferimento/attuale</label>
-                    <input type="date" id="dataPermessi" />
+          @if (caricamentoSaldi) {
+            <div style="padding: 24px; text-align: center">Caricamento dei saldi in corso...</div>
+          } @else {
+            <!-- FERIE -->
+            @if (schedaFeriePermessi === 'ferie') {
+              <div class="contenuto-scheda-ferie">
+                <div class="riepilogo-ferie">
+                  <div class="riepilogo-ferie-titolo">
+                    <span class="icona-ferie">✚</span>
+                    <strong>Ferie residue</strong>
                   </div>
 
-                  <div class="campo-permessi">
-                    <label for="oreResiduePermessi">Ore residue</label>
-                    <input type="number" id="oreResiduePermessi" placeholder="Digita qui" />
+                  <div class="riepilogo-ferie-valore">
+                    <strong>{{ saldoTotaleFerie | number: '1.0-2' }}</strong>
+                    <span>{{ unitaFerie === 'giorni' ? 'gg' : 'hh' }}</span>
+                    <small>
+                      (maturazione {{ rateoFerieMedio | number: '1.0-2' }}
+                      {{ unitaFerie === 'giorni' ? 'gg' : 'hh' }}/mese)
+                    </small>
+                  </div>
+
+                  <div class="icona-orologio"><span></span></div>
+                </div>
+
+                <div class="impostazioni-ferie">
+                  <div class="selettore-anno">
+                    <button
+                      type="button"
+                      aria-label="Anno precedente"
+                      (click)="cambiaAnnoFerie(-1)"
+                    >
+                      &#8249;
+                    </button>
+
+                    <span>{{ annoFerie }}</span>
+
+                    <button type="button" aria-label="Anno successivo" (click)="cambiaAnnoFerie(1)">
+                      &#8250;
+                    </button>
+                  </div>
+
+                  <div class="tipo-contratto">
+                    <span>
+                      Unità di misura:
+                      <strong>{{ unitaFerie === 'giorni' ? 'Giorni' : 'Ore' }}</strong>
+                    </span>
                   </div>
                 </div>
-              </div>
-            </div>
-          }
 
-          <!-- R.O.L. -->
-          @if (schedaFeriePermessi === 'rol') {
-            <div class="contenuto-scheda-rol">
-              <div class="riepiloghi-rol">
-                <div class="riepilogo-rol">
-                  <div class="riepilogo-rol-titolo">
+                <div class="tabella-ferie">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Mese</th>
+                        <th>{{ unitaFerie === 'giorni' ? 'Gg. residui' : 'Ore residue' }}</th>
+                        <th>Rateo</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      @for (mese of mesiFerie; track mese.numero) {
+                        <tr>
+                          <td>{{ mese.nome }}</td>
+
+                          <td>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              [name]="'saldoFerie' + mese.numero"
+                              [(ngModel)]="mese.saldo"
+                            />
+                          </td>
+
+                          <td>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              [name]="'rateoFerie' + mese.numero"
+                              [(ngModel)]="mese.rateo"
+                            />
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            }
+
+            <!-- PERMESSI -->
+            @if (schedaFeriePermessi === 'permesso') {
+              <div class="contenuto-scheda-permessi">
+                <div class="riepilogo-ferie">
+                  <div class="riepilogo-ferie-titolo">
                     <span class="icona-permessi">◷</span>
-                    <strong>R.O.L.</strong>
+                    <strong>Permessi</strong>
                   </div>
 
-                  <div class="riepilogo-rol-valore">
-                    <strong>4</strong>
+                  <div class="riepilogo-ferie-valore">
+                    <strong>{{ oreResiduePermessi | number: '1.0-2' }}</strong>
                     <span>hh</span>
-                    <small>(maturazione 4,07 hh/mese)</small>
+                    <small> (maturazione {{ rateoPermessi | number: '1.0-2' }} hh/mese) </small>
                   </div>
 
                   <div class="icona-orologio"><span></span></div>
                 </div>
 
-                <div class="riepilogo-rol">
-                  <div class="riepilogo-rol-titolo">
-                    <strong>Maturati</strong>
-                  </div>
+                <div class="modifica-dati-permessi">
+                  <h3>Modifica dati</h3>
 
-                  <div class="riepilogo-rol-valore">
-                    <strong>10</strong>
-                    <span>hh</span>
-                  </div>
+                  <div class="campi-permessi">
+                    <div class="campo-permessi">
+                      <label for="dataPermessi">Data di riferimento/attuale</label>
+                      <input
+                        type="date"
+                        id="dataPermessi"
+                        name="dataPermessi"
+                        [(ngModel)]="dataPermessi"
+                        (change)="aggiornaDataPermessi()"
+                      />
+                    </div>
 
-                  <div class="icona-orologio"><span></span></div>
+                    <div class="campo-permessi">
+                      <label for="oreResiduePermessi">Ore residue</label>
+                      <input
+                        type="number"
+                        id="oreResiduePermessi"
+                        name="oreResiduePermessi"
+                        min="0"
+                        step="0.01"
+                        placeholder="Digita qui"
+                        [(ngModel)]="oreResiduePermessi"
+                      />
+                    </div>
+
+                    <div class="campo-permessi">
+                      <label for="oreMaturatePermessi">Ore maturate</label>
+                      <input
+                        type="number"
+                        id="oreMaturatePermessi"
+                        name="oreMaturatePermessi"
+                        min="0"
+                        step="0.01"
+                        placeholder="Digita qui"
+                        [(ngModel)]="maturatePermessi"
+                      />
+                    </div>
+
+                    <div class="campo-permessi">
+                      <label for="rateoPermessi">Rateo mensile</label>
+                      <input
+                        type="number"
+                        id="rateoPermessi"
+                        name="rateoPermessi"
+                        min="0"
+                        step="0.01"
+                        placeholder="Digita qui"
+                        [(ngModel)]="rateoPermessi"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
+            }
 
-              <div class="modifica-dati-rol">
-                <h3>Modifica dati</h3>
+            <!-- R.O.L. -->
+            @if (schedaFeriePermessi === 'rol') {
+              <div class="contenuto-scheda-rol">
+                <div class="riepiloghi-rol">
+                  <div class="riepilogo-rol">
+                    <div class="riepilogo-rol-titolo">
+                      <span class="icona-permessi">◷</span>
+                      <strong>R.O.L. residue</strong>
+                    </div>
 
-                <div class="campi-rol">
-                  <div class="campo-rol">
-                    <label for="oreResidueRol">Ore residue</label>
-                    <input type="number" id="oreResidueRol" placeholder="Digita qui" />
+                    <div class="riepilogo-rol-valore">
+                      <strong>{{ oreResidueRol | number: '1.0-2' }}</strong>
+                      <span>hh</span>
+                      <small> (maturazione {{ rateoRol | number: '1.0-2' }} hh/mese) </small>
+                    </div>
+
+                    <div class="icona-orologio"><span></span></div>
                   </div>
 
-                  <div class="campo-rol">
-                    <label for="oreMaturateRol">Ore maturate</label>
-                    <input type="number" id="oreMaturateRol" placeholder="Digita qui" />
-                  </div>
+                  <div class="riepilogo-rol">
+                    <div class="riepilogo-rol-titolo">
+                      <strong>Maturati</strong>
+                    </div>
 
-                  <div class="campo-rol campo-rol-data">
-                    <label for="dataRol">Data di riferimento/attuale</label>
-                    <input type="date" id="dataRol" />
+                    <div class="riepilogo-rol-valore">
+                      <strong>{{ oreMaturateRol | number: '1.0-2' }}</strong>
+                      <span>hh</span>
+                    </div>
+
+                    <div class="icona-orologio"><span></span></div>
                   </div>
                 </div>
+
+                <div class="modifica-dati-rol">
+                  <h3>Modifica dati</h3>
+
+                  <div class="campi-rol">
+                    <div class="campo-rol">
+                      <label for="oreResidueRol">Ore residue</label>
+                      <input
+                        type="number"
+                        id="oreResidueRol"
+                        name="oreResidueRol"
+                        min="0"
+                        step="0.01"
+                        placeholder="Digita qui"
+                        [(ngModel)]="oreResidueRol"
+                      />
+                    </div>
+
+                    <div class="campo-rol">
+                      <label for="oreMaturateRol">Ore maturate</label>
+                      <input
+                        type="number"
+                        id="oreMaturateRol"
+                        name="oreMaturateRol"
+                        min="0"
+                        step="0.01"
+                        placeholder="Digita qui"
+                        [(ngModel)]="oreMaturateRol"
+                      />
+                    </div>
+
+                    <div class="campo-rol">
+                      <label for="rateoRol">Rateo mensile</label>
+                      <input
+                        type="number"
+                        id="rateoRol"
+                        name="rateoRol"
+                        min="0"
+                        step="0.01"
+                        placeholder="Digita qui"
+                        [(ngModel)]="rateoRol"
+                      />
+                    </div>
+
+                    <div class="campo-rol campo-rol-data">
+                      <label for="dataRol">Data di riferimento/attuale</label>
+                      <input
+                        type="date"
+                        id="dataRol"
+                        name="dataRol"
+                        [(ngModel)]="dataRol"
+                        (change)="aggiornaDataRol()"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+          }
+
+          <!-- STORICO E UNDO / REDO -->
+          <div style="margin: 16px 20px">
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                flex-wrap: wrap;
+              "
+            >
+              <button
+                type="button"
+                (click)="caricaStorico()"
+                [disabled]="caricamentoStorico || !getSaldoIdAttivo()"
+              >
+                {{ storicoAperto ? 'Aggiorna storico' : 'Visualizza storico' }}
+              </button>
+
+              <div style="display: flex; gap: 8px">
+                <button
+                  type="button"
+                  (click)="eseguiUndo()"
+                  [disabled]="!canUndo || salvataggioSaldi"
+                >
+                  Annulla ultima modifica
+                </button>
+
+                <button
+                  type="button"
+                  (click)="eseguiRedo()"
+                  [disabled]="!canRedo || salvataggioSaldi"
+                >
+                  Ripristina modifica
+                </button>
               </div>
             </div>
-          }
+
+            @if (storicoAperto) {
+              <div style="margin-top: 12px">
+                @if (caricamentoStorico) {
+                  <p>Caricamento storico...</p>
+                } @else {
+                  @if (storicoSaldi.length) {
+                    <div style="max-height: 180px; overflow-y: auto">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>Operazione</th>
+                            <th>Campo</th>
+                            <th>Valore precedente</th>
+                            <th>Nuovo valore</th>
+                            <th>Data</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          @for (elemento of storicoSaldi; track elemento.id ?? $index) {
+                            <tr>
+                              <td>{{ descrizioneAzioneStorico(elemento) }}</td>
+                              <td>{{ elemento.field_name ?? '-' }}</td>
+                              <td>{{ elemento.old_value ?? '-' }}</td>
+                              <td>{{ elemento.new_value ?? '-' }}</td>
+                              <td>
+                                {{
+                                  elemento.created_at
+                                    ? (elemento.created_at | date: 'dd/MM/yyyy HH:mm')
+                                    : '-'
+                                }}
+                              </td>
+                            </tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                  } @else {
+                    <p>Nessuna modifica presente nello storico di questo saldo.</p>
+                  }
+                }
+              </div>
+            }
+          </div>
 
           <div class="azioni-gestione-ferie">
-            <button type="button" class="btn-annulla-ferie" (click)="chiudiModaleFeriePermessi()">
+            <button
+              type="button"
+              class="btn-annulla-ferie"
+              [disabled]="salvataggioSaldi"
+              (click)="chiudiModaleFeriePermessi()"
+            >
               Annulla
             </button>
 
-            <button type="button" class="btn-salva-ferie" (click)="chiudiModaleFeriePermessi()">
-              Salva
+            <button
+              type="button"
+              class="btn-salva-ferie"
+              [disabled]="salvataggioSaldi || caricamentoSaldi"
+              (click)="salvaSchedaFeriePermessi()"
+            >
+              {{ salvataggioSaldi ? 'Salvataggio...' : 'Salva' }}
             </button>
           </div>
         </div>

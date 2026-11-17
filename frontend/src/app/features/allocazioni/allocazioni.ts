@@ -46,11 +46,10 @@ export class Allocazioni implements OnInit, OnDestroy {
   projects: Project[] = [];
   users: User[] = [];
 
-  // Catalogo completo: utilizzato nelle modali.
+  // Catalogo completo: utilizzato nelle modali e nel filtro.
   assignmentRoles: AssignmentRole[] = [];
 
-  // Solo ruoli presenti nelle allocazioni attive:
-  // utilizzato nel filtro Ruolo.
+  // Solo ruoli presenti nelle allocazioni attive.
   activeAssignmentRoles: AssignmentRole[] = [];
 
   /* =========================================================
@@ -331,20 +330,15 @@ export class Allocazioni implements OnInit, OnDestroy {
         this.projects = res.projects || [];
         this.users = res.users || [];
 
-        // Catalogo completo per le modali.
+        // Catalogo completo per le modali e per la select del filtro.
         this.assignmentRoles = res.assignment_roles || [];
 
         // Ruoli attivi indipendenti dai filtri applicati alla tabella.
         this.activeAssignmentRoles = res.active_assignment_roles || [];
 
-        // Selezione ruolo: viene mantenuta finché il ruolo
-        // esiste ancora tra quelli effettivamente attivi.
-        if (
-          this.selectedRole &&
-          !this.activeAssignmentRoles.some((role) => role.alias === this.selectedRole)
-        ) {
-          this.selectedRole = '';
-        }
+        // Non azzeriamo selectedRole quando non ci sono utenti
+        // con quel ruolo: la selezione deve rimanere visibile
+        // anche quando il risultato del filtro è vuoto.
 
         // Incarico predefinito per le modali.
         if (!this.formRoleId || !this.assignmentRoles.some((role) => role.id === this.formRoleId)) {
