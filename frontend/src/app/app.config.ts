@@ -1,8 +1,14 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
+
 import { provideClientHydration } from '@angular/platform-browser';
-import { provideHttpClient } from '@angular/common/http';
+
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+
+import { authInterceptor } from './core/interceptors/auth.interceptor';
+
 import { it_IT, provideNzI18n } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import it from '@angular/common/locales/it';
@@ -15,7 +21,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideClientHydration(),
-    provideHttpClient(),
+
+    provideHttpClient(withInterceptors([authInterceptor])),
+
     provideNzI18n(it_IT),
     provideNzDateFnsAdapter(),
   ],
