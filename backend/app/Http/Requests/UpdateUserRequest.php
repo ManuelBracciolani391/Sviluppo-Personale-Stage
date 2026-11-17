@@ -23,5 +23,4 @@ class UpdateUserRequest extends StoreUserRequest
 
         return $rules;
     }
-
 }

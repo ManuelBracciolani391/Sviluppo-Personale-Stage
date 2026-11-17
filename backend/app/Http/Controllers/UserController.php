@@ -21,8 +21,7 @@ use App\Models\Role;
 use App\Models\AssignmentRole;
 
 class UserController extends Controller
-{   
-
+{
     public function options(): JsonResponse
     {
         return response()->json([
@@ -35,6 +34,7 @@ class UserController extends Controller
                 ->get(),
         ]);
     }
+
     /*
     |--------------------------------------------------------------------------
     | LISTA UTENTI
@@ -197,11 +197,29 @@ class UserController extends Controller
                     );
                 }
 
-                if (array_key_exists('working_days', $validated)) {
+                /*
+                |--------------------------------------------------------------------------
+                | SALVATAGGIO DISTRIBUZIONE ORARIA
+                |--------------------------------------------------------------------------
+                |
+                | Per un contratto da 40 ore la distribuzione
+                | viene sempre forzata dal backend.
+                |
+                | Per il part-time vengono salvati gli orari
+                | personalizzati ricevuti dal frontend.
+                |
+                */
+
+                $weeklyHours = (int) $validated['contract']['weekly_hours'];
+
+                if (
+                    array_key_exists('working_days', $validated) ||
+                    $weeklyHours === 40
+                ) {
                     $this->saveWorkingDays(
                         $contract,
-                        (int) $validated['contract']['weekly_hours'],
-                        $validated['working_days']
+                        $weeklyHours,
+                        $validated['working_days'] ?? []
                     );
                 }
             }
@@ -342,7 +360,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Filtro per ruolo
+        | FILTRO PER RUOLO
         |--------------------------------------------------------------------------
         */
 
@@ -360,7 +378,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Filtro per ruolo di assegnazione
+        | FILTRO PER RUOLO DI ASSEGNAZIONE
         |--------------------------------------------------------------------------
         */
 
@@ -378,7 +396,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Filtro per expertise
+        | FILTRO PER EXPERTISE
         |--------------------------------------------------------------------------
         */
 
@@ -396,7 +414,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Filtro per visibilità nell'allocazione
+        | FILTRO PER VISIBILITÀ NELL'ALLOCATION
         |--------------------------------------------------------------------------
         */
 
@@ -409,7 +427,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Ricerca e ordinamento
+        | RICERCA E ORDINAMENTO
         |--------------------------------------------------------------------------
         */
 
@@ -518,7 +536,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Ricerca e ordinamento
+        | RICERCA E ORDINAMENTO
         |--------------------------------------------------------------------------
         */
 
@@ -609,7 +627,7 @@ class UserController extends Controller
     ): Builder {
         /*
         |--------------------------------------------------------------------------
-        | Ricerca
+        | RICERCA
         |--------------------------------------------------------------------------
         */
 
@@ -640,7 +658,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Ordinamento
+        | ORDINAMENTO
         |--------------------------------------------------------------------------
         */
 
@@ -676,7 +694,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Ordinamento secondario
+        | ORDINAMENTO SECONDARIO
         |--------------------------------------------------------------------------
         */
 
@@ -758,7 +776,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Normalizza i nomi dei giorni ricevuti
+        | NORMALIZZA I NOMI DEI GIORNI RICEVUTI
         |--------------------------------------------------------------------------
         */
 
@@ -799,14 +817,16 @@ class UserController extends Controller
 
                 $values = [
                     'is_working_day' => $isWorkingDay,
+
                     'start_time' =>
                         $isWorkingDay
-                        ? '09:00:00'
-                        : null,
+                            ? '09:00:00'
+                            : null,
+
                     'end_time' =>
                         $isWorkingDay
-                        ? '18:00:00'
-                        : null,
+                            ? '18:00:00'
+                            : null,
                 ];
 
             } else {
@@ -827,7 +847,6 @@ class UserController extends Controller
                         true
                     )
                 ) {
-
                     $values = [
                         'is_working_day' => false,
                         'start_time' => null,
@@ -858,13 +877,13 @@ class UserController extends Controller
 
                         'start_time' =>
                             $isWorkingDay
-                            ? ($input['start_time'] ?? null)
-                            : null,
+                                ? ($input['start_time'] ?? null)
+                                : null,
 
                         'end_time' =>
                             $isWorkingDay
-                            ? ($input['end_time'] ?? null)
-                            : null,
+                                ? ($input['end_time'] ?? null)
+                                : null,
                     ];
                 }
             }
@@ -917,7 +936,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Giorni ammessi
+        | GIORNI AMMESSI
         |--------------------------------------------------------------------------
         */
 
@@ -941,7 +960,7 @@ class UserController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Sabato e domenica non configurabili
+            | SABATO E DOMENICA NON CONFIGURABILI
             |--------------------------------------------------------------------------
             */
 
@@ -954,14 +973,14 @@ class UserController extends Controller
             ) {
                 throw ValidationException::withMessages([
                     'working_days' => [
-                        "Puoi configurare soltanto i giorni dal lunedì al venerdì.",
+                        'Puoi configurare soltanto i giorni dal lunedì al venerdì.',
                     ],
                 ]);
             }
 
             /*
             |--------------------------------------------------------------------------
-            | Giorno duplicato
+            | GIORNO DUPLICATO
             |--------------------------------------------------------------------------
             */
 
@@ -983,7 +1002,7 @@ class UserController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Dati del giorno
+            | DATI DEL GIORNO
             |--------------------------------------------------------------------------
             */
 
@@ -1000,7 +1019,7 @@ class UserController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Giorno NON lavorativo
+            | GIORNO NON LAVORATIVO
             |--------------------------------------------------------------------------
             */
 
@@ -1022,7 +1041,7 @@ class UserController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Giorno lavorativo
+            | GIORNO LAVORATIVO
             |--------------------------------------------------------------------------
             */
 
@@ -1034,17 +1053,13 @@ class UserController extends Controller
                 ]);
             }
 
-            $start = Carbon::parse(
-                $startTime
-            );
+            $start = Carbon::parse($startTime);
 
-            $end = Carbon::parse(
-                $endTime
-            );
+            $end = Carbon::parse($endTime);
 
             /*
             |--------------------------------------------------------------------------
-            | Fine successiva all'inizio
+            | FINE SUCCESSIVA ALL'INIZIO
             |--------------------------------------------------------------------------
             */
 
@@ -1058,19 +1073,18 @@ class UserController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Calcolo ore effettive
+            | CALCOLO ORE EFFETTIVE
             |--------------------------------------------------------------------------
             */
 
-            $minutes =
-                $this->calculateWorkingMinutes(
-                    $startTime,
-                    $endTime
-                );
+            $minutes = $this->calculateWorkingMinutes(
+                $startTime,
+                $endTime
+            );
 
             /*
             |--------------------------------------------------------------------------
-            | Massimo 8 ore effettive al giorno
+            | MASSIMO 8 ORE EFFETTIVE AL GIORNO
             |--------------------------------------------------------------------------
             */
 
@@ -1087,7 +1101,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Totale settimanale
+        | TOTALE SETTIMANALE
         |--------------------------------------------------------------------------
         |
         | Il totale deve essere ESATTAMENTE uguale
@@ -1114,20 +1128,15 @@ class UserController extends Controller
         string $startTime,
         string $endTime
     ): int {
-        $start = Carbon::parse(
-            $startTime
-        );
+        $start = Carbon::parse($startTime);
 
-        $end = Carbon::parse(
-            $endTime
-        );
+        $end = Carbon::parse($endTime);
 
-        $minutes =
-            $start->diffInMinutes($end);
+        $minutes = $start->diffInMinutes($end);
 
         /*
         |--------------------------------------------------------------------------
-        | Regola B:
+        | REGOLA B:
         | sottrai 60 minuti se l'orario di fine
         | supera le 15:00
         |--------------------------------------------------------------------------
