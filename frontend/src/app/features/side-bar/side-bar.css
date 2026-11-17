@@ -49,8 +49,8 @@
   color: #263746;
   cursor: pointer;
   transition:
-  background-color 0.35s ease-in-out,
-  box-shadow 0.35s ease-in-out;
+    background-color 0.35s ease-in-out,
+    box-shadow 0.35s ease-in-out;
 }
 
 .side-nav button img {
@@ -90,8 +90,9 @@
   color: #225b91;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.2s ease,
-              transform 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
   border-radius: 20%;
 }
 
@@ -103,11 +104,12 @@
 
 .top-actions button:hover {
   background-color: #eaf2f9;
-  transform: scale(1.10);
+  transform: scale(1.1);
 }
 
 .page-title {
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family:
+    'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   font-size: 20px;
   padding: 10px;
 }

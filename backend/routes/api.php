@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Http\Controllers\UserController;
@@ -7,42 +8,25 @@ use App\Http\Controllers\Api\ProjectController;
 use App\Http\Controllers\Api\ProjectMemberController;
 use App\Http\Controllers\Api\TimesheetProjectController;
 use App\Http\Controllers\Api\TimesheetProjectMemberController;
+use App\Http\Controllers\Api\AllocationManagementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| Rotte Pubbliche
+| API Routes
 |--------------------------------------------------------------------------
 */
 
-Route::post('/login', [AuthController::class, 'login'])
-    ->name('login');
+// Rotte pubbliche
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
-Route::post('/forgot-password', [
-    AuthController::class,
-    'forgotPassword',
-])->name('password.email');
-
-Route::post('/reset-password', [
-    AuthController::class,
-    'resetPassword',
-])->name('password.update');
-
-
-/*
-|--------------------------------------------------------------------------
-| Rotte Protette (Auth: Sanctum)
-|--------------------------------------------------------------------------
-*/
-
+// Rotte protette
 Route::middleware('auth:sanctum')->group(function () {
 
-    Route::post('/logout', [
-        AuthController::class,
-        'logout',
-    ])->name('logout');
-
+    // Profilo utente
     Route::get('/user', function (Request $request) {
     return response()->json($request->user()->load(['roles', 'filestorage']));
     })->name('user.profile');
@@ -110,25 +94,119 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('projects/{id}', [ProjectController::class, 'destroy']);
         Route::post('projects/{id}/restore', [ProjectController::class, 'restore']);
         Route::post('projects/{id}/upload-file', [ProjectController::class, 'uploadFile']);
+        return $request->user();
     });
 
-    // Membri del Progetto Standard
-    Route::get('projects/{projectId}/members', [ProjectMemberController::class, 'index']);
-    Route::post('projects/{projectId}/members', [ProjectMemberController::class, 'store']);
-    Route::delete('projects/{projectId}/members/{userId}', [ProjectMemberController::class, 'destroy']);
+    // Gestione utenti
+    Route::middleware('can:manage-users')->group(function () {
+        Route::apiResource('users', UserController::class);
 
+        // Gestione ferie e permessi
+        Route::get(
+            '/users/{user}/leave-balances',
+            [UserLeaveBalanceController::class, 'index']
+        );
 
-    /*
-    |--------------------------------------------------------------------------
-    | Modulo Timesheet Projects
-    |--------------------------------------------------------------------------
-    */
-    Route::apiResource('timesheet-projects', TimesheetProjectController::class);
-    Route::post('timesheet-projects/{id}/upload-logo', [TimesheetProjectController::class, 'uploadLogo']);
-    Route::put('timesheet-projects/{id}/note', [TimesheetProjectController::class, 'updateNote']);
+        Route::put(
+            '/users/{user}/leave-balances',
+            [UserLeaveBalanceController::class, 'update']
+        );
+    });
 
-    Route::get('timesheet-projects/{timesheetProjectId}/members', [TimesheetProjectMemberController::class, 'index']);
-    Route::post('timesheet-projects/{timesheetProjectId}/members', [TimesheetProjectMemberController::class, 'store']);
-    Route::delete('timesheet-projects/{timesheetProjectId}/members/{userId}', [TimesheetProjectMemberController::class, 'destroy']);
+    // Gestione allocazioni
+    Route::middleware('can:manage-allocations')
+        ->prefix('allocations')
+        ->name('allocations.')
+        ->controller(AllocationManagementController::class)
+        ->group(function () {
 
+            Route::get('/', 'index')->name('index');
+
+            // Dati separati per Timesheet
+            Route::get('/timesheet', 'timesheetIndex')
+                ->name('timesheet.index');
+
+            Route::get('/user/{user}', 'userDetail')
+                ->name('user.detail');
+
+            Route::get('/project/{project}', 'projectDetail')
+                ->name('project.detail');
+
+            // Assegnazioni ai progetti normali
+            Route::post('/assign', 'storeAllocation')
+                ->name('assign');
+
+            Route::put(
+                '/project/{projectId}/user/{userId}',
+                'updateAllocation'
+            )->name('update');
+
+            Route::delete(
+                '/project/{projectId}/user/{userId}/terminate',
+                'terminateAllocation'
+            )->name('terminate');
+
+            Route::patch(
+                '/project/{projectId}/user/{userId}/toggle-difficulty',
+                'toggleDifficulty'
+            )->name('toggle-difficulty');
+
+            // Necessità del progetto
+            Route::post('/project/{project}/needs', 'storeNeed')
+                ->name('needs.store');
+
+            Route::delete('/needs/{need}', 'destroyNeed')
+                ->name('needs.destroy');
+        });
+
+    // Gestione progetti
+    Route::apiResource('projects', ProjectController::class);
+
+    // Membri dei progetti
+    Route::get(
+        '/projects/{projectId}/members',
+        [ProjectMemberController::class, 'index']
+    );
+
+    Route::post(
+        '/projects/{projectId}/members',
+        [ProjectMemberController::class, 'store']
+    );
+
+    Route::delete(
+        '/projects/{projectId}/members/{userId}',
+        [ProjectMemberController::class, 'destroy']
+    );
+
+    // Gestione Timesheet
+    Route::apiResource(
+        'timesheet-projects',
+        TimesheetProjectController::class
+    );
+
+    Route::post(
+        '/timesheet-projects/{timesheetProject}/upload-logo',
+        [TimesheetProjectController::class, 'uploadLogo']
+    );
+
+    Route::put(
+        '/timesheet-projects/{timesheetProject}/note',
+        [TimesheetProjectController::class, 'updateNote']
+    );
+
+    // Associazione semplice degli utenti ai Timesheet
+    Route::get(
+        '/timesheet-projects/{timesheetProjectId}/members',
+        [TimesheetProjectMemberController::class, 'index']
+    );
+
+    Route::post(
+        '/timesheet-projects/{timesheetProjectId}/members',
+        [TimesheetProjectMemberController::class, 'store']
+    );
+
+    Route::delete(
+        '/timesheet-projects/{timesheetProjectId}/members/{userId}',
+        [TimesheetProjectMemberController::class, 'destroy']
+    );
 });

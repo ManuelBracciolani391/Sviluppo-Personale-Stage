@@ -22,9 +22,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Gate per la gestione utenti (Admin e HR)
         Gate::define('manage-users', function (User $user): bool {
             return $user->roles()
                 ->whereIn('alias', ['Admin', 'HR'])
+                ->exists();
+        });
+
+        // Gate per la gestione delle allocazioni (Admin e Project Manager)
+        Gate::define('manage-allocations', function (User $user): bool {
+            return $user->roles()
+                ->whereIn('alias', ['Admin', 'Project Manager'])
                 ->exists();
         });
 
