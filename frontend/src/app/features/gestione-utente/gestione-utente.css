@@ -1,0 +1,2962 @@
+/* =========================================
+   CONTENUTO PAGINA
+========================================= */
+
+.gestione-utente-content {
+  display: block;
+  width: 100%;
+  min-width: 0;
+
+  padding: 14px;
+  box-sizing: border-box;
+}
+
+/* =========================================
+   PULSANTE NUOVO UTENTE
+========================================= */
+
+.nuovo-utente {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  position: static;
+
+  margin: 0;
+  padding: 0;
+}
+
+.nuovo-utente button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  width: 160px;
+  height: 36px;
+
+  background-color: #004b80;
+  color: #ffffff;
+
+  border: none;
+  border-radius: 6px;
+
+  padding: 0 12px;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.nuovo-utente button:hover {
+  background-color: #09558b;
+}
+
+.pulsante {
+  font-size: 17px;
+  line-height: 1;
+}
+
+/* =========================================
+   CONTENITORE TABELLA
+========================================= */
+
+.tabella-utenti {
+  width: 100%;
+
+  margin-top: 14px;
+
+  overflow-x: auto;
+
+  box-sizing: border-box;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e1e5eb;
+  border-radius: 6px;
+}
+
+/* =========================================
+   TABELLA
+========================================= */
+
+.tabella-utenti table {
+  width: 100%;
+
+  min-width: 760px;
+
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  text-align: left;
+
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', Arial, sans-serif;
+}
+
+/* =========================================
+   LARGHEZZA COLONNE
+========================================= */
+
+.col-nome {
+  width: 18%;
+}
+
+.col-assunzione {
+  width: 16%;
+}
+
+.col-ruolo {
+  width: 11%;
+}
+
+.col-incarico {
+  width: 15%;
+}
+
+.col-competenza {
+  width: 12%;
+}
+
+.col-visibilita {
+  width: 18%;
+}
+
+.col-azioni {
+  width: 10%;
+}
+
+/* =========================================
+   INTESTAZIONE BLU
+========================================= */
+
+.tabella-utenti thead {
+  background-color: #004b80;
+}
+
+.tabella-utenti th {
+  height: 42px;
+
+  padding: 0 12px;
+
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  text-align: left;
+  white-space: nowrap;
+
+  border-right: 1px solid rgb(255 255 255 / 15%);
+  border-bottom: 1px solid #dce2e9;
+
+  box-sizing: border-box;
+}
+
+.tabella-utenti th:last-child {
+  border-right: none;
+}
+
+/* =========================================
+   ORDINAMENTO E FILTRI
+========================================= */
+
+.ordinamento {
+  margin-left: 6px;
+
+  color: #b8d3e8;
+
+  font-size: 9px;
+}
+
+.filtro {
+  float: right;
+
+  margin-left: 5px;
+
+  color: #b8d3e8;
+
+  font-size: 9px;
+}
+
+/* =========================================
+   RIGHE E CELLE
+========================================= */
+
+.tabella-utenti tbody tr {
+  height: 44px;
+
+  background-color: #ffffff;
+
+  border-bottom: 1px solid #e7ebf0;
+}
+
+.tabella-utenti tbody tr:last-child {
+  border-bottom: none;
+}
+
+.tabella-utenti tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.tabella-utenti td {
+  height: 38px;
+
+  padding: 0 10px;
+
+  color: #344054;
+
+  font-size: 10px;
+  font-weight: 400;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  box-sizing: border-box;
+}
+
+/* =========================================
+   NOME UTENTE
+========================================= */
+
+.nome-utente {
+  color: #263746;
+  font-weight: 500;
+}
+
+/* =========================================
+   MENU AZIONI
+========================================= */
+
+.azioni {
+  text-align: center;
+  overflow: visible;
+}
+
+.menu-azioni {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 24px;
+  height: 28px;
+
+  padding: 0;
+
+  border: none;
+  border-radius: 4px;
+
+  background-color: transparent;
+
+  color: #101828;
+
+  font-size: 20px;
+  line-height: 1;
+
+  cursor: pointer;
+}
+
+.menu-azioni:hover {
+  background-color: #eef2f6;
+}
+
+/* =========================================
+   UTENTI DISABILITATI
+========================================= */
+
+.utenti-disabilitati {
+  display: flex;
+
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 24px;
+
+  color: #e11d48;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.icona-disabilitata {
+  font-size: 20px;
+}
+
+.freccia {
+  margin-left: 4px;
+
+  color: #667085;
+
+  font-size: 13px;
+}
+
+/* =========================================
+   PAGINAZIONE
+========================================= */
+
+.paginazione {
+  display: flex;
+
+  justify-content: flex-end;
+  align-items: center;
+
+  gap: 8px;
+
+  margin-top: -22px;
+  padding-bottom: 8px;
+}
+
+.paginazione button {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 20px;
+  height: 22px;
+
+  padding: 0 5px;
+
+  background-color: #ffffff;
+
+  border: 1px solid #e1e5eb;
+  border-radius: 3px;
+
+  color: #667085;
+
+  font-size: 10px;
+
+  cursor: pointer;
+}
+
+.paginazione button:hover {
+  background-color: #f5f9ff;
+}
+
+.paginazione .pagina.attiva {
+  color: #1677ff;
+
+  border-color: #1677ff;
+
+  background-color: #ffffff;
+}
+
+.paginazione .pagina-freccia {
+  color: #1677ff;
+
+  font-size: 14px;
+}
+
+.paginazione .pagina-freccia:disabled {
+  color: #d0d5dd;
+
+  background-color: #ffffff;
+
+  cursor: default;
+}
+
+/* =========================================================
+    DROPDOWN AZIONI PROGETTO
+    ========================================================= */
+
+.project-actions-menu {
+  position: fixed;
+
+  width: 180px;
+
+  box-sizing: border-box;
+
+  padding: 8px 0;
+
+  background: #ffffff;
+
+  border-radius: 2px;
+
+  box-shadow:
+    0 4px 12px rgba(0, 0, 0, 0.18),
+    0 1px 4px rgba(0, 0, 0, 0.08);
+
+  z-index: 10000;
+}
+
+/* =========================================================
+    ELEMENTI MENU
+    ========================================================= */
+
+.project-menu-item {
+  width: 100%;
+  height: 48px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 0 18px;
+
+  border: none;
+
+  background: transparent;
+
+  color: #214d85;
+
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+
+  text-align: left;
+
+  cursor: pointer;
+}
+
+.project-menu-item:hover {
+  background: #f5f7fa;
+}
+
+.project-menu-item svg {
+  width: 18px;
+  height: 18px;
+
+  flex-shrink: 0;
+
+  fill: none;
+
+  stroke: #214d85;
+
+  stroke-width: 1.7;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.project-menu-item span {
+  line-height: 1;
+}
+
+/* =========================================================
+    CSV
+    ========================================================= */
+
+.project-menu-item svg text {
+  fill: #214d85;
+  stroke: none;
+
+  font-family: Arial, sans-serif;
+  font-size: 6px;
+  font-weight: 700;
+}
+
+/* =========================================================
+    ELIMINA
+    ========================================================= */
+
+.project-menu-item.delete-item {
+  margin: 2px 5px 0;
+
+  width: calc(100% - 10px);
+
+  height: 45px;
+
+  border-radius: 4px;
+
+  color: #d71945;
+
+  background: #fff1f4;
+}
+
+.project-menu-item.delete-item:hover {
+  background: #ffe6eb;
+}
+
+.project-menu-item.delete-item svg {
+  stroke: #d71945;
+}
+
+/* =========================================
+   DROPDOWN AZIONI UTENTE
+========================================= */
+
+.user-actions-menu {
+  position: fixed;
+
+  width: 150px;
+  box-sizing: border-box;
+
+  padding: 4px;
+
+  background: #ffffff;
+
+  border: 1px solid #e1e5eb;
+  border-radius: 4px;
+
+  box-shadow:
+    0 4px 12px rgb(0 0 0 / 12%),
+    0 1px 4px rgb(0 0 0 / 6%);
+
+  z-index: 10000;
+}
+
+/* Voci del menu */
+
+.user-menu-item {
+  width: 100%;
+  min-height: 25px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  align-items: center;
+
+  gap: 7px;
+
+  padding: 5px 7px;
+
+  border: none;
+  border-radius: 3px;
+
+  background: #ffffff;
+
+  color: #004b80;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 400;
+
+  text-align: left;
+  white-space: nowrap;
+
+  cursor: pointer;
+}
+
+.user-menu-item:hover {
+  background: #f2f6fa;
+}
+
+/* Icone */
+
+.user-menu-item svg {
+  width: 12px;
+  height: 12px;
+
+  flex-shrink: 0;
+
+  fill: none;
+
+  stroke: currentColor;
+  stroke-width: 1.7;
+
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Disabilita */
+
+.user-menu-item.disable-item {
+  margin-top: 2px;
+
+  color: #e11d48;
+
+  background: #fff1f4;
+}
+
+.user-menu-item.disable-item:hover {
+  background: #ffe6eb;
+}
+
+/* =========================================
+   INTESTAZIONE UTENTI DISABILITATI
+========================================= */
+
+.utenti-disabilitati {
+  display: flex;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.intestazione-disabilitati {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #e11d48;
+
+  font-size: 10px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.icona-disabilitata {
+  font-size: 14px;
+}
+
+.freccia {
+  margin-left: 4px;
+  color: #667085;
+  font-size: 13px;
+
+  transition: transform 0.2s ease;
+}
+
+.freccia-aperta {
+  transform: rotate(180deg);
+}
+
+/* =========================================
+   TABELLA UTENTI DISABILITATI
+========================================= */
+
+.tabella-disabilitati {
+  width: 100%;
+  margin-top: 10px;
+
+  overflow-x: auto;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+  border: 1px solid #e1e5eb;
+  border-radius: 5px;
+}
+
+.tabella-disabilitati table {
+  width: 100%;
+  min-width: 760px;
+
+  border-collapse: collapse;
+  table-layout: fixed;
+
+  text-align: left;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', Arial, sans-serif;
+}
+
+/* Larghezza colonne */
+
+.disabilitati-col-nome {
+  width: 22%;
+}
+
+.disabilitati-col-assunzione {
+  width: 16%;
+}
+
+.disabilitati-col-dimissione {
+  width: 18%;
+}
+
+.disabilitati-col-azioni {
+  width: 44%;
+}
+
+/* Intestazione grigia */
+
+.tabella-disabilitati thead {
+  background: #424b56;
+}
+
+.tabella-disabilitati th {
+  height: 42px;
+  padding: 0 14px;
+
+  color: #ffffff;
+
+  font-size: 12px;
+  font-weight: 400;
+  text-align: left;
+  white-space: nowrap;
+
+  border-bottom: 1px solid #dce2e9;
+  box-sizing: border-box;
+}
+
+/* Righe */
+
+.tabella-disabilitati tbody tr {
+  height: 48px;
+  background: #ffffff;
+  border-bottom: 1px solid #e7ebf0;
+}
+
+.tabella-disabilitati tbody tr:last-child {
+  border-bottom: none;
+}
+
+.tabella-disabilitati td {
+  height: 48px;
+  padding: 0 14px;
+
+  color: #344054;
+  font-size: 9px;
+
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+/* Nome e avatar */
+
+.nome-disabilitato {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.avatar-disabilitato {
+  font-size: 23px;
+}
+
+/* Pulsante riabilita */
+
+.azioni-disabilitati {
+  text-align: right;
+}
+
+.riabilita-utente {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  height: 26px;
+  padding: 0 12px;
+
+  border: none;
+  border-radius: 5px;
+
+  background: #004b80;
+  color: #ffffff;
+
+  font-size: 10px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.riabilita-utente:hover {
+  background: #09558b;
+}
+
+/* Paginazione quando la tabella è aperta */
+
+.paginazione.paginazione-disabilitati-aperti {
+  margin-top: 12px;
+}
+
+/* Paginazione utenti disabilitati */
+
+.paginazione-disabilitati {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  gap: 8px;
+
+  width: 100%;
+  margin-top: 12px;
+  padding-bottom: 8px;
+
+  box-sizing: border-box;
+}
+
+/* =========================================
+   SFONDO MODALE
+========================================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 15px;
+  box-sizing: border-box;
+
+  background: transparent;
+
+  z-index: 20000;
+}
+
+/* =========================================
+   CONTENITORE MODALE
+========================================= */
+
+.modal-nuovo-utente {
+  width: 100%;
+  max-width: 468px;
+
+  padding: 16px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+
+  border: 1px solid #e1e5eb;
+  border-radius: 7px;
+
+  box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
+}
+
+/* =========================================
+   TITOLO
+========================================= */
+
+.modal-header {
+  padding-bottom: 13px;
+  border-bottom: 1px solid #e7ebf0;
+}
+
+.modal-header h2 {
+  margin: 0;
+
+  color: #004b80;
+
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* =========================================
+   SCHEDE
+========================================= */
+
+/* Font della modale */
+
+.modal-nuovo-utente,
+.modal-nuovo-utente input,
+.modal-nuovo-utente select,
+.modal-nuovo-utente button {
+  font-family: Inter, Arial, Helvetica, sans-serif;
+}
+
+.modal-tabs {
+  display: flex;
+  align-items: center;
+
+  gap: 16px;
+
+  height: 38px;
+  margin-bottom: 12px;
+}
+
+.modal-tab {
+  height: 100%;
+
+  padding: 0;
+
+  border: none;
+  border-bottom: 3px solid transparent;
+
+  background: transparent;
+
+  color: #667085;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 400;
+
+  cursor: pointer;
+}
+
+.modal-tab.active {
+  color: #004b80;
+
+  border-bottom-color: #004b80;
+
+  font-weight: 600;
+}
+
+/* =========================================
+   CONTENUTO FORM
+========================================= */
+
+.modal-content {
+  min-height: 211px;
+}
+
+.form-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  column-gap: 11px;
+  row-gap: 11px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  gap: 4px;
+}
+
+.form-group label {
+  color: #202936;
+
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  height: 28px;
+
+  padding: 0 10px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #dce2e9;
+  border-radius: 6px;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #344054;
+
+  font-family: inherit;
+  font-size: 10px;
+}
+
+.form-group input::placeholder {
+  color: #8291a8;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgb(22 119 255 / 10%);
+}
+
+/* =========================================
+   CONTENUTO CONTRATTO
+========================================= */
+
+.contratto-placeholder {
+  color: #667085;
+  font-size: 11px;
+}
+
+/* =========================================
+   PULSANTI IN FONDO
+========================================= */
+
+.modal-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 11px;
+
+  margin-top: 14px;
+}
+
+.modal-footer button {
+  height: 28px;
+
+  border-radius: 6px;
+
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.btn-annulla {
+  border: 1px solid #004b80;
+
+  background: #ffffff;
+  color: #004b80;
+}
+
+.btn-annulla:hover {
+  background: #f2f6fa;
+}
+
+.btn-salva {
+  border: 1px solid #004b80;
+
+  background: #004b80;
+  color: #ffffff;
+}
+
+.btn-salva:hover {
+  background: #09558b;
+}
+
+/* =========================================
+   MODALE - SCHEDA CONTRATTO
+========================================= */
+
+.modal-nuovo-utente {
+  max-width: 610px;
+}
+
+.contratto-content {
+  min-height: auto;
+}
+
+.contratto-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px 12px;
+}
+
+.contratto-grid .form-group input,
+.contratto-grid .form-group select,
+.contratto-opzioni .form-group input {
+  height: 27px;
+}
+
+/* Altro e visibilità */
+
+.contratto-opzioni {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 9px;
+}
+
+.visibilita-contratto {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-top: 1px;
+  color: #344054;
+  font-size: 9px;
+}
+
+.visibilita-contratto small {
+  max-width: 190px;
+  color: #8291a8;
+  font-size: 8px;
+  line-height: 1.3;
+}
+
+/* Checkbox tirocinante */
+
+.checkbox-contratto {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  color: #344054;
+  font-size: 9px;
+}
+
+/* Distribuzione oraria */
+
+.distribuzione-oraria {
+  margin-top: 12px;
+}
+
+.distribuzione-oraria h3 {
+  margin: 0 0 8px;
+  color: #004b80;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.giorni-orario {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.riga-orario {
+  display: grid;
+  grid-template-columns: 65px minmax(65px, 1fr) minmax(65px, 1fr) 43px 94px;
+  align-items: center;
+  gap: 5px;
+}
+
+.nome-giorno {
+  color: #8291a8;
+  font-size: 8px;
+}
+
+.input-orario {
+  width: 100%;
+  min-width: 0;
+  height: 22px;
+  padding: 0 5px;
+  box-sizing: border-box;
+  border: 1px solid #dce2e9;
+  border-radius: 5px;
+  background: #fff;
+  color: #344054;
+  font-family: inherit;
+  font-size: 8px;
+}
+
+.input-orario:disabled {
+  background: #f2f4f7;
+  opacity: 0.6;
+}
+
+.badge-ore {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  height: 19px;
+  border-radius: 10px;
+  background: #e8f2ff;
+  color: #004b80;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.checkbox-non-lavorativo {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #344054;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.checkbox-non-lavorativo input,
+.checkbox-contratto input {
+  width: 10px;
+  height: 10px;
+  margin: 0;
+  accent-color: #1677ff;
+}
+
+.totale-orario {
+  margin-top: 9px;
+  text-align: right;
+  color: #004b80;
+  font-size: 9px;
+  font-weight: 600;
+}
+
+/* =========================================
+   MODALE CONFERMA
+========================================= */
+
+.conferma-overlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 15px;
+  box-sizing: border-box;
+
+  background: transparent;
+
+  z-index: 21000;
+}
+
+/* Riquadro bianco */
+
+.modale-conferma {
+  position: relative;
+
+  width: 100%;
+  max-width: 520px;
+  min-height: 300px;
+
+  box-sizing: border-box;
+
+  background: #ffffff;
+  border-radius: 7px;
+
+  box-shadow: 0 3px 9px rgb(0 0 0 / 10%);
+}
+
+/* Intestazione */
+
+.conferma-intestazione {
+  position: absolute;
+  top: -22px;
+  left: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  width: 100%;
+
+  color: #718096;
+  font-family: Inter, Arial, sans-serif;
+  font-size: 11px;
+}
+
+/* Pulsante X */
+
+.chiudi-conferma {
+  position: absolute;
+  top: 25px;
+  right: 9px;
+
+  padding: 0;
+
+  border: none;
+  background: transparent;
+
+  color: #b5c0ce;
+  font-size: 15px;
+
+  cursor: pointer;
+}
+
+/* Contenuto */
+
+.conferma-contenuto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 300px;
+  padding: 35px;
+  box-sizing: border-box;
+
+  text-align: center;
+  font-family: Inter, Arial, sans-serif;
+}
+
+/* Icona spunta */
+
+.icona-successo {
+  width: 38px;
+  height: 38px;
+
+  fill: none;
+  stroke: #00518a;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Titolo */
+
+.conferma-contenuto h2 {
+  margin: 6px 0 0;
+
+  color: #004b80;
+
+  font-size: 23px;
+  font-weight: 600;
+}
+
+/* Messaggio */
+
+.conferma-contenuto p {
+  margin: 7px 0 11px;
+
+  color: #667085;
+
+  font-size: 15px;
+  font-weight: 400;
+}
+
+/* Pulsante OK */
+
+.btn-conferma-ok {
+  width: 250px;
+  height: 42px;
+
+  border: none;
+  border-radius: 4px;
+
+  background: #004b80;
+  color: #ffffff;
+
+  font-family: Inter, Arial, sans-serif;
+  font-size: 15px;
+
+  cursor: pointer;
+}
+
+.btn-conferma-ok:hover {
+  background: #09558b;
+}
+
+/* OVERLAY DELLE MODALI */
+.riabilita-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  font-family: Arial, sans-serif;
+}
+
+/* MODALE CONFERMA */
+.modale-riabilita {
+  position: relative;
+  width: 340px;
+  min-height: 150px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px 26px 20px;
+  box-sizing: border-box;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+.modale-riabilita h3 {
+  font-size: 12px;
+  font-weight: 500;
+  color: #07518a;
+  margin: 0 0 18px;
+}
+
+.chiudi-riabilita,
+.chiudi-riabilitato {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  border: none;
+  background: transparent;
+  color: #9aa6b2;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.utente-riabilita-info {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 0;
+  border-top: 1px solid #eeeeee;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.utente-riabilita-avatar {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #e9edf1;
+  flex-shrink: 0;
+}
+
+.utente-riabilita-info strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: #202b38;
+}
+
+.utente-riabilita-info small {
+  display: block;
+  font-size: 9px;
+  color: #788493;
+  margin-top: 3px;
+}
+
+.azioni-riabilita {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.azioni-riabilita button {
+  flex: 1;
+  height: 27px;
+  border-radius: 5px;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.btn-annulla-riabilita {
+  background: #ffffff;
+  border: 1px solid #07518a;
+  color: #07518a;
+}
+
+.btn-conferma-riabilita {
+  background: #07518a;
+  border: 1px solid #07518a;
+  color: #ffffff;
+}
+
+/* MODALE SUCCESSO */
+.modale-utente-riabilitato {
+  position: relative;
+  width: 415px;
+  height: 280px;
+  background: #ffffff;
+  border-radius: 7px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+.contenuto-riabilitato {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 30px;
+  text-align: center;
+}
+
+.icona-riabilitato {
+  width: 38px;
+  height: 38px;
+  margin-bottom: 8px;
+}
+
+.contenuto-riabilitato h2 {
+  font-size: 24px;
+  font-weight: 500;
+  color: #07518a;
+  margin: 0 0 10px;
+  font-family: Arial, sans-serif;
+}
+
+.contenuto-riabilitato p {
+  font-size: 11px;
+  color: #66717e;
+  margin: 0 0 17px;
+}
+
+.btn-ok-riabilitato {
+  width: 197px;
+  height: 27px;
+  border: none;
+  border-radius: 5px;
+  background: #07518a;
+  color: #ffffff;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+/* MODALE CONFERMA DISABILITAZIONE */
+.modale-disabilita-conferma {
+  position: relative;
+  width: 380px;
+  min-height: 280px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 28px 30px 24px;
+  box-sizing: border-box;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+  font-family: Arial, sans-serif;
+}
+
+/* TITOLO */
+.modale-disabilita-conferma h3 {
+  font-size: 12px;
+  font-weight: 500;
+  color: #07518a;
+  margin: 0 20px 15px 0;
+}
+
+/* AVVISO ROSSO */
+.avviso-disabilita {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #fff1f1;
+  border: 1px solid #f3caca;
+  border-radius: 5px;
+  padding: 9px;
+  margin-bottom: 15px;
+}
+
+.icona-avviso-disabilita {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  border: 1px solid #d93636;
+  border-radius: 50%;
+  color: #d93636;
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.avviso-disabilita p {
+  margin: 0;
+  color: #c83232;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+/* INFORMAZIONI UTENTE */
+.utente-disabilita-info {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 0;
+  border-top: 1px solid #eeeeee;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.avatar-disabilita {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #e9edf1;
+  flex-shrink: 0;
+}
+
+.utente-disabilita-info strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: #202b38;
+}
+
+.utente-disabilita-info small {
+  display: block;
+  font-size: 9px;
+  color: #788493;
+  margin-top: 3px;
+}
+
+/* CAMPO DATA */
+.campo-data-disabilita {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 12px;
+}
+
+.campo-data-disabilita label {
+  font-size: 10px;
+  color: #526171;
+}
+
+.campo-data-disabilita input {
+  height: 29px;
+  border: 1px solid #dce2e9;
+  border-radius: 5px;
+  padding: 0 8px;
+  font-family: Arial, sans-serif;
+  font-size: 10px;
+  color: #526171;
+  box-sizing: border-box;
+}
+
+/* PULSANTI */
+.azioni-disabilita {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.azioni-disabilita button {
+  flex: 1;
+  height: 27px;
+  border-radius: 5px;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.btn-annulla-disabilita {
+  background: #ffffff;
+  border: 1px solid #07518a;
+  color: #07518a;
+}
+
+.btn-conferma-disabilita {
+  background-color: #07518a;
+  border: 1px solid #07518a;
+  color: #ffffff;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn-conferma-disabilita:hover {
+  background-color: #06416e;
+  border-color: #06416e;
+}
+
+/* SECONDA MODALE - DISABILITA UTENTE */
+.modale-disabilita-dettagli {
+  position: relative;
+  width: 340px;
+  min-height: 250px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 24px 26px 20px;
+  box-sizing: border-box;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+  font-family: Arial, sans-serif;
+}
+
+/* TITOLO */
+.header-disabilita-dettagli h3 {
+  font-size: 12px;
+  font-weight: 500;
+  color: #c62828;
+  margin: 0 0 18px;
+}
+
+/* AVVISO */
+.avviso-disabilita-dettagli {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 10px;
+  background: #fff1f0;
+  border: 1px solid #f2c4c1;
+  border-radius: 6px;
+  margin-bottom: 14px;
+}
+
+.icona-avviso-disabilita-dettagli {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #d93636;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.avviso-disabilita-dettagli p {
+  margin: 0;
+  font-size: 10px;
+  line-height: 15px;
+  color: #b42323;
+}
+
+/* INFORMAZIONI UTENTE */
+.utente-disabilita-dettagli {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 0;
+  border-top: 1px solid #eeeeee;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.utente-disabilita-dettagli strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  color: #202b38;
+}
+
+.utente-disabilita-dettagli small {
+  display: block;
+  font-size: 9px;
+  color: #788493;
+  margin-top: 3px;
+}
+
+/* CAMPO DATA */
+.campo-data-disabilita {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.campo-data-disabilita label {
+  font-size: 10px;
+  color: #07518a;
+}
+
+.campo-data-disabilita input {
+  width: 100%;
+  height: 30px;
+  padding: 5px 8px;
+  box-sizing: border-box;
+  border: 1px solid #dce2e9;
+  border-radius: 5px;
+  font-size: 10px;
+  color: #202b38;
+}
+
+/* PULSANTI */
+.azioni-disabilita {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.azioni-disabilita button {
+  flex: 1;
+  height: 29px;
+  border-radius: 5px;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+/* ANNULLA */
+.btn-annulla-disabilita {
+  background: #ffffff;
+  border: 1px solid #c62828;
+  color: #c62828;
+}
+
+/* DISABILITA */
+.btn-conferma-disabilita {
+  background: #c62828;
+  border: 1px solid #c62828;
+  color: #ffffff;
+}
+
+.btn-conferma-disabilita:hover {
+  background: #a51f1f;
+  border-color: #a51f1f;
+}
+
+/* SECONDA MODALE - DIMENSIONI E STRUTTURA */
+.modale-disabilita-dettagli {
+  width: 380px;
+  min-height: 340px;
+  padding: 28px 30px 24px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+.icona-utente-disabilita {
+  display: block;
+  width: 22px;
+  height: 22px;
+  margin: 0 auto 7px;
+}
+
+/* TITOLO */
+.header-disabilita-dettagli {
+  width: 100%;
+  text-align: center;
+}
+
+.header-disabilita-dettagli h3 {
+  color: #d0002a;
+  font-size: 12px;
+  font-weight: 500;
+  margin: 5px 0 7px;
+}
+
+/* AVVISO */
+.avviso-disabilita-dettagli {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0 0 10px;
+}
+
+.icona-avviso-disabilita-dettagli {
+  display: none;
+}
+
+.avviso-disabilita-dettagli p {
+  color: #596574;
+  font-size: 7px;
+  line-height: 10px;
+  text-align: center;
+  margin: 0;
+}
+
+/* INFORMAZIONI UTENTE */
+.utente-disabilita-dettagli {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 0;
+  border-top: 1px solid #eeeeee;
+  border-bottom: none;
+}
+
+.utente-disabilita-dettagli .avatar-disabilita {
+  width: 19px;
+  height: 19px;
+  border-radius: 50%;
+  background: #e9edf1;
+  flex-shrink: 0;
+}
+
+.utente-disabilita-dettagli strong {
+  font-size: 7px;
+  color: #202b38;
+}
+
+.utente-disabilita-dettagli small {
+  font-size: 6px;
+  margin-top: 2px;
+}
+
+/* DATA DI DIMISSIONI */
+.modale-disabilita-dettagli .campo-data-disabilita {
+  width: 100%;
+  margin-top: 1px;
+  gap: 4px;
+}
+
+.modale-disabilita-dettagli .campo-data-disabilita label {
+  font-size: 7px;
+  color: #394554;
+}
+
+.modale-disabilita-dettagli .campo-data-disabilita input {
+  height: 20px;
+  font-size: 7px;
+  border-radius: 4px;
+}
+
+/* PULSANTI */
+.modale-disabilita-dettagli .azioni-disabilita {
+  width: 100%;
+  gap: 4px;
+  margin-top: 14px;
+}
+
+.modale-disabilita-dettagli .azioni-disabilita button {
+  height: 19px;
+  font-size: 7px;
+  border-radius: 4px;
+}
+
+/* ANNULLA */
+.modale-disabilita-dettagli .btn-annulla-disabilita {
+  background: #ffffff;
+  border: 1px solid #ff3855;
+  color: #d0002a;
+}
+
+/* DISABILITA */
+.modale-disabilita-dettagli .btn-conferma-disabilita {
+  background: #d0002a;
+  border: 1px solid #d0002a;
+  color: #ffffff;
+}
+
+.modale-disabilita-dettagli .btn-conferma-disabilita:hover {
+  background: #ad0023;
+  border-color: #ad0023;
+}
+
+.modale-disabilita-dettagli .header-disabilita-dettagli h3 {
+  font-size: 17px;
+}
+
+.modale-disabilita-dettagli .avviso-disabilita-dettagli p {
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.modale-disabilita-dettagli .utente-disabilita-dettagli strong {
+  font-size: 13px;
+}
+
+.modale-disabilita-dettagli .utente-disabilita-dettagli small {
+  font-size: 11px;
+}
+
+.modale-disabilita-dettagli .campo-data-disabilita label {
+  font-size: 12px;
+}
+
+.modale-disabilita-dettagli .campo-data-disabilita input {
+  height: 36px;
+  font-size: 12px;
+}
+
+.modale-disabilita-dettagli .azioni-disabilita button {
+  height: 34px;
+  font-size: 12px;
+}
+
+/* MODALE UTENTE DISABILITATO */
+.modale-utente-disabilitato {
+  position: relative;
+  width: 380px;
+  min-height: 240px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-sizing: border-box;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+/* ICONA DI CONFERMA */
+.icona-successo-disabilitazione {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 14px;
+}
+
+.icona-successo-disabilitazione svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* TITOLO */
+.modale-utente-disabilitato h3 {
+  margin: 0 0 10px;
+  color: #07518a;
+  font-size: 19px;
+  font-weight: 600;
+}
+
+/* MESSAGGIO */
+.modale-utente-disabilitato p {
+  margin: 0;
+  color: #555555;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* PULSANTE */
+.azioni-utente-disabilitato {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 24px;
+}
+
+.btn-ok-utente-disabilitato {
+  min-width: 150px;
+  height: 40px;
+  padding: 0 20px;
+  background: #07518a;
+  border: 1px solid #07518a;
+  border-radius: 5px;
+  color: #ffffff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-ok-utente-disabilitato:hover {
+  background: #06416e;
+  border-color: #06416e;
+}
+
+/* =========================================
+   MODALE GESTIONE FERIE E PERMESSI
+========================================= */
+
+.modale-gestione-ferie-permessi {
+  width: 750px;
+  max-width: calc(100vw - 40px);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 28px 32px;
+  box-sizing: border-box;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+}
+
+/* INTESTAZIONE */
+
+.header-gestione-ferie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.header-gestione-ferie h2 {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 600;
+  color: #263746;
+}
+
+.btn-chiudi-ferie {
+  border: none;
+  background: transparent;
+  color: #687785;
+  font-size: 28px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* DATI UTENTE */
+
+.utente-gestione-ferie {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 25px;
+}
+
+.utente-gestione-ferie strong {
+  font-size: 16px;
+  font-weight: 600;
+  color: #263746;
+}
+
+.utente-gestione-ferie span {
+  font-size: 13px;
+  color: #788591;
+}
+
+/* SCHEDE */
+
+.schede-gestione-ferie {
+  display: flex;
+  align-items: center;
+  gap: 35px;
+  border-bottom: 1px solid #e3e7eb;
+  margin-bottom: 25px;
+}
+
+.schede-gestione-ferie button {
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 12px 2px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #7a8792;
+  cursor: pointer;
+}
+
+.schede-gestione-ferie button:hover {
+  color: #225b91;
+}
+
+.schede-gestione-ferie button.scheda-attiva {
+  color: #225b91;
+  font-weight: 600;
+}
+
+.schede-gestione-ferie button.scheda-attiva::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 100%;
+  height: 2px;
+  background: #225b91;
+}
+
+/* CONTENUTO DELLE SCHEDE */
+
+.contenuto-scheda-ferie,
+.contenuto-scheda-permessi,
+.contenuto-scheda-rol {
+  min-height: 280px;
+  padding: 5px 0 20px;
+}
+
+.contenuto-scheda-ferie h3,
+.contenuto-scheda-permessi h3,
+.contenuto-scheda-rol h3 {
+  margin: 0 0 20px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #263746;
+}
+
+/* PULSANTI IN FONDO */
+
+.azioni-gestione-ferie {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid #e8ebee;
+  padding-top: 20px;
+  margin-top: 10px;
+}
+
+.btn-annulla-ferie,
+.btn-salva-ferie {
+  min-width: 105px;
+  height: 38px;
+  padding: 0 18px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.btn-annulla-ferie {
+  background: #ffffff;
+  border: 1px solid #d5dce2;
+  color: #596875;
+}
+
+.btn-annulla-ferie:hover {
+  background: #f5f6f7;
+}
+
+.btn-salva-ferie {
+  background: #225b91;
+  border: 1px solid #225b91;
+  color: #ffffff;
+}
+
+.btn-salva-ferie:hover {
+  background: #194a78;
+}
+
+/* =========================================
+   SCHEDA FERIE
+========================================= */
+
+.contenuto-scheda-ferie {
+  min-height: 280px;
+}
+
+.riepilogo-ferie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  border: 1px solid #e1e5eb;
+  border-radius: 7px;
+  background: #ffffff;
+}
+
+.riepilogo-ferie-titolo h3 {
+  margin: 0 0 6px;
+  color: #263746;
+  font-size: 15px;
+}
+
+.riepilogo-ferie-titolo span {
+  color: #788591;
+  font-size: 12px;
+}
+
+.giorni-ferie-residui {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: #004b80;
+}
+
+.giorni-ferie-residui strong {
+  font-size: 25px;
+}
+
+.giorni-ferie-residui span {
+  font-size: 12px;
+}
+
+.filtri-ferie {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.campo-filtro-ferie {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 180px;
+}
+
+.campo-filtro-ferie label {
+  color: #344054;
+  font-size: 12px;
+}
+
+.campo-filtro-ferie select {
+  height: 34px;
+  padding: 0 9px;
+  border: 1px solid #dce2e9;
+  border-radius: 5px;
+  background: #ffffff;
+  color: #344054;
+  font-size: 12px;
+}
+
+.tabella-ferie {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e1e5eb;
+  border-radius: 6px;
+}
+
+.tabella-ferie table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 12px;
+}
+
+.tabella-ferie th {
+  padding: 12px;
+  background: #004b80;
+  color: #ffffff;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tabella-ferie td {
+  padding: 11px 12px;
+  color: #344054;
+  border-bottom: 1px solid #e7ebf0;
+}
+
+.tabella-ferie tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* =========================================
+   MODALE FERIE E PERMESSI - DIMENSIONI
+========================================= */
+
+.modale-gestione-ferie-permessi {
+  width: 350px;
+  max-width: calc(100vw - 24px);
+  max-height: 90vh;
+  padding: 12px;
+  border-radius: 5px;
+  overflow-y: auto;
+}
+
+/* INTESTAZIONE */
+
+.header-gestione-ferie {
+  margin-bottom: 10px;
+}
+
+.header-gestione-ferie h2 {
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.btn-chiudi-ferie {
+  font-size: 20px;
+}
+
+/* DATI UTENTE */
+
+.utente-gestione-ferie {
+  gap: 2px;
+  margin-bottom: 9px;
+}
+
+.utente-gestione-ferie strong {
+  font-size: 9px;
+}
+
+.utente-gestione-ferie span {
+  font-size: 8px;
+}
+
+/* SCHEDE */
+
+.schede-gestione-ferie {
+  gap: 14px;
+  margin-bottom: 8px;
+}
+
+.schede-gestione-ferie button {
+  padding: 5px 1px;
+  font-size: 8px;
+}
+
+/* =========================================
+   RIEPILOGO FERIE RESIDUE
+========================================= */
+
+.riepilogo-ferie {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 28px;
+  padding: 4px 30px 4px 7px;
+  margin-bottom: 8px;
+  background: #e5f1fa;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.riepilogo-ferie-titolo {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #064b80;
+  font-size: 9px;
+}
+
+.icona-ferie {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: #079b69;
+  color: white;
+  font-size: 8px;
+}
+
+.riepilogo-ferie-valore {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  color: #064b80;
+}
+
+.riepilogo-ferie-valore strong {
+  font-size: 11px;
+}
+
+.riepilogo-ferie-valore span {
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.riepilogo-ferie-valore small {
+  font-size: 6px;
+  color: #8795a3;
+}
+
+/* ICONA OROLOGIO */
+
+.icona-orologio {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #c8e0f3;
+}
+
+.icona-orologio span {
+  position: absolute;
+  inset: 4px;
+  border: 2px solid #064b80;
+  border-radius: 50%;
+}
+
+.icona-orologio span::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 9px;
+  width: 2px;
+  height: 8px;
+  background: #064b80;
+}
+
+.icona-orologio span::after {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  width: 6px;
+  height: 2px;
+  background: #064b80;
+}
+
+/* =========================================
+   ANNO E TIPO CONTRATTO
+========================================= */
+
+.impostazioni-ferie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  font-size: 7px;
+}
+
+.selettore-anno {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.selettore-anno button {
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  border: 1px solid #d8e0e8;
+  border-radius: 50%;
+  background: white;
+  color: #064b80;
+  cursor: pointer;
+}
+
+.tipo-contratto {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.tipo-contratto label {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.tipo-contratto input {
+  width: 9px;
+  height: 9px;
+  margin: 0;
+}
+
+/* =========================================
+   TABELLA FERIE
+========================================= */
+
+.tabella-ferie {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.tabella-ferie table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 7px;
+}
+
+.tabella-ferie th {
+  height: 16px;
+  padding: 2px 4px;
+  background: #064b80;
+  color: white;
+  text-align: left;
+  font-weight: 500;
+}
+
+.tabella-ferie th:first-child {
+  width: 32%;
+}
+
+.tabella-ferie th:nth-child(2),
+.tabella-ferie th:nth-child(3) {
+  width: 34%;
+}
+
+.tabella-ferie td {
+  height: 15px;
+  padding: 1px 4px;
+  border: 1px solid #e0e5eb;
+  color: #526170;
+}
+
+.tabella-ferie input {
+  display: block;
+  width: 100%;
+  height: 12px;
+  padding: 0 3px;
+  box-sizing: border-box;
+  border: 1px solid #dce2e9;
+  border-radius: 2px;
+  background: white;
+  color: #263746;
+  font-size: 7px;
+}
+
+/* =========================================
+   PULSANTI IN FONDO
+========================================= */
+
+.azioni-gestione-ferie {
+  gap: 7px;
+  padding-top: 8px;
+  margin-top: 7px;
+}
+
+.btn-annulla-ferie,
+.btn-salva-ferie {
+  flex: 1;
+  min-width: 0;
+  height: 21px;
+  padding: 0 5px;
+  border-radius: 3px;
+  font-size: 8px;
+}
+
+/* =========================================
+   INGRANDIMENTO MODALE FERIE E PERMESSI
+========================================= */
+
+.modale-gestione-ferie-permessi {
+  width: 400px;
+  padding: 15px;
+}
+
+/* TITOLO E DATI UTENTE */
+
+.header-gestione-ferie h2 {
+  font-size: 12px;
+}
+
+.utente-gestione-ferie strong {
+  font-size: 10px;
+}
+
+.utente-gestione-ferie span {
+  font-size: 9px;
+}
+
+/* SCHEDE */
+
+.schede-gestione-ferie button {
+  font-size: 9px;
+  padding: 6px 1px;
+}
+
+/* RIEPILOGO */
+
+.riepilogo-ferie {
+  min-height: 32px;
+}
+
+.riepilogo-ferie-titolo {
+  font-size: 10px;
+}
+
+.riepilogo-ferie-valore strong {
+  font-size: 12px;
+}
+
+.riepilogo-ferie-valore small {
+  font-size: 7px;
+}
+
+/* TABELLA */
+
+.tabella-ferie table {
+  font-size: 8px;
+}
+
+.tabella-ferie th {
+  height: 18px;
+}
+
+.tabella-ferie td {
+  height: 17px;
+}
+
+.tabella-ferie input {
+  height: 14px;
+  font-size: 8px;
+}
+
+/* PULSANTI */
+
+.btn-annulla-ferie,
+.btn-salva-ferie {
+  height: 24px;
+  font-size: 9px;
+}
+
+/* =========================================
+   SCHEDA PERMESSI
+========================================= */
+
+.contenuto-scheda-permessi {
+  min-height: 105px;
+  padding: 0;
+}
+
+/* ICONA PERMESSI */
+
+.icona-permessi {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: #ffc83d;
+  color: white;
+  font-size: 9px;
+}
+
+/* MODIFICA DATI */
+
+.modifica-dati-permessi {
+  margin-top: 12px;
+}
+
+.modifica-dati-permessi h3 {
+  margin: 0 0 10px;
+  color: #064b80;
+  font-size: 9px;
+  font-weight: 500;
+}
+
+/* CAMPI AFFIANCATI */
+
+.campi-permessi {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.campo-permessi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.campo-permessi label {
+  color: #263746;
+  font-size: 8px;
+}
+
+.campo-permessi input {
+  width: 100%;
+  height: 21px;
+  padding: 0 7px;
+  box-sizing: border-box;
+  border: 1px solid #dce2e9;
+  border-radius: 5px;
+  background: #fff;
+  color: #263746;
+  font-family: Arial, sans-serif;
+  font-size: 8px;
+}
+
+.campo-permessi input::placeholder {
+  color: #8996a3;
+}
+
+.campo-permessi input:focus {
+  outline: none;
+  border-color: #225b91;
+}
+
+/* =========================================
+   SCHEDA R.O.L.
+========================================= */
+
+.contenuto-scheda-rol {
+  min-height: 170px;
+  padding: 0;
+}
+
+/* DUE RIEPILOGHI AFFIANCATI */
+
+.riepiloghi-rol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  width: 100%;
+}
+
+.riepilogo-rol {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  min-height: 38px;
+  padding: 5px 30px 5px 7px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  background: #e5f1fa;
+}
+
+.riepilogo-rol-titolo {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #064b80;
+  font-size: 8px;
+}
+
+.riepilogo-rol-valore {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  color: #064b80;
+}
+
+.riepilogo-rol-valore strong {
+  font-size: 11px;
+}
+
+.riepilogo-rol-valore span {
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.riepilogo-rol-valore small {
+  font-size: 6px;
+  color: #8795a3;
+}
+
+/* MODIFICA DATI */
+
+.modifica-dati-rol {
+  margin-top: 12px;
+}
+
+.modifica-dati-rol h3 {
+  margin: 0 0 10px;
+  color: #064b80;
+  font-size: 9px;
+  font-weight: 500;
+}
+
+/* CAMPI R.O.L. */
+
+.campi-rol {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.campo-rol {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.campo-rol label {
+  color: #263746;
+  font-size: 8px;
+}
+
+.campo-rol input {
+  width: 100%;
+  height: 21px;
+  padding: 0 7px;
+  box-sizing: border-box;
+  border: 1px solid #dce2e9;
+  border-radius: 5px;
+  background: #fff;
+  color: #263746;
+  font-family: Arial, sans-serif;
+  font-size: 8px;
+}
+
+.campo-rol input::placeholder {
+  color: #8996a3;
+}
+
+.campo-rol input:focus {
+  outline: none;
+  border-color: #225b91;
+}
+
+/* DATA A TUTTA LARGHEZZA */
+
+.campo-rol-data {
+  grid-column: 1 / -1;
+  width: calc(50% - 4px);
+}
+
+/* =========================================
+   INGRANDIMENTO TESTI - GESTIONE UTENTE
+========================================= */
+
+/* TESTI GENERALI */
+.gestione-utente-content {
+  font-size: 16px;
+}
+
+/* TITOLO DELLA PAGINA */
+.gestione-utente-content h1 {
+  font-size: 26px;
+}
+
+/* TITOLI DELLE SEZIONI */
+.gestione-utente-content h2 {
+  font-size: 21px;
+}
+
+/* TESTI E DESCRIZIONI */
+.gestione-utente-content p {
+  font-size: 15px;
+}
+
+/* TABELLE */
+.gestione-utente-content table {
+  font-size: 14px;
+}
+
+.gestione-utente-content th {
+  font-size: 14px;
+}
+
+.gestione-utente-content td {
+  font-size: 14px;
+}
+
+/* PULSANTI */
+.gestione-utente-content button {
+  font-size: 14px;
+}
+
+/* CAMPI DI INSERIMENTO */
+.gestione-utente-content input,
+.gestione-utente-content select,
+.gestione-utente-content textarea {
+  font-size: 14px;
+}
+
+/* =========================================
+   INGRANDIMENTO TESTI NELLE MODALI
+   GESTIONE UTENTE
+========================================= */
+
+/* TESTI GENERALI DELLE MODALI */
+.riabilita-overlay {
+  font-size: 15px;
+}
+
+/* TITOLI */
+.riabilita-overlay h2 {
+  font-size: 20px;
+}
+
+.riabilita-overlay h3 {
+  font-size: 16px;
+}
+
+/* TESTI E DESCRIZIONI */
+.riabilita-overlay p,
+.riabilita-overlay span,
+.riabilita-overlay strong {
+  font-size: 14px;
+}
+
+/* ETICHETTE */
+.riabilita-overlay label {
+  font-size: 13px;
+}
+
+/* TABELLE */
+.riabilita-overlay table {
+  font-size: 13px;
+}
+
+.riabilita-overlay th,
+.riabilita-overlay td {
+  font-size: 13px;
+}
+
+/* CAMPI */
+.riabilita-overlay input,
+.riabilita-overlay select,
+.riabilita-overlay textarea {
+  font-size: 13px;
+}
+
+/* PULSANTI */
+.riabilita-overlay button {
+  font-size: 13px;
+}
+
+/* ALLINEAMENTO FRECCE ANNO - MODALE FERIE */
+
+.selettore-anno button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 20px;
+  height: 20px;
+  padding: 0;
+
+  line-height: 1;
+  font-size: 14px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* INGRANDIMENTO X CHIUSURA MODALE */
+.modale-gestione-ferie-permessi .btn-chiudi-ferie {
+  font-size: 38px !important;
+  font-weight: 400;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Adattamento schermi piccoli */
+
+@media (max-width: 600px) {
+  .modal-nuovo-utente {
+    max-width: 100%;
+  }
+
+  .riga-orario {
+    grid-template-columns: 55px minmax(55px, 1fr) minmax(55px, 1fr) 38px;
+  }
+
+  .checkbox-non-lavorativo {
+    grid-column: 2 / -1;
+  }
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 520px) {
+  .modal-nuovo-utente {
+    max-width: 100%;
+    padding: 13px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-content {
+    max-height: 65vh;
+    overflow-y: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .gestione-utente-content {
+    padding: 10px;
+  }
+
+  .tabella-utenti {
+    overflow-x: auto;
+  }
+
+  .tabella-utenti table {
+    min-width: 760px;
+  }
+}

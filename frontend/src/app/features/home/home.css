@@ -4,12 +4,7 @@
   left: 70px;
   right: 0;
   height: 220px;
-  background: linear-gradient(
-    90deg,
-    #80b8ed 0%,
-    #0871bd 50%,
-    #0062a8 100%
-  );
+  background: linear-gradient(90deg, #80b8ed 0%, #0871bd 50%, #0062a8 100%);
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -55,6 +50,7 @@
   font-size: 30px;
   font-weight: 300;
   font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: #ffffff;
 }
 
 .profile-text p {
@@ -72,7 +68,7 @@
   height: 140px;
   object-fit: contain;
   object-position: center;
-  opacity: 0.80;
+  opacity: 0.8;
   z-index: 2;
 }
 
@@ -289,7 +285,7 @@
   color: #ffffff;
 }
 
-.btn-salva:hover{
+.btn-salva:hover {
   background-color: #80b8ed;
 }
 
@@ -346,7 +342,6 @@
 
 /* TABLET E FINESTRE RIDOTTE */
 @media screen and (max-width: 1024px) {
-
   .personal-data {
     left: 75px;
     right: 10px;
@@ -370,7 +365,6 @@
 
 /* SMARTPHONE */
 @media screen and (max-width: 600px) {
-
   .personal-data {
     left: 70px;
     right: 8px;
@@ -399,4 +393,176 @@
   .change-password {
     font-size: 9px;
   }
+}
+
+/* =========================================
+   RESPONSIVITÀ TABLET
+========================================= */
+
+@media screen and (max-width: 768px) {
+  /* Banner */
+  .profile-banner {
+    left: 70px;
+    right: 0;
+    height: 200px;
+  }
+
+  /* Informazioni utente */
+  .profile-info {
+    left: 20px;
+    gap: 12px;
+  }
+
+  .profile-avatar {
+    width: 90px;
+    height: 90px;
+    font-size: 30px;
+    flex-shrink: 0;
+  }
+
+  .profile-text h2 {
+    font-size: 23px;
+  }
+
+  .profile-text p {
+    font-size: 12px;
+  }
+
+  .banner-logo {
+    width: 85px;
+    height: 100px;
+    right: 8px;
+  }
+
+  /* Dati personali */
+  .personal-data {
+    left: 70px;
+    right: 8px;
+    padding: 8px;
+  }
+
+  .personal-data-content {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .data-card {
+    min-width: 0;
+    gap: 6px;
+    padding: 6px 8px;
+  }
+
+  .data-label,
+  .data-value {
+    font-size: 11px;
+  }
+
+  .data-label {
+    white-space: normal;
+  }
+
+  .data-value {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* =========================================
+   RESPONSIVITÀ SMARTPHONE
+========================================= */
+
+@media screen and (max-width: 600px) {
+  /* Banner */
+  .profile-banner {
+    height: 180px;
+  }
+
+  .profile-info {
+    left: 12px;
+    gap: 10px;
+  }
+
+  .profile-avatar {
+    width: 70px;
+    height: 70px;
+    font-size: 24px;
+  }
+
+  .profile-text h2 {
+    font-size: 19px;
+    overflow-wrap: anywhere;
+  }
+
+  .profile-text p {
+    font-size: 11px;
+  }
+
+  .banner-logo {
+    width: 55px;
+    height: 75px;
+    right: 5px;
+    opacity: 0.5;
+  }
+
+  /* Dati personali */
+  .personal-data {
+    top: 250px;
+    left: 70px;
+    right: 8px;
+    padding: 8px;
+  }
+
+  .personal-data-header h3 {
+    font-size: 13px;
+  }
+
+  .change-password {
+    font-size: 10px;
+  }
+
+  .personal-data-content {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .data-card {
+    width: 100%;
+    min-height: 45px;
+    height: auto;
+    padding: 8px;
+  }
+
+  .data-card img {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+  }
+
+  .data-label {
+    font-size: 11px;
+  }
+
+  .data-value {
+    font-size: 11px;
+  }
+}
+
+/* Correzione responsività riquadro Email */
+.personal-data-content .data-card:nth-child(3) {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.personal-data-content .data-card:nth-child(3) .data-label {
+  flex-shrink: 0;
+}
+
+.personal-data-content .data-card:nth-child(3) .data-value {
+  min-width: 0;
+  flex: 1;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-align: right;
 }

@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -18,9 +19,12 @@ return new class extends Migration {
 
             $table->date('reference_month');
 
-            $table->decimal('remaining_hours', 8, 2)->default(0); // Giorni o ore residue
-            $table->decimal('accrued_hours', 8, 2)->default(0);   // Ore maturate (es. ROL)
-            $table->decimal('monthly_accrual', 8, 2)->default(0); // Rateo mensile (es. 2.18 o 2.86)
+            $table->string('contract_type')->nullable();
+            $table->string('balance_unit')->default('ore');
+
+            $table->decimal('remaining_hours', 8, 2)->default(0);
+            $table->decimal('accrued_hours', 8, 2)->default(0);
+            $table->decimal('monthly_accrual', 8, 2)->default(0);
 
             $table->timestamps();
 

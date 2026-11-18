@@ -5,7 +5,8 @@ import { SideBar } from '../side-bar/side-bar';
 @Component({
   imports: [RouterLink, SideBar],
   selector: 'app-impostazioni',
-  styleUrl: './impostazioni.css',
+  standalone: true,
   templateUrl: './impostazioni.html',
+  styleUrl: './impostazioni.css',
 })
 export class Impostazioni {}
