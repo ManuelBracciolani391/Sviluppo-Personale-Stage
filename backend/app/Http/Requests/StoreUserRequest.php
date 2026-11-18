@@ -5,12 +5,12 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
+use Carbon\Carbon;
 
 class StoreUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        //return app()->environment('local');
         return $this->user()?->can('manage-users') ?? false;
     }
 
@@ -124,12 +124,83 @@ class StoreUserRequest extends FormRequest
         ];
     }
 
+    /**
+     * Messaggi personalizzati di validazione.
+     */
+    public function messages(): array
+    {
+        return [
+            'contract.contract_end_date.after_or_equal' =>
+                'La data di fine contratto non può essere precedente alla data di inizio contratto.',
+
+            'contract.contract_end_date.date' =>
+                'La data di fine contratto non è valida.',
+
+            'contract.contract_start_date.required' =>
+                'La data di inizio contratto è obbligatoria.',
+
+            'contract.contract_start_date.date' =>
+                'La data di inizio contratto non è valida.',
+
+            'hiring_date.date' =>
+                'La data di assunzione non è valida.',
+
+            'working_days.*.end_time.after' =>
+                'L’orario di fine deve essere successivo all’orario di inizio.',
+        ];
+    }
+
+    /**
+     * Validazioni aggiuntive.
+     */
     public function after(): array
     {
         return [
             function (Validator $validator): void {
-                // Se le regole di base hanno già rilevato errori,
-                // evitiamo di eseguire calcoli su dati non validi.
+
+                // Non eseguiamo controlli aggiuntivi
+                // se i dati di base non sono validi.
+                if ($validator->errors()->isNotEmpty()) {
+                    return;
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | VALIDAZIONE DATA ASSUNZIONE / FINE CONTRATTO
+                |--------------------------------------------------------------------------
+                */
+
+                $hiringDate = $this->input('hiring_date');
+
+                $contractEndDate = $this->input(
+                    'contract.contract_end_date'
+                );
+
+                if (
+                    !empty($hiringDate) &&
+                    !empty($contractEndDate)
+                ) {
+                    if (
+                        Carbon::parse($contractEndDate)
+                            ->startOfDay()
+                            ->lt(
+                                Carbon::parse($hiringDate)
+                                    ->startOfDay()
+                            )
+                    ) {
+                        $validator->errors()->add(
+                            'contract.contract_end_date',
+                            'La data di fine contratto non può essere precedente alla data di assunzione.'
+                        );
+                    }
+                }
+
+                /*
+                |--------------------------------------------------------------------------
+                | VALIDAZIONE DISTRIBUZIONE ORARIA
+                |--------------------------------------------------------------------------
+                */
+
                 if ($validator->errors()->isNotEmpty()) {
                     return;
                 }
@@ -143,16 +214,17 @@ class StoreUserRequest extends FormRequest
                 $workingDays = $this->input('working_days', []);
 
                 /*
-                 * CONTRATTO DA 40 ORE
-                 *
-                 * La distribuzione deve essere obbligatoriamente:
-                 * Lunedì - Venerdì
-                 * 09:00 - 18:00
-                 *
-                 * Non sono ammessi giorni non lavorativi
-                 * o orari differenti.
-                 */
+                |--------------------------------------------------------------------------
+                | CONTRATTO DA 40 ORE
+                |--------------------------------------------------------------------------
+                |
+                | Lunedì-venerdì:
+                | 09:00-18:00
+                |
+                */
+
                 if ((int) $hours === 40) {
+
                     $giorniRichiesti = [
                         'monday',
                         'tuesday',
@@ -161,7 +233,10 @@ class StoreUserRequest extends FormRequest
                         'friday',
                     ];
 
-                    if (!is_array($workingDays) || count($workingDays) !== 5) {
+                    if (
+                        !is_array($workingDays) ||
+                        count($workingDays) !== 5
+                    ) {
                         $validator->errors()->add(
                             'working_days',
                             'Per un contratto da 40 ore devono essere presenti tutti e cinque i giorni lavorativi.'
@@ -173,6 +248,7 @@ class StoreUserRequest extends FormRequest
                     $giorniRicevuti = [];
 
                     foreach ($workingDays as $index => $day) {
+
                         if (!is_array($day)) {
                             continue;
                         }
@@ -190,14 +266,20 @@ class StoreUserRequest extends FormRequest
                             );
                         }
 
-                        if (($day['start_time'] ?? null) !== '09:00') {
+                        if (
+                            ($day['start_time'] ?? null)
+                            !== '09:00'
+                        ) {
                             $validator->errors()->add(
                                 "working_days.$index.start_time",
                                 'Per un contratto da 40 ore l’orario di inizio deve essere 09:00.'
                             );
                         }
 
-                        if (($day['end_time'] ?? null) !== '18:00') {
+                        if (
+                            ($day['end_time'] ?? null)
+                            !== '18:00'
+                        ) {
                             $validator->errors()->add(
                                 "working_days.$index.end_time",
                                 'Per un contratto da 40 ore l’orario di fine deve essere 18:00.'
@@ -206,7 +288,9 @@ class StoreUserRequest extends FormRequest
                     }
 
                     sort($giorniRicevuti);
+
                     $giorniAttesi = $giorniRichiesti;
+
                     sort($giorniAttesi);
 
                     if ($giorniRicevuti !== $giorniAttesi) {
@@ -220,15 +304,17 @@ class StoreUserRequest extends FormRequest
                 }
 
                 /*
-                 * CONTRATTI INFERIORI A 40 ORE
-                 *
-                 * Controlliamo gli orari di ogni giorno lavorativo
-                 * e il totale delle ore effettive distribuite.
-                 */
+                |--------------------------------------------------------------------------
+                | CONTRATTI INFERIORI A 40 ORE
+                |--------------------------------------------------------------------------
+                */
+
                 if ((int) $hours < 40) {
+
                     $totaleMinuti = 0;
 
                     foreach ($workingDays as $index => $day) {
+
                         if (!is_array($day)) {
                             continue;
                         }
@@ -272,12 +358,16 @@ class StoreUserRequest extends FormRequest
                             ($endHour * 60 + $endMinute)
                             - ($startHour * 60 + $startMinute);
 
-                        // Mantiene la stessa regola della pausa usata dal backend.
+                        // Pausa di un'ora se l'orario di fine
+                        // supera le 15:00.
                         if ($end > '15:00') {
                             $minutiGiornalieri -= 60;
                         }
 
-                        $totaleMinuti += max(0, $minutiGiornalieri);
+                        $totaleMinuti += max(
+                            0,
+                            $minutiGiornalieri
+                        );
                     }
 
                     if ($validator->errors()->isNotEmpty()) {
@@ -287,7 +377,11 @@ class StoreUserRequest extends FormRequest
                     $minutiContratto = (int) $hours * 60;
 
                     if ($totaleMinuti > $minutiContratto) {
-                        $oreDistribuite = round($totaleMinuti / 60, 2);
+
+                        $oreDistribuite = round(
+                            $totaleMinuti / 60,
+                            2
+                        );
 
                         $validator->errors()->add(
                             'working_days',
