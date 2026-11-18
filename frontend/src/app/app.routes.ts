@@ -12,6 +12,12 @@ export const routes: Routes = [
 
   // Rotta protetta (richiede il token della guard)
   {
+    path: 'profilo-utente/home',
+    component: Home,
+    canActivate: [authGuard],
+  },
+
+  {
     path: 'home',
     component: Home,
     canActivate: [authGuard],
@@ -23,8 +29,8 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-     path: 'projects',
-     component: Projects,
+    path: 'projects',
+    component: Projects,
   },
 
   {

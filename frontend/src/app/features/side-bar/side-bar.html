@@ -1,53 +1,36 @@
-
 <div class="app-shell">
-
   <aside class="sidebar">
-
     <div class="brand">
-      <img src="/img/impostazioni/LogoContainer.png">
+      <img src="/img/impostazioni/LogoContainer.png" />
     </div>
 
     <nav class="side-nav" aria-label="Navigazione principale">
-
       <button type="button" aria-label="Dashboard">
-        <img src="/img/impostazioni/Sidebar-item.png">
+        <img src="/img/impostazioni/Sidebar-item.png" />
       </button>
 
       <button type="button" aria-label="Organizzazione">
-        <img src="/img/impostazioni/Sidebar-item-1.png">
+        <img src="/img/impostazioni/Sidebar-item-1.png" />
       </button>
 
       <button type="button" aria-label="Progetti">
-        <img src="/img/impostazioni/Sidebar-item-2.png">
+        <img src="/img/impostazioni/Sidebar-item-2.png" />
       </button>
 
       <button type="button" aria-label="Statistiche">
-        <img src="/img/impostazioni/Sidebar-item-3.png">
+        <img src="/img/impostazioni/Sidebar-item-3.png" />
       </button>
-
     </nav>
-
   </aside>
 
   <main class="main-area">
-
     <header class="topbar">
-
       <div class="page-title">
         <span>{{ titoloPagina }}</span>
 
         <span class="info-icon" aria-label="Informazioni">
-
           <svg viewBox="0 0 24 24" aria-hidden="true">
-
-            <circle
-              cx="12"
-              cy="12"
-              r="9"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-            />
+            <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" />
 
             <path
               d="M12 11v5 M12 7.5h.01"
@@ -56,58 +39,51 @@
               stroke-width="2"
               stroke-linecap="round"
             />
-
           </svg>
-
         </span>
       </div>
 
       <div class="top-actions">
-
         <button type="button" aria-label="Notifiche">
-          <img src="/img/icone/icone-sidebar.png">
+          <img src="/img/icone/icone-sidebar.png" />
         </button>
 
-        <button
-          type="button"
-          aria-label="Configurazione"
-          routerLink="/impostazioni"
-        >
-          <img src="/img/icone/icone-sidebar-1.png">
-        </button>
+        @if (!isUser) {
+          <button type="button" aria-label="Configurazione" routerLink="/impostazioni">
+            <img src="/img/icone/icone-sidebar-1.png" />
+          </button>
+        }
 
-        <div class="avatar" aria-label="Profilo">
+        <div class="profilo-menu-container">
+          <button
+            type="button"
+            class="avatar"
+            aria-label="Profilo"
+            [attr.aria-expanded]="menuProfiloAperto"
+            (click)="toggleMenuProfilo()"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="8" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6" />
+              <path
+                d="M5 20.5c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.6"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
 
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-
-            <circle
-              cx="12"
-              cy="8"
-              r="3.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.6"
-            />
-
-            <path
-              d="M5 20.5c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.6"
-              stroke-linecap="round"
-            />
-
-          </svg>
-
+          @if (titoloPagina === 'Profilo' && menuProfiloAperto) {
+            <div class="profilo-menu">
+              <a routerLink="/login" (click)="menuProfiloAperto = false"> Logout </a>
+            </div>
+          }
         </div>
-
       </div>
-
     </header>
 
     <!-- Qui Angular inserisce il contenuto della pagina -->
     <ng-content></ng-content>
-
   </main>
-
 </div>

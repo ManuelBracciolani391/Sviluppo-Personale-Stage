@@ -377,6 +377,16 @@ export class GestioneUtente implements OnInit {
     this.caricaUtentiDisabilitati(pagina);
   }
 
+  // Numeri delle pagine degli utenti attivi
+  get pagineUtenti(): number[] {
+    return Array.from({ length: this.ultimaPagina }, (_, indice) => indice + 1);
+  }
+
+  // Numeri delle pagine degli utenti disabilitati
+  get pagineUtentiDisabilitati(): number[] {
+    return Array.from({ length: this.ultimaPaginaDisabilitati }, (_, indice) => indice + 1);
+  }
+
   // =========================================
   // MODALE NUOVO / MODIFICA UTENTE
   // =========================================
@@ -886,5 +896,84 @@ export class GestioneUtente implements OnInit {
     }
 
     this.errore = messaggio;
+  }
+
+  // =========================================
+  // ORDINAMENTO E FILTRI TABELLA UTENTI
+  // =========================================
+
+  campoOrdinamento: 'nome' | 'dataAssunzione' | null = null;
+
+  direzioneOrdinamento: 'asc' | 'desc' = 'asc';
+
+  filtroAperto: 'ruolo' | 'incarico' | 'competenza' | 'visibilita' | null = null;
+
+  filtri = {
+    ruolo: '',
+    incarico: '',
+    competenza: '',
+    visibilita: '',
+  };
+
+  ordinaPer(campo: 'nome' | 'dataAssunzione'): void {
+    if (this.campoOrdinamento === campo) {
+      this.direzioneOrdinamento = this.direzioneOrdinamento === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.campoOrdinamento = campo;
+      this.direzioneOrdinamento = 'asc';
+    }
+
+    this.utenti = [...this.utenti].sort((a, b) => {
+      let confronto = 0;
+
+      if (campo === 'nome') {
+        confronto = (a.last_name ?? '').localeCompare(b.last_name ?? '', 'it', {
+          sensitivity: 'base',
+        });
+      } else {
+        const dataA = this.convertiDataPerOrdinamento(a.dataAssunzione);
+        const dataB = this.convertiDataPerOrdinamento(b.dataAssunzione);
+        confronto = dataA - dataB;
+      }
+
+      return this.direzioneOrdinamento === 'asc' ? confronto : -confronto;
+    });
+  }
+
+  private convertiDataPerOrdinamento(data: string): number {
+    const [giorno, mese, anno] = data.split('/').map(Number);
+
+    if (!giorno || !mese || !anno) return 0;
+
+    return new Date(anno, mese - 1, giorno).getTime();
+  }
+
+  toggleFiltro(campo: 'ruolo' | 'incarico' | 'competenza' | 'visibilita'): void {
+    this.filtroAperto = this.filtroAperto === campo ? null : campo;
+  }
+
+  applicaFiltro(campo: 'ruolo' | 'incarico' | 'competenza' | 'visibilita', event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.filtri[campo] = select.value;
+    this.filtroAperto = null;
+  }
+
+  opzioniFiltro(campo: 'ruolo' | 'incarico' | 'competenza' | 'visibilita'): string[] {
+    return [
+      ...new Set(
+        this.utenti.map((utente) => utente[campo].trim()).filter((valore) => valore !== ''),
+      ),
+    ].sort((a, b) => a.localeCompare(b, 'it'));
+  }
+
+  get utentiFiltrati(): Utente[] {
+    return this.utenti.filter((utente) => {
+      return (
+        (!this.filtri.ruolo || utente.ruolo === this.filtri.ruolo) &&
+        (!this.filtri.incarico || utente.incarico === this.filtri.incarico) &&
+        (!this.filtri.competenza || utente.competenza === this.filtri.competenza) &&
+        (!this.filtri.visibilita || utente.visibilita === this.filtri.visibilita)
+      );
+    });
   }
 }

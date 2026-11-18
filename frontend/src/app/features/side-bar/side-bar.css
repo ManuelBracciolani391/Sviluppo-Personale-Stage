@@ -49,8 +49,8 @@
   color: #263746;
   cursor: pointer;
   transition:
-  background-color 0.35s ease-in-out,
-  box-shadow 0.35s ease-in-out;
+    background-color 0.35s ease-in-out,
+    box-shadow 0.35s ease-in-out;
 }
 
 .side-nav button img {
@@ -90,8 +90,9 @@
   color: #225b91;
   font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.2s ease,
-              transform 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
   border-radius: 20%;
 }
 
@@ -103,11 +104,12 @@
 
 .top-actions button:hover {
   background-color: #eaf2f9;
-  transform: scale(1.10);
+  transform: scale(1.1);
 }
 
 .page-title {
-  font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  font-family:
+    'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
   font-size: 20px;
   padding: 10px;
 }
@@ -180,4 +182,43 @@
 
 .settings-content {
   padding: 10px 11px 16px;
+}
+
+/* =========================================
+   MENU PROFILO UTENTE
+========================================= */
+
+.profilo-menu-container {
+  position: relative;
+}
+
+.profilo-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 100px;
+  padding: 8px 12px;
+  background: #ffffff;
+  border: 1px solid #e1e5eb;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
+  z-index: 1000;
+}
+
+.profilo-menu a {
+  display: block;
+  color: #225b91;
+  font-size: 13px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.profilo-menu a:hover {
+  color: #123f69;
+}
+
+.impostazioni-disabilitate {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+  pointer-events: none;
 }
