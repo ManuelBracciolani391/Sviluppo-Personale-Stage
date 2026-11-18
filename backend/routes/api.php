@@ -1,4 +1,3 @@
-
 <?php
 
 use App\Http\Controllers\UserController;
@@ -28,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Profilo utente
     Route::get('/user', function (Request $request) {
-    return response()->json($request->user()->load(['roles', 'filestorage']));
+        return response()->json($request->user()->load(['roles', 'filestorage']));
     })->name('user.profile');
 
 
@@ -94,10 +93,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('projects/{id}', [ProjectController::class, 'destroy']);
         Route::post('projects/{id}/restore', [ProjectController::class, 'restore']);
         Route::post('projects/{id}/upload-file', [ProjectController::class, 'uploadFile']);
-        
+
     });
 
-   
+
 
     // Gestione allocazioni
     Route::middleware('can:manage-allocations')

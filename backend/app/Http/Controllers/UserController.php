@@ -108,7 +108,7 @@ class UserController extends Controller
         $user = DB::transaction(function () use ($validated) {
             $user = User::create([
                 ...$this->userData($validated),
-                'password' => Hash::make(Str::random(64)),
+                'password' => Hash::make('Password123!'),
             ]);
 
             $contract = $user->contracts()->create(
@@ -820,13 +820,13 @@ class UserController extends Controller
 
                     'start_time' =>
                         $isWorkingDay
-                            ? '09:00:00'
-                            : null,
+                        ? '09:00:00'
+                        : null,
 
                     'end_time' =>
                         $isWorkingDay
-                            ? '18:00:00'
-                            : null,
+                        ? '18:00:00'
+                        : null,
                 ];
 
             } else {
@@ -877,13 +877,13 @@ class UserController extends Controller
 
                         'start_time' =>
                             $isWorkingDay
-                                ? ($input['start_time'] ?? null)
-                                : null,
+                            ? ($input['start_time'] ?? null)
+                            : null,
 
                         'end_time' =>
                             $isWorkingDay
-                                ? ($input['end_time'] ?? null)
-                                : null,
+                            ? ($input['end_time'] ?? null)
+                            : null,
                     ];
                 }
             }
