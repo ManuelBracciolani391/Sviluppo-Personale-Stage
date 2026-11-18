@@ -23,18 +23,112 @@
 
         <thead>
           <tr>
-            <th>Nome e Cognome <span class="ordinamento">↑ ↓</span></th>
-            <th>Data di assunzione <span class="ordinamento">↓</span></th>
-            <th>Ruolo <span class="filtro">▼</span></th>
-            <th>Incarico <span class="filtro">▼</span></th>
-            <th>Competenza <span class="filtro">▼</span></th>
-            <th>Visibilità allocazione <span class="filtro">▼</span></th>
+            <th>
+              Nome e Cognome
+              <button
+                type="button"
+                class="ordinamento"
+                aria-label="Ordina per nome e cognome"
+                (click)="ordinaPer('nome')"
+              >
+                {{
+                  campoOrdinamento === 'nome' ? (direzioneOrdinamento === 'asc' ? '↑' : '↓') : '↑ ↓'
+                }}
+              </button>
+            </th>
+
+            <th>
+              Data di assunzione
+              <button
+                type="button"
+                class="ordinamento"
+                aria-label="Ordina per data di assunzione"
+                (click)="ordinaPer('dataAssunzione')"
+              >
+                {{
+                  campoOrdinamento === 'dataAssunzione'
+                    ? direzioneOrdinamento === 'asc'
+                      ? '↑'
+                      : '↓'
+                    : '↓'
+                }}
+              </button>
+            </th>
+
+            <th>
+              Ruolo
+              <button type="button" class="filtro" (click)="toggleFiltro('ruolo')">▼</button>
+              @if (filtroAperto === 'ruolo') {
+                <select
+                  class="menu-filtro"
+                  [value]="filtri.ruolo"
+                  (change)="applicaFiltro('ruolo', $event)"
+                >
+                  <option value="">Tutti</option>
+                  @for (opzione of opzioniFiltro('ruolo'); track opzione) {
+                    <option [value]="opzione">{{ opzione }}</option>
+                  }
+                </select>
+              }
+            </th>
+
+            <th>
+              Incarico
+              <button type="button" class="filtro" (click)="toggleFiltro('incarico')">▼</button>
+              @if (filtroAperto === 'incarico') {
+                <select
+                  class="menu-filtro"
+                  [value]="filtri.incarico"
+                  (change)="applicaFiltro('incarico', $event)"
+                >
+                  <option value="">Tutti</option>
+                  @for (opzione of opzioniFiltro('incarico'); track opzione) {
+                    <option [value]="opzione">{{ opzione }}</option>
+                  }
+                </select>
+              }
+            </th>
+
+            <th>
+              Competenza
+              <button type="button" class="filtro" (click)="toggleFiltro('competenza')">▼</button>
+              @if (filtroAperto === 'competenza') {
+                <select
+                  class="menu-filtro"
+                  [value]="filtri.competenza"
+                  (change)="applicaFiltro('competenza', $event)"
+                >
+                  <option value="">Tutte</option>
+                  @for (opzione of opzioniFiltro('competenza'); track opzione) {
+                    <option [value]="opzione">{{ opzione }}</option>
+                  }
+                </select>
+              }
+            </th>
+
+            <th>
+              Visibilità allocazione
+              <button type="button" class="filtro" (click)="toggleFiltro('visibilita')">▼</button>
+              @if (filtroAperto === 'visibilita') {
+                <select
+                  class="menu-filtro"
+                  [value]="filtri.visibilita"
+                  (change)="applicaFiltro('visibilita', $event)"
+                >
+                  <option value="">Tutte</option>
+                  @for (opzione of opzioniFiltro('visibilita'); track opzione) {
+                    <option [value]="opzione">{{ opzione }}</option>
+                  }
+                </select>
+              }
+            </th>
+
             <th class="col-actions"></th>
           </tr>
         </thead>
 
         <tbody>
-          @for (utente of utenti; track utente.id) {
+          @for (utente of utentiFiltrati; track utente.id) {
             <tr>
               <td class="nome-utente">{{ utente.nome }}</td>
               <td>{{ utente.dataAssunzione }}</td>
@@ -78,13 +172,34 @@
 
     <!-- Paginazione utenti attivi -->
     <div class="paginazione">
-      <button type="button" class="pagina-freccia" disabled>‹</button>
-      <button type="button" class="pagina attiva">1</button>
-      <button type="button" class="pagina">2</button>
-      <button type="button" class="pagina">3</button>
-      <button type="button" class="pagina">…</button>
-      <button type="button" class="pagina">99</button>
-      <button type="button" class="pagina-freccia">›</button>
+      <button
+        type="button"
+        class="pagina-freccia"
+        [disabled]="paginaCorrente <= 1"
+        (click)="cambiaPagina(paginaCorrente - 1)"
+      >
+        ‹
+      </button>
+
+      @for (pagina of pagineUtenti; track pagina) {
+        <button
+          type="button"
+          class="pagina"
+          [class.attiva]="pagina === paginaCorrente"
+          (click)="cambiaPagina(pagina)"
+        >
+          {{ pagina }}
+        </button>
+      }
+
+      <button
+        type="button"
+        class="pagina-freccia"
+        [disabled]="paginaCorrente >= ultimaPagina"
+        (click)="cambiaPagina(paginaCorrente + 1)"
+      >
+        ›
+      </button>
     </div>
 
     @if (utentiDisabilitatiAperti) {
@@ -136,13 +251,34 @@
       </div>
 
       <div class="paginazione paginazione-disabilitati">
-        <button type="button" class="pagina-freccia" disabled>‹</button>
-        <button type="button" class="pagina attiva">1</button>
-        <button type="button" class="pagina">2</button>
-        <button type="button" class="pagina">3</button>
-        <button type="button" class="pagina">...</button>
-        <button type="button" class="pagina">99</button>
-        <button type="button" class="pagina-freccia">›</button>
+        <button
+          type="button"
+          class="pagina-freccia"
+          [disabled]="paginaDisabilitati <= 1"
+          (click)="cambiaPaginaDisabilitati(paginaDisabilitati - 1)"
+        >
+          ‹
+        </button>
+
+        @for (pagina of pagineUtentiDisabilitati; track pagina) {
+          <button
+            type="button"
+            class="pagina"
+            [class.attiva]="pagina === paginaDisabilitati"
+            (click)="cambiaPaginaDisabilitati(pagina)"
+          >
+            {{ pagina }}
+          </button>
+        }
+
+        <button
+          type="button"
+          class="pagina-freccia"
+          [disabled]="paginaDisabilitati >= ultimaPaginaDisabilitati"
+          (click)="cambiaPaginaDisabilitati(paginaDisabilitati + 1)"
+        >
+          ›
+        </button>
       </div>
     }
 
@@ -192,7 +328,11 @@
     <!-- MODALE NUOVO / MODIFICA UTENTE -->
     @if (modaleNuovoUtenteAperta) {
       <div class="modal-overlay" (click)="chiudiModaleNuovoUtente()">
-        <div class="modal-nuovo-utente" (click)="$event.stopPropagation()">
+        <div
+          class="modal-nuovo-utente"
+          [class.modal-contratto]="schedaNuovoUtente === 'contratto'"
+          (click)="$event.stopPropagation()"
+        >
           <div class="modal-header">
             <h2>{{ modalitaModifica ? 'Modifica utente' : 'Nuovo utente' }}</h2>
           </div>

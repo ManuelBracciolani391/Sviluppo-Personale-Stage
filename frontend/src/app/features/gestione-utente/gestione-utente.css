@@ -83,14 +83,10 @@
 
 .tabella-utenti table {
   width: 100%;
-
-  min-width: 760px;
-
+  min-width: 0;
   border-collapse: collapse;
   table-layout: fixed;
-
   text-align: left;
-
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', Arial, sans-serif;
 }
 
@@ -99,11 +95,11 @@
 ========================================= */
 
 .col-nome {
-  width: 18%;
+  width: 19%;
 }
 
 .col-assunzione {
-  width: 16%;
+  width: 15%;
 }
 
 .col-ruolo {
@@ -111,7 +107,7 @@
 }
 
 .col-incarico {
-  width: 15%;
+  width: 14%;
 }
 
 .col-competenza {
@@ -119,7 +115,7 @@
 }
 
 .col-visibilita {
-  width: 18%;
+  width: 19%;
 }
 
 .col-azioni {
@@ -808,6 +804,21 @@
   box-shadow: 0 4px 12px rgb(0 0 0 / 12%);
 }
 
+/* Modale ridotta nella scheda Contratto */
+.modal-nuovo-utente.modal-contratto {
+  width: 100%;
+  max-width: 560px;
+  max-height: 85vh;
+  padding: 12px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Riduce lo spazio verticale del contenuto Contratto */
+.modal-nuovo-utente.modal-contratto .contratto-content {
+  min-height: 0;
+}
+
 /* =========================================
    TITOLO
 ========================================= */
@@ -999,10 +1010,6 @@
 /* =========================================
    MODALE - SCHEDA CONTRATTO
 ========================================= */
-
-.modal-nuovo-utente {
-  max-width: 610px;
-}
 
 .contratto-content {
   min-height: auto;
@@ -2911,6 +2918,40 @@
   padding: 0;
 }
 
+/* Pulsanti di ordinamento e filtro nelle intestazioni */
+
+.ordinamento,
+.filtro {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 3px 5px;
+}
+
+.ordinamento:hover,
+.filtro:hover {
+  color: #225b91;
+}
+
+/* Menu dei filtri */
+
+.menu-filtro {
+  display: block;
+  position: relative;
+  margin-top: 6px;
+  width: 100%;
+  max-width: 150px;
+  padding: 5px;
+  border: 1px solid #dce2e9;
+  border-radius: 5px;
+  background: #fff;
+  color: #333;
+  font-size: 12px;
+  cursor: pointer;
+}
+
 /* Adattamento schermi piccoli */
 
 @media (max-width: 600px) {
@@ -2958,5 +2999,260 @@
 
   .tabella-utenti table {
     min-width: 760px;
+  }
+}
+
+/* =========================================
+   RESPONSIVE - TABLET
+========================================= */
+
+@media (max-width: 900px) {
+  .gestione-utente-content {
+    width: 100%;
+    padding: 12px;
+  }
+
+  /* Le tabelle scorrono senza deformarsi */
+  .tabella-utenti,
+  .tabella-disabilitati {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabella-utenti table,
+  .tabella-disabilitati table {
+    min-width: 760px;
+  }
+
+  /* Modali */
+  .modal-nuovo-utente,
+  .modale-gestione-ferie-permessi {
+    max-width: calc(100vw - 32px);
+  }
+
+  .modale-gestione-ferie-permessi {
+    overflow-x: auto;
+  }
+}
+
+/* =========================================
+   RESPONSIVE - SMARTPHONE
+========================================= */
+
+@media (max-width: 600px) {
+  .gestione-utente-content {
+    padding: 8px;
+  }
+
+  /* Pulsante nuovo utente */
+  .nuovo-utente button {
+    max-width: 100%;
+    width: 145px;
+  }
+
+  /* Tabelle */
+  .tabella-utenti,
+  .tabella-disabilitati {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  .tabella-utenti table,
+  .tabella-disabilitati table {
+    min-width: 760px;
+  }
+
+  /* Sezione utenti disabilitati */
+  .utenti-disabilitati {
+    margin-top: 18px;
+    flex-wrap: wrap;
+  }
+
+  /* Paginazione */
+  .paginazione,
+  .paginazione-disabilitati {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 12px;
+  }
+
+  /* Modale nuovo utente */
+  .modal-overlay,
+  .conferma-overlay,
+  .riabilita-overlay {
+    padding: 10px;
+  }
+
+  .modal-nuovo-utente {
+    width: 100%;
+    max-width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .form-grid,
+  .contratto-grid,
+  .contratto-opzioni {
+    grid-template-columns: 1fr;
+  }
+
+  .riga-orario {
+    grid-template-columns: 48px minmax(55px, 1fr) minmax(55px, 1fr);
+    gap: 5px;
+  }
+
+  .badge-ore,
+  .checkbox-non-lavorativo {
+    grid-column: 2 / -1;
+  }
+
+  /* Modali di conferma */
+  .modale-conferma,
+  .modale-riabilita,
+  .modale-utente-riabilitato,
+  .modale-disabilita-conferma,
+  .modale-disabilita-dettagli,
+  .modale-utente-disabilitato {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .conferma-contenuto {
+    padding: 20px;
+  }
+
+  .btn-conferma-ok {
+    width: 100%;
+    max-width: 250px;
+  }
+
+  /* Modale ferie e permessi */
+  .modale-gestione-ferie-permessi {
+    width: 100%;
+    max-width: 100%;
+    max-height: 90vh;
+    padding: 12px;
+    overflow-y: auto;
+  }
+
+  .schede-gestione-ferie {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .filtri-ferie {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .campo-filtro-ferie {
+    width: 100%;
+  }
+
+  .campi-permessi,
+  .campi-rol,
+  .riepiloghi-rol {
+    grid-template-columns: 1fr;
+  }
+
+  .campo-rol-data {
+    width: 100%;
+  }
+
+  .azioni-gestione-ferie {
+    flex-wrap: wrap;
+  }
+
+  .btn-annulla-ferie,
+  .btn-salva-ferie {
+    flex: 1;
+  }
+}
+
+/* =========================================
+   RESPONSIVE - SMARTPHONE PICCOLI
+========================================= */
+
+@media (max-width: 380px) {
+  .gestione-utente-content {
+    padding: 6px;
+  }
+
+  .modal-tabs {
+    gap: 8px;
+  }
+
+  .modal-tab {
+    font-size: 10px;
+  }
+
+  .schede-gestione-ferie {
+    gap: 7px;
+  }
+
+  .schede-gestione-ferie button {
+    font-size: 8px;
+  }
+
+  .azioni-riabilita,
+  .azioni-disabilita {
+    gap: 5px;
+  }
+}
+
+@media (max-width: 900px) {
+  .tabella-utenti table {
+    min-width: 650px;
+    table-layout: fixed;
+  }
+
+  .tabella-utenti th,
+  .tabella-utenti td {
+    padding-left: 6px;
+    padding-right: 6px;
+    font-size: 11px;
+  }
+
+  .col-nome {
+    width: 20%;
+  }
+
+  .col-assunzione {
+    width: 16%;
+  }
+
+  .col-ruolo {
+    width: 12%;
+  }
+
+  .col-incarico {
+    width: 15%;
+  }
+
+  .col-competenza {
+    width: 13%;
+  }
+
+  .col-visibilita {
+    width: 16%;
+  }
+
+  .col-azioni {
+    width: 8%;
+  }
+}
+
+@media (max-width: 600px) {
+  .tabella-utenti table {
+    min-width: 600px;
+  }
+
+  .tabella-utenti th,
+  .tabella-utenti td {
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 10px;
   }
 }
