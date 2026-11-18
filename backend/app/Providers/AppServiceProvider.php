@@ -10,16 +10,16 @@ use Illuminate\Auth\Notifications\ResetPassword;
 class AppServiceProvider extends ServiceProvider
 {
         /**
-          * Register any application services.
-          */
+         * Register any application services.
+         */
         public function register(): void
         {
                 //
         }
 
         /**
-          * Bootstrap any application services.
-          */
+         * Bootstrap any application services.
+         */
         public function boot(): void
         {
                 // Gestione utenti: Admin e HR
@@ -31,6 +31,12 @@ class AppServiceProvider extends ServiceProvider
 
                 // Gestione progetti: Admin e Project Manager
                 Gate::define('manage-projects', function (User $user): bool {
+                        return $user->roles()
+                                ->whereIn('alias', ['Admin', 'Project Manager'])
+                                ->exists();
+                });
+
+                Gate::define('manage-allocations', function (User $user): bool {
                         return $user->roles()
                                 ->whereIn('alias', ['Admin', 'Project Manager'])
                                 ->exists();
