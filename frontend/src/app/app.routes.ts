@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth-guard';
+import { authGuard, projectManagerGuard } from './core/guards/auth-guard';
 import { LoginComponent } from './features/login/login';
 import { Home } from './features/home/home';
 import { Impostazioni } from './features/impostazioni/impostazioni';
@@ -38,6 +38,7 @@ export const routes: Routes = [
   {
     path: 'gestione-utente',
     component: GestioneUtente,
+    canActivate: [authGuard, projectManagerGuard],
   },
 
   // Rotta protetta per la gestione delle allocazioni

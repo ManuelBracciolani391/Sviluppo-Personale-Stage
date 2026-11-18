@@ -243,8 +243,10 @@
           <!-- GESTIONE UTENTI: COLLEGATA ALLA ROTTA ANGULAR -->
           <article
             class="setting-card green"
-            routerLink="/gestione-utente"
-            tabindex="0"
+            [routerLink]="isProjectManager ? null : '/gestione-utente'"
+            [class.setting-card-disabled]="isProjectManager"
+            [attr.aria-disabled]="isProjectManager"
+            [attr.tabindex]="isProjectManager ? -1 : 0"
             role="link"
           >
             <div class="card-copy">
