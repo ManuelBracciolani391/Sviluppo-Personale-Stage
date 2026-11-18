@@ -13,6 +13,12 @@ export const routes: Routes = [
 
   // Rotta protetta per la home
   {
+    path: 'profilo-utente/home',
+    component: Home,
+    canActivate: [authGuard],
+  },
+
+  {
     path: 'home',
     component: Home,
     canActivate: [authGuard],
