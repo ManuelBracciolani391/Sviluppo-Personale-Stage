@@ -93,6 +93,42 @@ interface ApiUser {
   latest_contract?: ContrattoApi;
 }
 
+type LeaveType = 'ferie' | 'permesso' | 'rol';
+
+interface LeaveBalanceApi {
+  id: number;
+  user_id: number;
+  leave_type: LeaveType;
+  contract_type?: string | null;
+  balance_unit?: string | null;
+  reference_month: string;
+  remaining_hours: number | string;
+  accrued_hours: number | string;
+  monthly_accrual: number | string;
+}
+
+interface MeseFerie {
+  nome: string;
+  numero: number;
+  maturate: number;
+  godute: number;
+  saldo: number;
+  rateo: number;
+  balanceId: number | null;
+}
+
+interface LeaveHistoryItem {
+  id?: number;
+  action?: string;
+  field_name?: string;
+  old_value?: number | string | null;
+  new_value?: number | string | null;
+  revision?: number | null;
+  created_at?: string;
+  undone_at?: string | null;
+  [key: string]: unknown;
+}
+
 @Component({
   selector: 'app-gestione-utente',
   standalone: true,
@@ -288,7 +324,7 @@ export class GestioneUtente implements OnInit {
       competenza:
         incarichi
           .map((r) => r.pivot?.expertise)
-          .filter(Boolean)
+          .filter((valore): valore is string => valore === 'Junior' || valore === 'Senior')
           .join(', ') || '',
       visibilita: utente.isAllocation_visible ? 'Sì' : 'No',
       first_name: utente.first_name,
@@ -319,6 +355,16 @@ export class GestioneUtente implements OnInit {
     const giorno = String(data.getDate()).padStart(2, '0');
 
     return `${anno}-${mese}-${giorno}`;
+  }
+
+  private primoGiornoMese(data: string): string {
+    if (!data) return `${this.oggi().substring(0, 7)}-01`;
+    return `${data.substring(0, 7)}-01`;
+  }
+
+  private numeroValore(valore: number | string | null | undefined): number {
+    const numero = Number(valore ?? 0);
+    return Number.isFinite(numero) ? numero : 0;
   }
 
   // =========================================
@@ -432,13 +478,21 @@ export class GestioneUtente implements OnInit {
             )[0]
           : undefined);
 
+      const competenzaSalvata = incarichi[0]?.pivot?.expertise ?? '';
+      const competenzaValida =
+        competenzaSalvata === 'Junior' || competenzaSalvata === 'Senior' ? competenzaSalvata : '';
+
+      const genereSalvato = dati.gender ?? '';
+      const genereValido =
+        genereSalvato === 'male' || genereSalvato === 'female' ? genereSalvato : '';
+
       this.modalitaModifica = true;
       this.utenteInModifica = utente;
 
       this.form = {
         first_name: dati.first_name ?? '',
         last_name: dati.last_name ?? '',
-        gender: dati.gender ?? '',
+        gender: genereValido,
         birth_date: (dati.birth_date ?? '').substring(0, 10),
         email: dati.email ?? '',
         azure_email: dati.azure_email ?? '',
@@ -447,10 +501,10 @@ export class GestioneUtente implements OnInit {
         contract_start_date: contratto?.contract_start_date?.substring(0, 10) ?? '',
         contract_end_date: contratto?.contract_end_date?.substring(0, 10) ?? '',
         contract_type: contratto?.contract_type ?? '',
-        weekly_hours: contratto?.weekly_hours ?? 40,
+        weekly_hours: Number(contratto?.weekly_hours ?? 40),
         role_id: dati.roles?.[0]?.id ?? null,
         assignment_role_id: incarichi[0]?.id ?? null,
-        expertise: incarichi[0]?.pivot?.expertise ?? '',
+        expertise: competenzaValida,
         isAllocation_visible: !!dati.isAllocation_visible,
         is_intern: !!dati.is_intern,
       };
@@ -474,12 +528,25 @@ export class GestioneUtente implements OnInit {
   oreSettimanali = 20;
 
   private readonly giorniItaliani = ['LUNEDÌ', 'MARTEDÌ', 'MERCOLEDÌ', 'GIOVEDÌ', 'VENERDÌ'];
-
   private readonly giorniApi = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 
   giorniLavorativi: GiornoLavorativo[] = this.creaGiorniDefault(20);
 
+  get distribuzioneBloccata(): boolean {
+    return Number(this.form.weekly_hours) === 40;
+  }
+
   private creaGiorniDefault(ore: number): GiornoLavorativo[] {
+    if (Number(ore) === 40) {
+      return this.giorniItaliani.map((nome) => ({
+        nome,
+        inizio: '09:00',
+        fine: '18:00',
+        ore: 8,
+        nonLavorativo: false,
+      }));
+    }
+
     const oreGiornaliere = ore / 5;
 
     return this.giorniItaliani.map((nome) => ({
@@ -509,7 +576,6 @@ export class GestioneUtente implements OnInit {
 
     let minuti = h2 * 60 + m2 - (h1 * 60 + m1);
 
-    // Il backend sottrae un'ora di pausa se l'orario finale supera le 15:00.
     if (fine > '15:00') minuti -= 60;
 
     return Math.max(0, minuti / 60);
@@ -523,6 +589,12 @@ export class GestioneUtente implements OnInit {
 
     this.oreSettimanali = valore;
     this.form.weekly_hours = valore;
+
+    if (valore === 40) {
+      this.giorniLavorativi = this.creaGiorniDefault(40);
+      this.cdr.detectChanges();
+      return;
+    }
 
     this.giorniLavorativi = this.giorniLavorativi.map((giorno) => {
       if (giorno.nonLavorativo) {
@@ -539,9 +611,17 @@ export class GestioneUtente implements OnInit {
         ore: this.calcolaOreEffettive('09:00', fine),
       };
     });
+
+    this.cdr.detectChanges();
   }
 
   aggiornaGiorno(indice: number, campo: 'inizio' | 'fine', event: Event): void {
+    if (this.distribuzioneBloccata) {
+      this.giorniLavorativi = this.creaGiorniDefault(40);
+      this.cdr.detectChanges();
+      return;
+    }
+
     const input = event.target as HTMLInputElement;
 
     this.giorniLavorativi = this.giorniLavorativi.map((giorno, i) => {
@@ -559,6 +639,12 @@ export class GestioneUtente implements OnInit {
   }
 
   cambiaGiornoNonLavorativo(indice: number, event: Event): void {
+    if (this.distribuzioneBloccata) {
+      this.giorniLavorativi = this.creaGiorniDefault(40);
+      this.cdr.detectChanges();
+      return;
+    }
+
     const input = event.target as HTMLInputElement;
 
     this.giorniLavorativi = this.giorniLavorativi.map((giorno, i) =>
@@ -583,6 +669,7 @@ export class GestioneUtente implements OnInit {
   private caricaOrariContratto(giorni?: GiornoLavorativoApi[]): void {
     this.giorniLavorativi = this.creaGiorniDefault(this.oreSettimanali);
 
+    if (Number(this.oreSettimanali) === 40) return;
     if (!giorni?.length) return;
 
     this.giorniLavorativi = this.giorniLavorativi.map((giorno, indice) => {
@@ -604,6 +691,15 @@ export class GestioneUtente implements OnInit {
   }
 
   private preparaWorkingDays(): GiornoLavorativoApi[] {
+    if (Number(this.form.weekly_hours) === 40) {
+      return this.giorniApi.map((giorno) => ({
+        day_of_week: giorno,
+        is_working_day: true,
+        start_time: '09:00',
+        end_time: '18:00',
+      }));
+    }
+
     return this.giorniLavorativi.map((giorno, indice) => ({
       day_of_week: this.giorniApi[indice],
       is_working_day: !giorno.nonLavorativo,
@@ -645,16 +741,26 @@ export class GestioneUtente implements OnInit {
       return;
     }
 
-    if (this.form.weekly_hours < 1 || this.form.weekly_hours > 40) {
+    const oreContratto = Number(this.oreSettimanali);
+
+    if (!Number.isFinite(oreContratto) || oreContratto < 1 || oreContratto > 40) {
       this.errore = 'Le ore settimanali devono essere comprese tra 1 e 40.';
       this.schedaNuovoUtente = 'contratto';
       return;
     }
 
-    if (this.form.weekly_hours < 40 && this.totaleOre !== this.form.weekly_hours) {
-      this.errore = `La distribuzione oraria deve totalizzare ${this.form.weekly_hours} ore. Attualmente: ${this.totaleOre}.`;
-      this.schedaNuovoUtente = 'contratto';
-      return;
+    this.form.weekly_hours = oreContratto;
+
+    if (this.form.gender !== 'male' && this.form.gender !== 'female') {
+      this.form.gender = '';
+    }
+
+    if (this.form.expertise !== 'Junior' && this.form.expertise !== 'Senior') {
+      this.form.expertise = '';
+    }
+
+    if (oreContratto === 40) {
+      this.giorniLavorativi = this.creaGiorniDefault(40);
     }
 
     const payload = {
@@ -679,12 +785,13 @@ export class GestioneUtente implements OnInit {
         contract_start_date: this.form.contract_start_date,
         contract_end_date: this.form.contract_end_date || null,
         contract_type: this.form.contract_type || null,
-        weekly_hours: this.form.weekly_hours,
+        weekly_hours: oreContratto,
       },
-      working_days: this.form.weekly_hours < 40 ? this.preparaWorkingDays() : [],
+      working_days: this.preparaWorkingDays(),
     };
 
     this.salvataggio = true;
+    this.cdr.detectChanges();
 
     try {
       if (this.modalitaModifica && this.utenteInModifica) {
@@ -704,6 +811,7 @@ export class GestioneUtente implements OnInit {
           ? 'Errore durante la modifica dell’utente.'
           : 'Errore durante la creazione dell’utente.',
       );
+      this.schedaNuovoUtente = 'contratto';
     } finally {
       this.salvataggio = false;
       this.cdr.detectChanges();
@@ -828,45 +936,511 @@ export class GestioneUtente implements OnInit {
   }
 
   // =========================================
-  // FERIE E PERMESSI - UI ESISTENTE
+  // FERIE, PERMESSI E R.O.L.
   // =========================================
 
   modaleFeriePermessiAperta = false;
   utenteFeriePermessi: Utente | null = null;
-  schedaFeriePermessi: 'ferie' | 'permessi' | 'rol' = 'ferie';
+  schedaFeriePermessi: LeaveType = 'ferie';
 
-  apriModaleFeriePermessi(): void {
+  caricamentoSaldi = false;
+  salvataggioSaldi = false;
+
+  annoFerie = new Date().getFullYear();
+  unitaFerie: 'giorni' | 'ore' = 'giorni';
+
+  dataPermessi = this.primoGiornoMese(this.oggi());
+  oreResiduePermessi = 0;
+  rateoPermessi = 0;
+  maturatePermessi = 0;
+
+  dataRol = this.primoGiornoMese(this.oggi());
+  oreResidueRol = 0;
+  oreMaturateRol = 0;
+  rateoRol = 0;
+
+  saldiLeave: LeaveBalanceApi[] = [];
+
+  mesiFerie: MeseFerie[] = [
+    { nome: 'Gennaio', numero: 1, maturate: 0, godute: 0, saldo: 0, rateo: 0, balanceId: null },
+    { nome: 'Febbraio', numero: 2, maturate: 0, godute: 0, saldo: 0, rateo: 0, balanceId: null },
+    { nome: 'Marzo', numero: 3, maturate: 0, godute: 0, saldo: 0, rateo: 0, balanceId: null },
+    { nome: 'Aprile', numero: 4, maturate: 0, godute: 0, saldo: 0, rateo: 0, balanceId: null },
+    { nome: 'Maggio', numero: 5, maturate: 0, godute: 0, saldo: 0, rateo: 0, balanceId: null },
+    { nome: 'Giugno', numero: 6, maturate: 0, godute: 0, saldo: 0, rateo: 0, balanceId: null },
+    { nome: 'Luglio', numero: 7, maturate: 0, godute: 0, saldo: 0, rateo: 0, balanceId: null },
+    { nome: 'Agosto', numero: 8, maturate: 0, godute: 0, saldo: 0, rateo: 0, balanceId: null },
+    { nome: 'Settembre', numero: 9, maturate: 0, godute: 0, saldo: 0, rateo: 0, balanceId: null },
+    { nome: 'Ottobre', numero: 10, maturate: 0, godute: 0, saldo: 0, rateo: 0, balanceId: null },
+    { nome: 'Novembre', numero: 11, maturate: 0, godute: 0, saldo: 0, rateo: 0, balanceId: null },
+    { nome: 'Dicembre', numero: 12, maturate: 0, godute: 0, saldo: 0, rateo: 0, balanceId: null },
+  ];
+
+  // Storico e annullamento/ripristino
+  storicoAperto = false;
+  caricamentoStorico = false;
+  storicoSaldi: LeaveHistoryItem[] = [];
+  canUndo = false;
+  canRedo = false;
+  balanceStoricoId: number | null = null;
+
+  private get leaveBalancesUrl(): string | null {
+    if (!this.utenteFeriePermessi) return null;
+    return `${this.apiUrl}/${this.utenteFeriePermessi.id}/leave-balances`;
+  }
+
+  async apriModaleFeriePermessi(): Promise<void> {
     if (!this.selectedUser) return;
 
     this.utenteFeriePermessi = this.selectedUser;
     this.schedaFeriePermessi = 'ferie';
     this.modaleFeriePermessiAperta = true;
     this.closeUserMenu();
+    this.errore = '';
+    this.annoFerie = new Date().getFullYear();
+    this.dataPermessi = this.primoGiornoMese(this.oggi());
+    this.dataRol = this.primoGiornoMese(this.oggi());
+    this.storicoAperto = false;
+    this.storicoSaldi = [];
+    this.canUndo = false;
+    this.canRedo = false;
+
+    await Promise.all([this.caricaSaldiLeave(), this.caricaUnitaContrattoUtente()]);
+
+    this.cdr.detectChanges();
   }
 
-  cambiaSchedaFeriePermessi(scheda: 'ferie' | 'permessi' | 'rol'): void {
+  cambiaSchedaFeriePermessi(scheda: LeaveType): void {
     this.schedaFeriePermessi = scheda;
+    this.storicoAperto = false;
+    this.storicoSaldi = [];
+    this.aggiornaStoricoSaldoAttivo();
   }
 
   chiudiModaleFeriePermessi(): void {
+    if (this.salvataggioSaldi) return;
+
     this.modaleFeriePermessiAperta = false;
     this.utenteFeriePermessi = null;
+    this.saldiLeave = [];
+    this.storicoSaldi = [];
+    this.storicoAperto = false;
+    this.balanceStoricoId = null;
+    this.canUndo = false;
+    this.canRedo = false;
   }
 
-  mesiFerie = [
-    { nome: 'Gennaio', maturate: 0, godute: 0, saldo: 0 },
-    { nome: 'Febbraio', maturate: 0, godute: 0, saldo: 0 },
-    { nome: 'Marzo', maturate: 0, godute: 0, saldo: 0 },
-    { nome: 'Aprile', maturate: 0, godute: 0, saldo: 0 },
-    { nome: 'Maggio', maturate: 0, godute: 0, saldo: 0 },
-    { nome: 'Giugno', maturate: 0, godute: 0, saldo: 0 },
-    { nome: 'Luglio', maturate: 0, godute: 0, saldo: 0 },
-    { nome: 'Agosto', maturate: 0, godute: 0, saldo: 0 },
-    { nome: 'Settembre', maturate: 0, godute: 0, saldo: 0 },
-    { nome: 'Ottobre', maturate: 0, godute: 0, saldo: 0 },
-    { nome: 'Novembre', maturate: 0, godute: 0, saldo: 0 },
-    { nome: 'Dicembre', maturate: 0, godute: 0, saldo: 0 },
-  ];
+  async caricaSaldiLeave(): Promise<void> {
+    const url = this.leaveBalancesUrl;
+    if (!url) return;
+
+    this.caricamentoSaldi = true;
+    this.errore = '';
+    this.cdr.detectChanges();
+
+    try {
+      const risposta: any = await firstValueFrom(
+        this.http.get(`${url}?year=${this.annoFerie}&per_page=100`),
+      );
+
+      const elenco = Array.isArray(risposta.data)
+        ? risposta.data
+        : Array.isArray(risposta.data?.data)
+          ? risposta.data.data
+          : [];
+
+      this.saldiLeave = elenco as LeaveBalanceApi[];
+      this.ricostruisciMesiFerie();
+      this.caricaValoriPermessi();
+      this.caricaValoriRol();
+      this.aggiornaStoricoSaldoAttivo();
+    } catch (error) {
+      this.gestisciErrore(error, 'Impossibile caricare i saldi di ferie, permessi e R.O.L.');
+    } finally {
+      this.caricamentoSaldi = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  private ricostruisciMesiFerie(): void {
+    this.mesiFerie = this.mesiFerie.map((mese) => {
+      const riferimento = `${this.annoFerie}-${String(mese.numero).padStart(2, '0')}`;
+      const saldo = this.saldiLeave.find(
+        (item) =>
+          item.leave_type === 'ferie' &&
+          (item.reference_month ?? '').substring(0, 7) === riferimento,
+      );
+
+      return {
+        ...mese,
+        maturate: this.numeroValore(saldo?.accrued_hours),
+        godute: 0,
+        saldo: this.numeroValore(saldo?.remaining_hours),
+        rateo: this.numeroValore(saldo?.monthly_accrual),
+        balanceId: saldo?.id ?? null,
+      };
+    });
+
+    const saldoFerie = this.saldiLeave.find((item) => item.leave_type === 'ferie');
+
+    if (saldoFerie?.balance_unit === 'giorni' || saldoFerie?.balance_unit === 'ore') {
+      this.unitaFerie = saldoFerie.balance_unit;
+    }
+  }
+
+  private caricaValoriPermessi(): void {
+    const mese = this.primoGiornoMese(this.dataPermessi).substring(0, 7);
+    const saldo = this.saldiLeave.find(
+      (item) =>
+        item.leave_type === 'permesso' && (item.reference_month ?? '').substring(0, 7) === mese,
+    );
+
+    this.oreResiduePermessi = this.numeroValore(saldo?.remaining_hours);
+    this.maturatePermessi = this.numeroValore(saldo?.accrued_hours);
+    this.rateoPermessi = this.numeroValore(saldo?.monthly_accrual);
+  }
+
+  private caricaValoriRol(): void {
+    const mese = this.primoGiornoMese(this.dataRol).substring(0, 7);
+    const saldo = this.saldiLeave.find(
+      (item) => item.leave_type === 'rol' && (item.reference_month ?? '').substring(0, 7) === mese,
+    );
+
+    this.oreResidueRol = this.numeroValore(saldo?.remaining_hours);
+    this.oreMaturateRol = this.numeroValore(saldo?.accrued_hours);
+    this.rateoRol = this.numeroValore(saldo?.monthly_accrual);
+  }
+
+  private async caricaUnitaContrattoUtente(): Promise<void> {
+    if (!this.utenteFeriePermessi) return;
+
+    try {
+      const risposta: any = await firstValueFrom(
+        this.http.get(`${this.apiUrl}/${this.utenteFeriePermessi.id}`),
+      );
+
+      const dati: ApiUser = risposta.data ?? risposta;
+      const contratto =
+        dati.latest_contract ??
+        (dati.contracts?.length
+          ? [...dati.contracts].sort((a, b) =>
+              b.contract_start_date.localeCompare(a.contract_start_date),
+            )[0]
+          : undefined);
+
+      if (!contratto) return;
+
+      const ore = Number(contratto.weekly_hours ?? 0);
+      this.unitaFerie = ore >= 40 ? 'giorni' : 'ore';
+
+      // Se esistono già saldi salvati, prevale l'unità determinata dal backend.
+      const saldoEsistente = this.saldiLeave.find((item) => item.leave_type === 'ferie');
+
+      if (saldoEsistente?.balance_unit === 'giorni' || saldoEsistente?.balance_unit === 'ore') {
+        this.unitaFerie = saldoEsistente.balance_unit;
+      }
+
+      this.cdr.detectChanges();
+    } catch {
+      // Il caricamento del contratto è solo necessario per mostrare l'unità
+      // quando non esistono ancora saldi ferie.
+    }
+  }
+
+  cambiaAnnoFerie(direzione: number): void {
+    const nuovoAnno = this.annoFerie + direzione;
+
+    if (nuovoAnno < 2000 || nuovoAnno > 2100) return;
+
+    this.annoFerie = nuovoAnno;
+    this.storicoAperto = false;
+    this.caricaSaldiLeave();
+  }
+
+  aggiornaDataPermessi(): void {
+    this.dataPermessi = this.primoGiornoMese(this.dataPermessi);
+    this.caricaValoriPermessi();
+    this.aggiornaStoricoSaldoAttivo();
+  }
+
+  aggiornaDataRol(): void {
+    this.dataRol = this.primoGiornoMese(this.dataRol);
+    this.caricaValoriRol();
+    this.aggiornaStoricoSaldoAttivo();
+  }
+
+  get saldoTotaleFerie(): number {
+    return Number(this.mesiFerie.reduce((totale, mese) => totale + mese.saldo, 0).toFixed(2));
+  }
+
+  get rateoFerieMedio(): number {
+    const valori = this.mesiFerie.map((mese) => mese.rateo).filter((valore) => valore > 0);
+
+    if (!valori.length) return 0;
+
+    return Number(
+      (valori.reduce((totale, valore) => totale + valore, 0) / valori.length).toFixed(2),
+    );
+  }
+
+  private saldoPerTipoEMese(tipo: LeaveType, riferimento: string): LeaveBalanceApi | undefined {
+    const mese = riferimento.substring(0, 7);
+
+    return this.saldiLeave.find(
+      (item) => item.leave_type === tipo && (item.reference_month ?? '').substring(0, 7) === mese,
+    );
+  }
+
+  private async salvaRecordSaldo(
+    tipo: LeaveType,
+    riferimento: string,
+    remaining: number,
+    accrued: number,
+    monthlyAccrual: number,
+  ): Promise<void> {
+    const baseUrl = this.leaveBalancesUrl;
+    if (!baseUrl) throw new Error('Utente non selezionato.');
+
+    const referenceMonth = this.primoGiornoMese(riferimento);
+    const esistente = this.saldoPerTipoEMese(tipo, referenceMonth);
+
+    const payload = {
+      leave_type: tipo,
+      reference_month: referenceMonth,
+      remaining_hours: Number(remaining.toFixed(2)),
+      accrued_hours: Number(accrued.toFixed(2)),
+      monthly_accrual: Number(monthlyAccrual.toFixed(2)),
+    };
+
+    if (esistente) {
+      await firstValueFrom(this.http.put(`${baseUrl}/${esistente.id}`, payload));
+    } else {
+      await firstValueFrom(this.http.post(baseUrl, payload));
+    }
+  }
+
+  async salvaFerie(): Promise<void> {
+    if (!this.utenteFeriePermessi) return;
+
+    this.salvataggioSaldi = true;
+    this.errore = '';
+    this.cdr.detectChanges();
+
+    try {
+      for (const mese of this.mesiFerie) {
+        const riferimento = `${this.annoFerie}-${String(mese.numero).padStart(2, '0')}-01`;
+
+        await this.salvaRecordSaldo('ferie', riferimento, mese.saldo, mese.maturate, mese.rateo);
+      }
+
+      await this.caricaSaldiLeave();
+      this.errore = '';
+    } catch (error) {
+      this.gestisciErrore(error, 'Errore durante il salvataggio delle ferie.');
+    } finally {
+      this.salvataggioSaldi = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  async salvaPermessi(): Promise<void> {
+    if (!this.utenteFeriePermessi) return;
+
+    if (!this.dataPermessi) {
+      this.errore = 'Seleziona il mese di riferimento dei permessi.';
+      return;
+    }
+
+    this.salvataggioSaldi = true;
+    this.errore = '';
+    this.cdr.detectChanges();
+
+    try {
+      await this.salvaRecordSaldo(
+        'permesso',
+        this.dataPermessi,
+        this.oreResiduePermessi,
+        this.maturatePermessi,
+        this.rateoPermessi,
+      );
+
+      await this.caricaSaldiLeave();
+      this.errore = '';
+    } catch (error) {
+      this.gestisciErrore(error, 'Errore durante il salvataggio dei permessi.');
+    } finally {
+      this.salvataggioSaldi = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  async salvaRol(): Promise<void> {
+    if (!this.utenteFeriePermessi) return;
+
+    if (!this.dataRol) {
+      this.errore = 'Seleziona il mese di riferimento dei R.O.L.';
+      return;
+    }
+
+    this.salvataggioSaldi = true;
+    this.errore = '';
+    this.cdr.detectChanges();
+
+    try {
+      await this.salvaRecordSaldo(
+        'rol',
+        this.dataRol,
+        this.oreResidueRol,
+        this.oreMaturateRol,
+        this.rateoRol,
+      );
+
+      await this.caricaSaldiLeave();
+      this.errore = '';
+    } catch (error) {
+      this.gestisciErrore(error, 'Errore durante il salvataggio dei R.O.L.');
+    } finally {
+      this.salvataggioSaldi = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  async salvaSchedaFeriePermessi(): Promise<void> {
+    if (this.schedaFeriePermessi === 'ferie') {
+      await this.salvaFerie();
+    } else if (this.schedaFeriePermessi === 'permesso') {
+      await this.salvaPermessi();
+    } else {
+      await this.salvaRol();
+    }
+  }
+
+  // =========================================
+  // STORICO, UNDO E REDO
+  // =========================================
+
+  private getSaldoIdAttivo(): number | null {
+    if (this.schedaFeriePermessi === 'ferie') {
+      const saldiAnno = this.saldiLeave
+        .filter(
+          (item) =>
+            item.leave_type === 'ferie' &&
+            (item.reference_month ?? '').substring(0, 4) === String(this.annoFerie),
+        )
+        .sort((a, b) => b.reference_month.localeCompare(a.reference_month));
+
+      return saldiAnno[0]?.id ?? null;
+    }
+
+    const riferimento = this.schedaFeriePermessi === 'permesso' ? this.dataPermessi : this.dataRol;
+
+    return this.saldoPerTipoEMese(this.schedaFeriePermessi, riferimento)?.id ?? null;
+  }
+
+  private aggiornaStoricoSaldoAttivo(): void {
+    const id = this.getSaldoIdAttivo();
+
+    if (id === this.balanceStoricoId) return;
+
+    this.balanceStoricoId = id;
+    this.canUndo = false;
+    this.canRedo = false;
+    this.storicoSaldi = [];
+
+    if (this.storicoAperto && id) {
+      this.caricaStorico();
+    }
+  }
+
+  async caricaStorico(): Promise<void> {
+    const baseUrl = this.leaveBalancesUrl;
+    const balanceId = this.getSaldoIdAttivo();
+
+    if (!baseUrl || !balanceId) {
+      this.storicoSaldi = [];
+      this.canUndo = false;
+      this.canRedo = false;
+      this.balanceStoricoId = null;
+      this.storicoAperto = true;
+      return;
+    }
+
+    this.balanceStoricoId = balanceId;
+    this.storicoAperto = true;
+    this.caricamentoStorico = true;
+
+    try {
+      const risposta: any = await firstValueFrom(this.http.get(`${baseUrl}/${balanceId}/history`));
+
+      const elenco =
+        risposta.history ??
+        risposta.data?.history ??
+        (Array.isArray(risposta.data) ? risposta.data : []);
+
+      this.storicoSaldi = Array.isArray(elenco) ? elenco : [];
+
+      const stato = risposta.state ?? risposta.data?.state ?? risposta;
+
+      this.canUndo = Boolean(stato.can_undo ?? risposta.can_undo ?? false);
+      this.canRedo = Boolean(stato.can_redo ?? risposta.can_redo ?? false);
+
+      this.cdr.detectChanges();
+    } catch (error) {
+      this.gestisciErrore(error, 'Impossibile caricare lo storico del saldo.');
+    } finally {
+      this.caricamentoStorico = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  async eseguiUndo(): Promise<void> {
+    await this.eseguiPassaggioStorico('undo');
+  }
+
+  async eseguiRedo(): Promise<void> {
+    await this.eseguiPassaggioStorico('redo');
+  }
+
+  private async eseguiPassaggioStorico(azione: 'undo' | 'redo'): Promise<void> {
+    const baseUrl = this.leaveBalancesUrl;
+    const balanceId = this.getSaldoIdAttivo();
+
+    if (!baseUrl || !balanceId) {
+      this.errore = 'Non è presente uno storico per il saldo selezionato.';
+      return;
+    }
+
+    this.salvataggioSaldi = true;
+    this.errore = '';
+
+    try {
+      await firstValueFrom(this.http.post(`${baseUrl}/${balanceId}/${azione}`, {}));
+
+      await this.caricaSaldiLeave();
+
+      this.balanceStoricoId = balanceId;
+      await this.caricaStorico();
+    } catch (error) {
+      this.gestisciErrore(
+        error,
+        azione === 'undo'
+          ? 'Impossibile annullare l’ultima modifica.'
+          : 'Impossibile ripristinare la modifica.',
+      );
+    } finally {
+      this.salvataggioSaldi = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  descrizioneAzioneStorico(item: LeaveHistoryItem): string {
+    if (item.action === 'created') return 'Creazione saldo';
+    if (item.action === 'updated') return 'Modifica saldo';
+    if (item.action === 'deleted') return 'Eliminazione saldo';
+    if (item.action === 'operation') return 'Operazione';
+
+    return item.action ?? item.field_name ?? 'Modifica';
+  }
 
   // =========================================
   // GESTIONE ERRORI API

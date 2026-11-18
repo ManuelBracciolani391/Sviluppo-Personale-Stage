@@ -21,8 +21,7 @@ use App\Models\Role;
 use App\Models\AssignmentRole;
 
 class UserController extends Controller
-{   
-
+{
     public function options(): JsonResponse
     {
         return response()->json([
@@ -35,6 +34,7 @@ class UserController extends Controller
                 ->get(),
         ]);
     }
+
     /*
     |--------------------------------------------------------------------------
     | LISTA UTENTI
@@ -89,14 +89,22 @@ class UserController extends Controller
     {
         $validated = $request->validated();
 
-        $contractData = $validated['contract'];
-        $weeklyHours = (int) $contractData['weekly_hours'];
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDAZIONE DATE ASSUNZIONE / CONTRATTO
+        |--------------------------------------------------------------------------
+        */
+
+        $this->validateUserContractDates($validated);
 
         /*
         |--------------------------------------------------------------------------
         | VALIDAZIONE PART-TIME
         |--------------------------------------------------------------------------
         */
+
+        $contractData = $validated['contract'];
+        $weeklyHours = (int) $contractData['weekly_hours'];
 
         if ($weeklyHours < 40) {
             $this->validatePartTimeWorkingDays(
@@ -105,15 +113,34 @@ class UserController extends Controller
             );
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | TRANSAZIONE CREAZIONE UTENTE
+        |--------------------------------------------------------------------------
+        */
+
         $user = DB::transaction(function () use ($validated) {
+
             $user = User::create([
                 ...$this->userData($validated),
-                'password' => Hash::make(Str::random(64)),
+                'password' => Hash::make('Password123!'),
             ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | CREAZIONE CONTRATTO
+            |--------------------------------------------------------------------------
+            */
 
             $contract = $user->contracts()->create(
                 $this->contractData($validated['contract'])
             );
+
+            /*
+            |--------------------------------------------------------------------------
+            | SALVATAGGIO GIORNI LAVORATIVI
+            |--------------------------------------------------------------------------
+            */
 
             $this->saveWorkingDays(
                 $contract,
@@ -121,9 +148,23 @@ class UserController extends Controller
                 $validated['working_days'] ?? []
             );
 
+            /*
+            |--------------------------------------------------------------------------
+            | RUOLI
+            |--------------------------------------------------------------------------
+            */
+
             if (array_key_exists('roles', $validated)) {
-                $user->roles()->sync($validated['roles'] ?? []);
+                $user->roles()->sync(
+                    $validated['roles'] ?? []
+                );
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | RUOLI DI ASSEGNAZIONE
+            |--------------------------------------------------------------------------
+            */
 
             if (array_key_exists('assignment_roles', $validated)) {
                 $this->syncAssignmentRoles(
@@ -134,6 +175,12 @@ class UserController extends Controller
 
             return $user;
         });
+
+        /*
+        |--------------------------------------------------------------------------
+        | RICARICA RELAZIONI
+        |--------------------------------------------------------------------------
+        */
 
         $user->load([
             'roles',
@@ -158,11 +205,27 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | VALIDAZIONE CONTRATTO / PART-TIME
+        | VALIDAZIONE DATE ASSUNZIONE / CONTRATTO
+        |--------------------------------------------------------------------------
+        |
+        | La validazione tiene conto anche dei dati già presenti
+        | nel database, se non vengono inviati nella richiesta.
+        |
+        */
+
+        $this->validateUserContractDates(
+            $validated,
+            $user
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDAZIONE PART-TIME
         |--------------------------------------------------------------------------
         */
 
         if (isset($validated['contract'])) {
+
             $weeklyHours = (int) $validated['contract']['weekly_hours'];
 
             if ($weeklyHours < 40) {
@@ -173,44 +236,116 @@ class UserController extends Controller
             }
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | TRANSAZIONE MODIFICA UTENTE
+        |--------------------------------------------------------------------------
+        */
+
         DB::transaction(function () use ($validated, $user) {
+
+            /*
+            |--------------------------------------------------------------------------
+            | DATI ANAGRAFICI
+            |--------------------------------------------------------------------------
+            */
 
             $user->update(
                 $this->userData($validated)
             );
 
+            /*
+            |--------------------------------------------------------------------------
+            | CONTRATTO
+            |--------------------------------------------------------------------------
+            */
+
             if (isset($validated['contract'])) {
 
-                // Recupera il contratto più recente
-                // oppure ne crea uno nuovo.
+                /*
+                |--------------------------------------------------------------------------
+                | RECUPERA CONTRATTO PIÙ RECENTE
+                |--------------------------------------------------------------------------
+                */
+
                 $contract = $user->contracts()
                     ->orderByDesc('contract_start_date')
                     ->first();
 
+                /*
+                |--------------------------------------------------------------------------
+                | CREA CONTRATTO SE NON ESISTE
+                |--------------------------------------------------------------------------
+                */
+
                 if (!$contract) {
+
                     $contract = $user->contracts()->create(
                         $this->contractData($validated['contract'])
                     );
+
                 } else {
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | AGGIORNA CONTRATTO ESISTENTE
+                    |--------------------------------------------------------------------------
+                    */
+
                     $contract->update(
                         $this->contractData($validated['contract'])
                     );
                 }
 
-                if (array_key_exists('working_days', $validated)) {
+                /*
+                |--------------------------------------------------------------------------
+                | SALVATAGGIO DISTRIBUZIONE ORARIA
+                |--------------------------------------------------------------------------
+                |
+                | Full-time:
+                | lunedì-venerdì 09:00-18:00
+                | non modificabile dal frontend.
+                |
+                | Part-time:
+                | vengono salvati gli orari ricevuti.
+                |
+                */
+
+                $weeklyHours = (int) $validated['contract']['weekly_hours'];
+
+                if (
+                    array_key_exists('working_days', $validated) ||
+                    $weeklyHours === 40
+                ) {
                     $this->saveWorkingDays(
                         $contract,
-                        (int) $validated['contract']['weekly_hours'],
-                        $validated['working_days']
+                        $weeklyHours,
+                        $validated['working_days'] ?? []
                     );
                 }
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | RUOLI
+            |--------------------------------------------------------------------------
+            */
 
             if (array_key_exists('roles', $validated)) {
                 $user->roles()->sync(
                     $validated['roles'] ?? []
                 );
             }
+
+            /*
+            |--------------------------------------------------------------------------
+            | RUOLI DI ASSEGNAZIONE
+            |--------------------------------------------------------------------------
+            |
+            | L'expertise precedente viene mantenuta quando
+            | il frontend non invia il valore.
+            |
+            */
 
             if (array_key_exists('assignment_roles', $validated)) {
                 $this->syncAssignmentRoles(
@@ -219,6 +354,12 @@ class UserController extends Controller
                 );
             }
         });
+
+        /*
+        |--------------------------------------------------------------------------
+        | RICARICA UTENTE AGGIORNATO
+        |--------------------------------------------------------------------------
+        */
 
         $user->refresh()->load([
             'roles',
@@ -342,7 +483,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Filtro per ruolo
+        | FILTRO PER RUOLO
         |--------------------------------------------------------------------------
         */
 
@@ -360,7 +501,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Filtro per ruolo di assegnazione
+        | FILTRO PER RUOLO DI ASSEGNAZIONE
         |--------------------------------------------------------------------------
         */
 
@@ -378,7 +519,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Filtro per expertise
+        | FILTRO PER EXPERTISE
         |--------------------------------------------------------------------------
         */
 
@@ -396,7 +537,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Filtro per visibilità nell'allocazione
+        | FILTRO PER VISIBILITÀ NELL'ALLOCATION
         |--------------------------------------------------------------------------
         */
 
@@ -409,7 +550,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Ricerca e ordinamento
+        | RICERCA E ORDINAMENTO
         |--------------------------------------------------------------------------
         */
 
@@ -427,6 +568,12 @@ class UserController extends Controller
             $validated['per_page'] ?? 15
         );
 
+        /*
+        |--------------------------------------------------------------------------
+        | FORMATTAZIONE RISULTATI
+        |--------------------------------------------------------------------------
+        */
+
         $users->getCollection()->transform(
             function (User $user) {
                 return [
@@ -438,7 +585,8 @@ class UserController extends Controller
 
                     'last_name' => $user->last_name,
 
-                    'hiring_date' => $user->hiring_date?->format('Y-m-d'),
+                    'hiring_date' =>
+                        $user->hiring_date?->format('Y-m-d'),
 
                     'roles' => $user->roles
                         ->pluck('alias')
@@ -448,7 +596,9 @@ class UserController extends Controller
                         ->map(function ($role) {
                             return [
                                 'alias' => $role->alias,
-                                'expertise' => $role->pivot->expertise,
+
+                                'expertise' =>
+                                    $role->pivot->expertise,
                             ];
                         })
                         ->values(),
@@ -518,7 +668,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Ricerca e ordinamento
+        | RICERCA E ORDINAMENTO
         |--------------------------------------------------------------------------
         */
 
@@ -536,6 +686,12 @@ class UserController extends Controller
         $users = $query->paginate(
             $validated['per_page'] ?? 15
         );
+
+        /*
+        |--------------------------------------------------------------------------
+        | FORMATTAZIONE RISULTATI
+        |--------------------------------------------------------------------------
+        */
 
         $users->getCollection()->transform(
             function (User $user) {
@@ -609,7 +765,7 @@ class UserController extends Controller
     ): Builder {
         /*
         |--------------------------------------------------------------------------
-        | Ricerca
+        | RICERCA
         |--------------------------------------------------------------------------
         */
 
@@ -640,7 +796,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Ordinamento
+        | ORDINAMENTO
         |--------------------------------------------------------------------------
         */
 
@@ -676,7 +832,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Ordinamento secondario
+        | ORDINAMENTO SECONDARIO
         |--------------------------------------------------------------------------
         */
 
@@ -737,6 +893,129 @@ class UserController extends Controller
 
     /*
     |--------------------------------------------------------------------------
+    | VALIDAZIONE COERENZA DATE UTENTE / CONTRATTO
+    |--------------------------------------------------------------------------
+    */
+
+    private function validateUserContractDates(
+        array $validated,
+        ?User $user = null
+    ): void {
+        /*
+        |--------------------------------------------------------------------------
+        | DATA ASSUNZIONE
+        |--------------------------------------------------------------------------
+        */
+
+        $hiringDate = $validated['hiring_date']
+            ?? $user?->hiring_date;
+
+        /*
+        |--------------------------------------------------------------------------
+        | CONTRATTO
+        |--------------------------------------------------------------------------
+        */
+
+        $existingContract = null;
+
+        if ($user !== null) {
+            $existingContract = $user->contracts()
+                ->orderByDesc('contract_start_date')
+                ->first();
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | DATA INIZIO CONTRATTO
+        |--------------------------------------------------------------------------
+        */
+
+        if (isset($validated['contract'])) {
+
+            $contractStartDate = array_key_exists(
+                'contract_start_date',
+                $validated['contract']
+            )
+                ? $validated['contract']['contract_start_date']
+                : $existingContract?->contract_start_date;
+
+            /*
+            |--------------------------------------------------------------------------
+            | DATA FINE CONTRATTO
+            |--------------------------------------------------------------------------
+            */
+
+            $contractEndDate = array_key_exists(
+                'contract_end_date',
+                $validated['contract']
+            )
+                ? $validated['contract']['contract_end_date']
+                : $existingContract?->contract_end_date;
+
+        } else {
+
+            $contractStartDate =
+                $existingContract?->contract_start_date;
+
+            $contractEndDate =
+                $existingContract?->contract_end_date;
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | FINE CONTRATTO NON PRECEDENTE ALL'ASSUNZIONE
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !empty($hiringDate) &&
+            !empty($contractEndDate)
+        ) {
+            $hiringDate = Carbon::parse($hiringDate)
+                ->startOfDay();
+
+            $contractEndDate = Carbon::parse($contractEndDate)
+                ->startOfDay();
+
+            if ($contractEndDate->lt($hiringDate)) {
+                throw ValidationException::withMessages([
+                    'contract.contract_end_date' => [
+                        'La data di fine contratto non può essere precedente alla data di assunzione.',
+                    ],
+                ]);
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | FINE CONTRATTO NON PRECEDENTE ALL'INIZIO CONTRATTO
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            !empty($contractStartDate) &&
+            !empty($contractEndDate)
+        ) {
+            $contractStartDate = Carbon::parse(
+                $contractStartDate
+            )->startOfDay();
+
+            $contractEndDate = Carbon::parse(
+                $contractEndDate
+            )->startOfDay();
+
+            if ($contractEndDate->lt($contractStartDate)) {
+                throw ValidationException::withMessages([
+                    'contract.contract_end_date' => [
+                        'La data di fine contratto non può essere precedente alla data di inizio contratto.',
+                    ],
+                ]);
+            }
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
     | GESTIONE GIORNI LAVORATIVI
     |--------------------------------------------------------------------------
     */
@@ -758,7 +1037,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Normalizza i nomi dei giorni ricevuti
+        | NORMALIZZA I NOMI DEI GIORNI RICEVUTI
         |--------------------------------------------------------------------------
         */
 
@@ -799,10 +1078,12 @@ class UserController extends Controller
 
                 $values = [
                     'is_working_day' => $isWorkingDay,
+
                     'start_time' =>
                         $isWorkingDay
                         ? '09:00:00'
                         : null,
+
                     'end_time' =>
                         $isWorkingDay
                         ? '18:00:00'
@@ -827,7 +1108,6 @@ class UserController extends Controller
                         true
                     )
                 ) {
-
                     $values = [
                         'is_working_day' => false,
                         'start_time' => null,
@@ -889,14 +1169,70 @@ class UserController extends Controller
         User $user,
         array $assignmentRoles
     ): void {
+        /*
+        |--------------------------------------------------------------------------
+        | RECUPERA EXPERTISE PRECEDENTI
+        |--------------------------------------------------------------------------
+        */
+
+        $existingRoles = $user->assignmentRoles()
+            ->withPivot('expertise')
+            ->get()
+            ->keyBy('id');
+
         $syncData = [];
 
         foreach ($assignmentRoles as $assignmentRole) {
-            $syncData[$assignmentRole['id']] = [
-                'expertise' =>
-                    $assignmentRole['expertise'] ?? null,
+
+            $assignmentRoleId = (int) $assignmentRole['id'];
+
+            /*
+            |--------------------------------------------------------------------------
+            | EXPERTISE RICEVUTA
+            |--------------------------------------------------------------------------
+            */
+
+            $expertise = $assignmentRole['expertise'] ?? null;
+
+            /*
+            |--------------------------------------------------------------------------
+            | MANTIENI EXPERTISE PRECEDENTE
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                $expertise === null ||
+                $expertise === ''
+            ) {
+                $expertise = $existingRoles
+                    ->get($assignmentRoleId)
+                    ?->pivot
+                    ?->expertise;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | DEFAULT PER NUOVO RUOLO
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                $expertise === null ||
+                $expertise === ''
+            ) {
+                $expertise = 'Junior';
+            }
+
+            $syncData[$assignmentRoleId] = [
+                'expertise' => $expertise,
             ];
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | SYNC
+        |--------------------------------------------------------------------------
+        */
 
         $user->assignmentRoles()->sync(
             $syncData
@@ -917,7 +1253,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Giorni ammessi
+        | GIORNI AMMESSI
         |--------------------------------------------------------------------------
         */
 
@@ -941,7 +1277,7 @@ class UserController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Sabato e domenica non configurabili
+            | SABATO E DOMENICA NON CONFIGURABILI
             |--------------------------------------------------------------------------
             */
 
@@ -954,14 +1290,14 @@ class UserController extends Controller
             ) {
                 throw ValidationException::withMessages([
                     'working_days' => [
-                        "Puoi configurare soltanto i giorni dal lunedì al venerdì.",
+                        'Puoi configurare soltanto i giorni dal lunedì al venerdì.',
                     ],
                 ]);
             }
 
             /*
             |--------------------------------------------------------------------------
-            | Giorno duplicato
+            | GIORNO DUPLICATO
             |--------------------------------------------------------------------------
             */
 
@@ -983,7 +1319,7 @@ class UserController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Dati del giorno
+            | DATI DEL GIORNO
             |--------------------------------------------------------------------------
             */
 
@@ -1000,7 +1336,7 @@ class UserController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Giorno NON lavorativo
+            | GIORNO NON LAVORATIVO
             |--------------------------------------------------------------------------
             */
 
@@ -1022,7 +1358,7 @@ class UserController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Giorno lavorativo
+            | GIORNO LAVORATIVO
             |--------------------------------------------------------------------------
             */
 
@@ -1034,17 +1370,13 @@ class UserController extends Controller
                 ]);
             }
 
-            $start = Carbon::parse(
-                $startTime
-            );
+            $start = Carbon::parse($startTime);
 
-            $end = Carbon::parse(
-                $endTime
-            );
+            $end = Carbon::parse($endTime);
 
             /*
             |--------------------------------------------------------------------------
-            | Fine successiva all'inizio
+            | FINE SUCCESSIVA ALL'INIZIO
             |--------------------------------------------------------------------------
             */
 
@@ -1058,19 +1390,18 @@ class UserController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | Calcolo ore effettive
+            | CALCOLO ORE EFFETTIVE
             |--------------------------------------------------------------------------
             */
 
-            $minutes =
-                $this->calculateWorkingMinutes(
-                    $startTime,
-                    $endTime
-                );
+            $minutes = $this->calculateWorkingMinutes(
+                $startTime,
+                $endTime
+            );
 
             /*
             |--------------------------------------------------------------------------
-            | Massimo 8 ore effettive al giorno
+            | MASSIMO 8 ORE EFFETTIVE AL GIORNO
             |--------------------------------------------------------------------------
             */
 
@@ -1087,7 +1418,7 @@ class UserController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | Totale settimanale
+        | TOTALE SETTIMANALE
         |--------------------------------------------------------------------------
         |
         | Il totale deve essere ESATTAMENTE uguale
@@ -1114,20 +1445,15 @@ class UserController extends Controller
         string $startTime,
         string $endTime
     ): int {
-        $start = Carbon::parse(
-            $startTime
-        );
+        $start = Carbon::parse($startTime);
 
-        $end = Carbon::parse(
-            $endTime
-        );
+        $end = Carbon::parse($endTime);
 
-        $minutes =
-            $start->diffInMinutes($end);
+        $minutes = $start->diffInMinutes($end);
 
         /*
         |--------------------------------------------------------------------------
-        | Regola B:
+        | REGOLA B:
         | sottrai 60 minuti se l'orario di fine
         | supera le 15:00
         |--------------------------------------------------------------------------
