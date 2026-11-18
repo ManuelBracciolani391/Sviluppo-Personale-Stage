@@ -44,7 +44,15 @@ export class SideBar implements OnInit {
       next: (utente) => {
         console.log('Ruoli ricevuti dal backend:', utente.roles);
 
-        this.isUser = utente.roles?.some((ruolo) => ruolo.alias.toLowerCase() === 'user') ?? false;
+        this.isUser =
+          utente.roles?.some((ruolo) => {
+            const alias = ruolo.alias
+              .trim()
+              .toLowerCase()
+              .replace(/[\s-]+/g, '_');
+
+            return alias === 'user' || alias === 'team_leader' || alias === 'teamleader';
+          }) ?? false;
 
         this.cdr.detectChanges();
 
