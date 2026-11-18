@@ -5,12 +5,13 @@ import { Home } from './features/home/home';
 import { Impostazioni } from './features/impostazioni/impostazioni';
 import { Projects } from './features/projects/projects';
 import { GestioneUtente } from './features/gestione-utente/gestione-utente';
+import { Allocazioni } from './features/allocazioni/allocazioni';
 
 export const routes: Routes = [
   // Rotta pubblica di login
   { path: 'login', component: LoginComponent },
 
-  // Rotta protetta (richiede il token della guard)
+  // Rotta protetta per la home
   {
     path: 'profilo-utente/home',
     component: Home,
@@ -23,6 +24,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 
+  // Rotta protetta per le impostazioni
   {
     path: 'impostazioni',
     component: Impostazioni,
@@ -36,6 +38,13 @@ export const routes: Routes = [
   {
     path: 'gestione-utente',
     component: GestioneUtente,
+  },
+
+  // Rotta protetta per la gestione delle allocazioni
+  {
+    path: 'allocazioni',
+    component: Allocazioni,
+    canActivate: [authGuard],
   },
 
   // Qualsiasi altra rotta non definita reindirizza al login

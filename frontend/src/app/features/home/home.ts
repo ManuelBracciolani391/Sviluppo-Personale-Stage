@@ -2,6 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef, PLATFORM_ID } from '@angu
 
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { HttpHeaders } from '@angular/common/http';
 import { SideBar } from '../side-bar/side-bar';
 
 interface UserRole {
@@ -69,6 +70,11 @@ export class Home implements OnInit {
   }
 
   private caricaProfilo(): void {
+    // Protezione aggiuntiva per evitare accessi a localStorage sul server.
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
     const token = localStorage.getItem('access_token');
 
     if (!token) {
@@ -76,8 +82,12 @@ export class Home implements OnInit {
       return;
     }
 
-    // Il token viene aggiunto automaticamente dall'interceptor
-    this.http.get<UserProfile>('http://127.0.0.1:8000/api/user').subscribe({
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
+    });
+
+    this.http.get<UserProfile>('http://127.0.0.1:8000/api/user', { headers }).subscribe({
       next: (utente) => {
         console.log('Dati utente ricevuti:', utente);
 
@@ -91,8 +101,8 @@ export class Home implements OnInit {
           this.ruoloUtente = 'Utente';
         }
 
-        // Gestione avatar
-        if (utente.filestorage?.path && utente.filestorage?.name) {
+        // Gestione dell'avatar tramite filestorage
+        if (utente.filestorage && utente.filestorage.path && utente.filestorage.name) {
           this.avatarUrl = `http://127.0.0.1:8000/storage/${utente.filestorage.path}/${utente.filestorage.name}.${utente.filestorage.extension}`;
         } else {
           this.avatarUrl = null;
