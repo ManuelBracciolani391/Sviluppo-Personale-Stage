@@ -22,20 +22,22 @@ return new class extends Migration
                 ->constrained('users')
                 ->restrictOnDelete();
             $table->foreignId('team_leader_id')
+                ->nullable()
                 ->constrained('users')
                 ->restrictOnDelete();
             $table->foreignId('scrum_master_id')
+                ->nullable()
                 ->constrained('users')
                 ->restrictOnDelete();
             $table->string('delivery_plan')->nullable();
             $table->string('azure_team_name');
             $table->string('bug_count_url');
-            $table->string('note');
+            $table->string('note')->nullable();
             $table->enum('priority', ['bassa','media','alta']);
             $table->string('pbi_without_feature_url')->nullable();
             $table->string('pbi_past_feature_url')->nullable();
-            $table->boolean('is_timesheet');
-            $table->boolean('is_course');
+            $table->boolean('is_timesheet')->nullable();
+            $table->boolean('is_course')->nullable();
             $table->date('start_date');
             $table->date('end_date')->nullable();
 

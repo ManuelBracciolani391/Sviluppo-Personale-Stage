@@ -222,6 +222,7 @@
 .th-icons img {
   width: 10px;
   margin: 3px;
+  cursor: pointer;
 }
 
 .header-small {
@@ -396,10 +397,8 @@
   width: 15px;
 }
 
-.cross-icon {
-  color: #e31845;
-  font-size: 23px;
-  font-weight: 300;
+.cross-icon img {
+  width: 19px;
 }
 
 /* =========================================================
@@ -697,7 +696,7 @@
 
   transform: translateY(-70%) rotate(45deg);
 
-  pointer-events: none;
+  /*pointer-events: none;*/
 }
 
 /* =========================================================
@@ -723,7 +722,7 @@
 
   transform: translateY(-50%);
 
-  pointer-events: none;
+  /*pointer-events: none;*/
 }
 
 /* =========================================================
@@ -761,7 +760,7 @@
 .checkbox-option input {
   position: absolute;
   opacity: 0;
-  pointer-events: none;
+  /*pointer-events: none;*/
 }
 
 .custom-checkbox {
@@ -865,7 +864,7 @@
 
   transform: translateY(-50%) rotate(-45deg);
 
-  pointer-events: none;
+  /*pointer-events: none;*/
 }
 
 /* =========================================================
@@ -1614,7 +1613,7 @@
 
   opacity: 0;
 
-  pointer-events: none;
+  /*pointer-events: none;*/
 }
 
 .csv-custom-checkbox {
@@ -2000,4 +1999,28 @@
 
 .project-menu-item.delete-item svg {
   stroke: #d71945;
+}
+
+/* Barra di ricerca progetti */
+.project-search-input {
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+  max-width: 100px;
+}
+
+/* Testo segnaposto */
+.project-search-input::placeholder {
+  color: #888888;
+}
+
+/* Quando la barra è selezionata */
+.project-search-input:focus {
+  border-color: #1677ff;
+  box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.15);
 }

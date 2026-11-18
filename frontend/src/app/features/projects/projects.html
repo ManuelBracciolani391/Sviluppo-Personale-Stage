@@ -1,4 +1,4 @@
-<app-side-bar [titoloPagina]="'Gestione Progetti'">
+<app-side-bar [titoloPagina]="'Gestione Progetti'" ngSkipHydration>
   <div class="projects-page">
     <!-- Schede -->
     <div class="tabs">
@@ -7,7 +7,7 @@
         [class.active]="activeTab === 'projects'"
         (click)="activeTab = 'projects'"
       >
-        Progetti <span>8</span>
+        Progetti <span>{{ projects.length }}</span>
       </button>
 
       <button
@@ -15,7 +15,7 @@
         [class.active]="activeTab === 'timesheet'"
         (click)="activeTab = 'timesheet'"
       >
-        Timesheet <span>3</span>
+        Timesheet <span>0</span>
       </button>
     </div>
 
@@ -31,7 +31,7 @@
     <div class="table-container" *ngIf="activeTab === 'projects'">
       <nz-table
         #projectsTable
-        [nzData]="projects"
+        [nzData]="filteredProjects"
         [nzPageSize]="8"
         [nzShowSizeChanger]="false"
         [nzScroll]="{ x: '1100px' }"
@@ -40,10 +40,31 @@
           <tr>
             <th class="col-project">
               <div class="th-content">
-                <span>Progetti</span>
+                <ng-container *ngIf="!showProjectSearch">
+                  <span>Progetti</span>
+                </ng-container>
+
+                <input
+                  *ngIf="showProjectSearch"
+                  type="text"
+                  class="project-search-input"
+                  [(ngModel)]="projectSearch"
+                  placeholder="Cerca..."
+                  (input)="filterProjects()"
+                />
+
                 <span class="th-icons">
-                  <img src="/img/projects/freccia-su.png" alt="" />
-                  <img src="/img/projects/lente.png" alt="" />
+                  <img
+                    src="/img/projects/freccia-su.png"
+                    alt="Ordina"
+                    (click)="sortProjects('name')"
+                  />
+
+                  <img
+                    src="/img/projects/lente.png"
+                    alt="Cerca"
+                    (click)="$event.stopPropagation(); toggleProjectSearch()"
+                  />
                 </span>
               </div>
             </th>
@@ -52,7 +73,11 @@
               <div class="th-content">
                 <span>Project manager</span>
                 <span class="th-icons">
-                  <img src="/img/projects/freccia-su.png" alt="" />
+                  <img
+                    src="/img/projects/freccia-su.png"
+                    alt="Ordina"
+                    (click)="sortProjects('projectManager')"
+                  />
                   <img src="/img/projects/lente.png" alt="" />
                 </span>
               </div>
@@ -62,7 +87,11 @@
               <div class="th-content">
                 <span>Team leader</span>
                 <span class="th-icons">
-                  <img src="/img/projects/freccia-su.png" alt="" />
+                  <img
+                    src="/img/projects/freccia-su.png"
+                    alt="Ordina"
+                    (click)="sortProjects('teamLeader')"
+                  />
                   <img src="/img/projects/lente.png" alt="" />
                 </span>
               </div>
@@ -72,7 +101,11 @@
               <div class="th-content">
                 <span>Scrum master</span>
                 <span class="th-icons">
-                  <img src="/img/projects/freccia-su.png" alt="" />
+                  <img
+                    src="/img/projects/freccia-su.png"
+                    alt="Ordina"
+                    (click)="sortProjects('scrumMaster')"
+                  />
                   <img src="/img/projects/lente.png" alt="" />
                 </span>
               </div>
@@ -82,7 +115,11 @@
               <div class="th-content">
                 <span>Stato</span>
                 <span class="th-icons">
-                  <img src="/img/projects/freccia-giu.png" alt="" />
+                  <img
+                    src="/img/projects/freccia-giu.png"
+                    alt="Ordina"
+                    (click)="sortProjects('status')"
+                  />
                   <img src="/img/projects/gerarchia.png" alt="" />
                 </span>
               </div>
@@ -92,7 +129,11 @@
               <div class="th-content">
                 <span>Priorità</span>
                 <span class="th-icons">
-                  <img src="/img/projects/freccia-giu.png" alt="" />
+                  <img
+                    src="/img/projects/freccia-giu.png"
+                    alt="Ordina"
+                    (click)="sortProjects('priority')"
+                  />
                   <img src="/img/projects/gerarchia.png" alt="" />
                 </span>
               </div>
@@ -201,12 +242,14 @@
 
             <!-- Daily -->
             <td class="center-cell">
-              <span *ngIf="project.daily !== '-'; else dailyNo" class="check-icon"
-                ><img src="/img/projects/check.png" alt=""
-              /></span>
+              <span *ngIf="project.daily === '✓'; else dailyNo" class="check-icon">
+                <img src="/img/projects/check.png" alt="" />
+              </span>
 
               <ng-template #dailyNo>
-                <span class="cross-icon"><img src="/img/projects/cross.png" alt="" /></span>
+                <span class="cross-icon">
+                  <img src="/img/projects/cross.png" alt="" />
+                </span>
               </ng-template>
             </td>
 
@@ -216,10 +259,34 @@
             </td>
 
             <!-- Bug -->
-            <td class="center-cell-bug">2</td>
+            <td class="center-cell-bug">
+              <ng-container *ngIf="project.bugCountUrl; else noBug">
+                <a [href]="project.bugCountUrl" target="_blank" rel="noopener noreferrer"> - </a>
+              </ng-container>
+
+              <ng-template #noBug>
+                <span>-</span>
+              </ng-template>
+            </td>
 
             <!-- PBI -->
-            <td class="center-cell-pbi">3</td>
+            <td class="center-cell-pbi">
+              <ng-container
+                *ngIf="project.pbiWithoutFeatureUrl || project.pbiPastFeatureUrl; else noPbi"
+              >
+                <a
+                  [href]="project.pbiWithoutFeatureUrl || project.pbiPastFeatureUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  -
+                </a>
+              </ng-container>
+
+              <ng-template #noPbi>
+                <span>-</span>
+              </ng-template>
+            </td>
 
             <!-- Azioni -->
             <td class="actions-cell">
@@ -274,11 +341,11 @@
             <label>Project manager</label>
 
             <div class="select-wrapper">
-              <select [(ngModel)]="newProject.projectManager">
-                <option value="" disabled>Seleziona utente</option>
-                <option value="Francesco Di Natale">Francesco Di Natale</option>
-                <option value="Oriana Costantino">Oriana Costantino</option>
-                <option value="Giuseppe Manzella">Giuseppe Manzella</option>
+              <select [(ngModel)]="newProject.projectManagerId">
+                <option [ngValue]="null" disabled>Seleziona utente</option>
+                <option *ngFor="let manager of projectManagers" [ngValue]="manager.id">
+                  {{ manager.name }}
+                </option>
               </select>
             </div>
           </div>
@@ -326,7 +393,7 @@
               <select [(ngModel)]="newProject.status">
                 <option value="" disabled>Seleziona</option>
                 <option value="In corso">In corso</option>
-                <option value="In manutenzione">In manutenzione</option>
+                <option value="manutenzione">In manutenzione</option>
                 <option value="Concluso">Concluso</option>
                 <option value="Sospeso">Sospeso</option>
               </select>

@@ -1,21 +1,39 @@
-import { CommonModule } from '@angular/common';
-import { Component, HostListener } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { ChangeDetectorRef, Component, HostListener, inject, PLATFORM_ID } from '@angular/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { SideBar } from '../side-bar/side-bar';
 import { FormsModule } from '@angular/forms';
+import { ProjectsService } from './projects.service';
 
 interface Project {
+  id: number;
   name: string;
   projectManager: string;
+  projectManagerId: number | null;
   teamLeader: string;
+  teamLeaderId: number | null;
   scrumMaster: string;
+  scrumMasterId: number | null;
   status: string;
   priority: string;
   deliveryPlan: string;
   daily: string;
   sprintReview: string;
+
+  // Dati originali del backend che ci serviranno successivamente
+  isAzure: boolean;
+  isUxUi: boolean;
+  azureProjectName: string | null;
+  azureTeamName: string | null;
+  bugCountUrl: string | null;
+  pbiWithoutFeatureUrl: string | null;
+  pbiPastFeatureUrl: string | null;
+  description: string | null;
+  note: string | null;
+  startDate: string | null;
+  endDate: string | null;
 }
 
 @Component({
@@ -27,11 +45,124 @@ interface Project {
 export class Projects {
   activeTab = 'projects';
 
+  sortColumn = '';
+  sortDirection: 'asc' | 'desc' = 'asc';
+
+  projectSearch = '';
+  showProjectSearch = false;
+  filteredProjects: Project[] = [];
+
+  private platformId = inject(PLATFORM_ID);
+
+  constructor(
+    private projectsService: ProjectsService,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  filterProjects(): void {
+    const search = this.projectSearch.trim().toLowerCase();
+
+    if (!search) {
+      this.filteredProjects = [...this.projects];
+      return;
+    }
+
+    this.filteredProjects = this.projects.filter((project) =>
+      project.name.toLowerCase().includes(search),
+    );
+  }
+
+  toggleProjectSearch(): void {
+    this.showProjectSearch = !this.showProjectSearch;
+
+    if (!this.showProjectSearch) {
+      this.projectSearch = '';
+    }
+  }
+
+  sortProjects(column: string): void {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'asc';
+    }
+
+    this.filteredProjects = [...this.filteredProjects].sort((a: any, b: any) => {
+      if (column === 'status') {
+        const statusOrder = ['In corso', 'In manutenzione', 'Concluso', 'Sospeso'];
+
+        const valueA = statusOrder.indexOf(a.status);
+        const valueB = statusOrder.indexOf(b.status);
+
+        const comparison = valueA - valueB;
+
+        return this.sortDirection === 'asc' ? comparison : -comparison;
+      }
+
+      if (column === 'priority') {
+        const priorityOrder = ['Bassa', 'Media', 'Alta'];
+
+        const valueA = priorityOrder.indexOf(a.priority);
+        const valueB = priorityOrder.indexOf(b.priority);
+
+        const comparison = valueA - valueB;
+
+        return this.sortDirection === 'asc' ? comparison : -comparison;
+      }
+
+      const valueA = String(a[column] ?? '').toLowerCase();
+      const valueB = String(b[column] ?? '').toLowerCase();
+
+      const comparison = valueA.localeCompare(valueB, 'it');
+
+      return this.sortDirection === 'asc' ? comparison : -comparison;
+    });
+  }
+
+  loadProjects(): void {
+    console.log('LOAD PROJECTS - chiamata effettuata');
+    this.projectsService.getProjects().subscribe({
+      next: (response) => {
+        console.log('Progetti ricevuti dal backend:', response);
+
+        this.projects = response.data.map((project: any) => this.mapProject(project));
+
+        this.filteredProjects = [...this.projects];
+
+        console.log('PROJECTS ARRAY:', this.projects);
+
+        this.projectManagers = this.projects
+          .filter((project) => project.projectManagerId !== null && project.projectManager !== '-')
+          .map((project) => ({
+            id: project.projectManagerId!,
+            name: project.projectManager,
+          }))
+          .filter(
+            (manager, index, self) => index === self.findIndex((item) => item.id === manager.id),
+          );
+
+        this.cdr.detectChanges();
+      },
+
+      error: (error) => {
+        console.error('Errore nel caricamento dei progetti:', error);
+      },
+    });
+  }
+
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadProjects();
+    }
+  }
+
   // =========================================================
   // MENU AZIONI PROGETTO
   // =========================================================
 
   selectedProject: Project | null = null;
+  editingProject: Project | null = null;
 
   menuPosition = {
     top: 0,
@@ -62,110 +193,112 @@ export class Projects {
     this.selectedProject = null;
   }
 
-  @HostListener('document:click')
-  onDocumentClick(): void {
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
     this.closeProjectMenu();
+
+    if (!this.showProjectSearch) {
+      return;
+    }
+
+    const target = event.target as HTMLElement;
+
+    if (!target.closest('.project-search-input')) {
+      this.showProjectSearch = false;
+      this.projectSearch = '';
+      this.filterProjects();
+    }
+  }
+
+  private mapProject(project: any): Project {
+    return {
+      id: project.id,
+
+      name: project.alias,
+
+      projectManager: project.project_manager
+        ? `${project.project_manager.first_name} ${project.project_manager.last_name}`
+        : '-',
+
+      projectManagerId: project.project_manager_id ?? null,
+
+      teamLeaderId: project.team_leader_id ?? null,
+
+      teamLeader: project.team_leader
+        ? `${project.team_leader.first_name} ${project.team_leader.last_name}`
+        : '-',
+
+      scrumMasterId: project.scrum_master_id ?? null,
+
+      scrumMaster: project.scrum_master
+        ? `${project.scrum_master.first_name} ${project.scrum_master.last_name}`
+        : '-',
+
+      status: this.formatStatus(project.status),
+
+      priority: this.formatPriority(project.priority),
+
+      deliveryPlan: project.delivery_plan ?? '-',
+
+      daily: project.is_daily ? '✓' : '×',
+
+      // Per ora il backend non ci fornisce uno sprint review direttamente utilizzabile
+      sprintReview: '-',
+
+      isAzure: project.is_azure,
+      isUxUi: project.is_ux_ui,
+      azureProjectName: project.azure_project_name,
+      azureTeamName: project.azure_team_name,
+      bugCountUrl: project.bug_count_url,
+      pbiWithoutFeatureUrl: project.pbi_without_feature_url,
+      pbiPastFeatureUrl: project.pbi_past_feature_url,
+      description: project.description,
+      note: project.note,
+      startDate: project.start_date,
+      endDate: project.end_date,
+    };
+  }
+
+  private formatStatus(status: string): string {
+    switch (status) {
+      case 'in corso':
+        return 'In corso';
+
+      case 'manutenzione':
+        return 'In manutenzione';
+
+      case 'concluso':
+        return 'Concluso';
+
+      case 'sospeso':
+        return 'Sospeso';
+
+      default:
+        return status;
+    }
+  }
+
+  private formatPriority(priority: string): string {
+    switch (priority) {
+      case 'alta':
+        return 'Alta';
+
+      case 'media':
+        return 'Media';
+
+      case 'bassa':
+        return 'Bassa';
+
+      default:
+        return priority;
+    }
   }
 
   // Dati di esempio.
   // In seguito verranno sostituiti dai dati provenienti da Laravel.
-  projects: Project[] = [
-    {
-      name: 'Sviluppo personale',
-      projectManager: 'Francesco Di Natale',
-      teamLeader: 'Rory Cannata',
-      scrumMaster: 'Francesco Di Natale',
-      status: 'In corso',
-      priority: 'Alta',
-      deliveryPlan: 'View plan',
-      daily: '✓',
-      sprintReview: '10/10/2026',
-    },
+  projects: Project[] = [];
 
-    {
-      name: 'GAIA',
-      projectManager: 'Oriana Costantino\nGiuseppe Manzella',
-      teamLeader: 'Gaetano Carfi',
-      scrumMaster: 'Giuseppe Bertolone',
-      status: 'In corso',
-      priority: 'Alta',
-      deliveryPlan: '-',
-      daily: '×',
-      sprintReview: '-',
-    },
-
-    {
-      name: 'Ribera',
-      projectManager: 'Oriana Costantino',
-      teamLeader: 'Gabriele Leotta',
-      scrumMaster: '-',
-      status: 'In corso',
-      priority: 'Alta',
-      deliveryPlan: 'View plan',
-      daily: '✓',
-      sprintReview: '10/10/2026',
-    },
-
-    {
-      name: 'Iole',
-      projectManager: 'Alfredo Torre\nGiuseppe Manzella',
-      teamLeader: '-',
-      scrumMaster: 'Francesco Di Natale',
-      status: 'In manutenzione',
-      priority: 'Media',
-      deliveryPlan: '-',
-      daily: '✓',
-      sprintReview: '10/10/2026',
-    },
-
-    {
-      name: 'CFMT',
-      projectManager: 'Giuseppe Manzella',
-      teamLeader: '-',
-      scrumMaster: 'Francesco Di Natale',
-      status: 'In manutenzione',
-      priority: 'Media',
-      deliveryPlan: 'View plan',
-      daily: '✓',
-      sprintReview: '10/10/2026',
-    },
-
-    {
-      name: 'NAR',
-      projectManager: 'Alfredo Torre\nDaniel Indelicato\nGiuseppe Manzella',
-      teamLeader: 'Daria Gilletti',
-      scrumMaster: 'Francesco Di Natale',
-      status: 'Concluso',
-      priority: 'Media',
-      deliveryPlan: 'View plan',
-      daily: '✓',
-      sprintReview: '10/10/2026',
-    },
-
-    {
-      name: 'Popcorn',
-      projectManager: 'Vincenzo Vitale\nGiuseppe Manzella',
-      teamLeader: 'Michele Lo Giudice',
-      scrumMaster: 'Michele Lo Giudice',
-      status: 'Concluso',
-      priority: 'Bassa',
-      deliveryPlan: '-',
-      daily: '×',
-      sprintReview: '-',
-    },
-
-    {
-      name: 'Indire',
-      projectManager: 'Giuseppe Manzella',
-      teamLeader: '-',
-      scrumMaster: 'Francesco Di Natale',
-      status: 'Sospeso',
-      priority: 'Bassa',
-      deliveryPlan: '-',
-      daily: '×',
-      sprintReview: '-',
-    },
-  ];
+  projectManagers: { id: number; name: string }[] = [];
 
   getStatusColor(status: string): string {
     switch (status) {
@@ -235,9 +368,26 @@ export class Projects {
   showDeleteModal = false;
   selectedDeleteProject: Project | null = null;
 
-  newProject = {
+  newProject: {
+    name: string;
+    projectManager: string;
+    projectManagerId: number | null;
+    startDate: string;
+    daily: boolean;
+    azure: boolean;
+    uxUi: boolean;
+    status: string;
+    priority: string;
+    azureProjectName: string;
+    azureTeamName: string;
+    bugLink: string;
+    pbiNoFeatureLink: string;
+    pbiPassedFeatureLink: string;
+    description: string;
+  } = {
     name: '',
     projectManager: '',
+    projectManagerId: null,
     startDate: '',
     daily: false,
     azure: false,
@@ -260,6 +410,7 @@ export class Projects {
     this.newProject = {
       name: '',
       projectManager: '',
+      projectManagerId: null,
       startDate: '',
       daily: false,
       azure: false,
@@ -278,31 +429,30 @@ export class Projects {
   }
 
   openEditProjectModal(project: Project | null): void {
-    if (!project) {
-      return;
-    }
+    if (!project) return;
 
     this.isEditMode = true;
+    this.editingProject = project;
 
     this.newProject = {
       name: project.name,
       projectManager: project.projectManager,
-      startDate: '',
+      projectManagerId: project.projectManagerId,
+      startDate: project.startDate ? project.startDate.substring(0, 10) : '',
       daily: project.daily === '✓',
-      azure: false,
-      uxUi: false,
+      azure: project.isAzure,
+      uxUi: project.isUxUi,
       status: project.status,
       priority: project.priority,
-      azureProjectName: '',
-      azureTeamName: '',
-      bugLink: '',
-      pbiNoFeatureLink: '',
-      pbiPassedFeatureLink: '',
-      description: '',
+      azureProjectName: project.azureProjectName ?? '',
+      azureTeamName: project.azureTeamName ?? '',
+      bugLink: project.bugCountUrl ?? '',
+      pbiNoFeatureLink: project.pbiWithoutFeatureUrl ?? '',
+      pbiPassedFeatureLink: project.pbiPastFeatureUrl ?? '',
+      description: project.description ?? '',
     };
 
     this.showNewProjectModal = true;
-
     this.closeProjectMenu();
   }
 
@@ -316,23 +466,96 @@ export class Projects {
   }
 
   updateProject(): void {
-    console.log('Modifica progetto:', this.newProject);
+    if (!this.editingProject) {
+      console.error('Nessun progetto selezionato per la modifica.');
+      return;
+    }
 
-    this.showNewProjectModal = false;
-    this.isEditMode = false;
+    const projectData = {
+      alias: this.newProject.name,
+      project_manager_id: this.newProject.projectManagerId,
+      description: this.newProject.description || null,
+      is_daily: this.newProject.daily,
+      is_azure: this.newProject.azure,
+      is_ux_ui: this.newProject.uxUi,
+      status: this.newProject.status.toLowerCase(),
+      priority: this.newProject.priority.toLowerCase(),
+      azure_project_name: this.newProject.azureProjectName || null,
+      azure_team_name: this.newProject.azureTeamName || null,
+      bug_count_url: this.newProject.bugLink || null,
+      pbi_without_feature_url: this.newProject.pbiNoFeatureLink || null,
+      pbi_past_feature_url: this.newProject.pbiPassedFeatureLink || null,
+      start_date: this.newProject.startDate || null,
+    };
+
+    console.log('Dati progetto da modificare:', projectData);
+
+    this.projectsService.updateProject(this.editingProject.id, projectData).subscribe({
+      next: (response) => {
+        console.log('Progetto modificato:', response);
+
+        this.showNewProjectModal = false;
+        this.isEditMode = false;
+        this.editingProject = null;
+
+        this.loadProjects();
+      },
+      error: (error) => {
+        console.error('Errore nella modifica del progetto:', error);
+      },
+    });
   }
 
   closeNewProjectModal(): void {
     this.showNewProjectModal = false;
     this.isEditMode = false;
+    this.editingProject = null;
   }
 
   saveNewProject(): void {
-    // Chiude la modale "Nuovo progetto"
-    this.showNewProjectModal = false;
+    const projectData = {
+      alias: this.newProject.name,
+      project_manager_id: this.newProject.projectManagerId,
+      description: this.newProject.description || null,
 
-    // Mostra la modale di conferma
-    this.showProjectCreatedModal = true;
+      is_daily: this.newProject.daily,
+      is_azure: this.newProject.azure,
+      is_ux_ui: this.newProject.uxUi,
+
+      status: this.newProject.status.toLowerCase(),
+      priority: this.newProject.priority.toLowerCase(),
+
+      azure_project_name: this.newProject.azureProjectName || null,
+      azure_team_name: this.newProject.azureTeamName || null,
+
+      bug_count_url: this.newProject.bugLink || null,
+      pbi_without_feature_url: this.newProject.pbiNoFeatureLink || null,
+      pbi_past_feature_url: this.newProject.pbiPassedFeatureLink || null,
+
+      start_date: this.newProject.startDate || null,
+    };
+
+    console.log('Dati progetto da inviare:', projectData);
+
+    this.projectsService.createProject(projectData).subscribe({
+      next: (response) => {
+        console.log('Progetto creato:', response);
+
+        console.log('CHIUDO LA MODALE');
+
+        //this.showNewProjectModal = false;
+        this.closeNewProjectModal();
+        this.showProjectCreatedModal = true;
+
+        this.cdr.detectChanges();
+
+        this.loadProjects();
+      },
+
+      error: (error) => {
+        console.error('Errore nella creazione del progetto:', error);
+      },
+    });
   }
 
   closeProjectCreatedModal(): void {
@@ -345,7 +568,7 @@ export class Projects {
     }
 
     this.selectedNoteProject = project;
-    this.noteText = '';
+    this.noteText = project.note ?? '';
     this.showNoteModal = true;
 
     this.closeProjectMenu();
@@ -391,20 +614,55 @@ export class Projects {
   }
 
   confirmDeleteProject(): void {
-    // Per ora chiudiamo semplicemente la modale.
-    // In seguito qui verrà effettuata la cancellazione tramite Laravel.
+    if (!this.selectedDeleteProject) {
+      return;
+    }
 
-    this.showDeleteModal = false;
-    this.selectedDeleteProject = null;
+    const projectId = this.selectedDeleteProject.id;
+
+    console.log('Eliminazione progetto:', projectId);
+
+    this.projectsService.deleteProject(projectId).subscribe({
+      next: (response) => {
+        console.log('Progetto eliminato:', response);
+
+        this.showDeleteModal = false;
+        this.selectedDeleteProject = null;
+
+        this.loadProjects();
+      },
+
+      error: (error) => {
+        console.error('Errore nell’eliminazione del progetto:', error);
+      },
+    });
   }
 
   saveNote(): void {
-    // Per ora chiudiamo semplicemente la modale.
-    // In seguito qui salveremo la nota nel backend Laravel.
+    if (!this.selectedNoteProject) {
+      return;
+    }
 
-    this.showNoteModal = false;
-    this.selectedNoteProject = null;
-    this.noteText = '';
+    const projectId = this.selectedNoteProject.id;
+
+    const projectData = {
+      note: this.noteText || null,
+    };
+
+    console.log('Nota da salvare:', projectData);
+
+    this.projectsService.updateProject(projectId, projectData).subscribe({
+      next: (response) => {
+        console.log('Nota salvata:', response);
+
+        this.closeNoteModal();
+        this.loadProjects();
+      },
+
+      error: (error) => {
+        console.error('Errore nel salvataggio della nota:', error);
+      },
+    });
   }
 
   csvItems = Array.from({ length: 88 }, (_, index) => ({
